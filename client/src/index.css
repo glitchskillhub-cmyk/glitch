@@ -1,0 +1,172 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #facc15;
+  --color-primary-dark: #eab308;
+  --color-primary-glow: rgba(250, 204, 21, 0.2);
+  --color-secondary: #0f172a;
+  --color-accent: #f8fafc;
+  --color-dark: #0f172a;
+  --color-bg: #ffffff;
+  --color-card: #ffffff;
+  --color-border: #e2e8f0;
+
+  --font-sans: 'Inter', system-ui, sans-serif;
+  --font-display: 'Inter', sans-serif;
+}
+
+@layer base {
+  body {
+    font-family: var(--font-sans);
+    background-color: var(--color-bg);
+    color: var(--color-dark);
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-display);
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    line-height: 1.2;
+    color: var(--color-dark);
+  }
+
+  p {
+    line-height: 1.6;
+    color: #475569;
+  }
+}
+
+@layer components {
+  /* Unique Text Styles */
+  .text-glow {
+    text-shadow: 0 0 20px var(--color-primary-glow);
+  }
+
+  .text-outline {
+    -webkit-text-stroke: 1px currentColor;
+    color: transparent;
+  }
+
+  .gradient-text {
+    @apply bg-clip-text text-transparent bg-linear-to-r from-black to-slate-500;
+  }
+
+  /* Bento Grid Cards */
+  .bento-card {
+    @apply relative overflow-hidden rounded-3xl border border-slate-200 bg-white p-8 transition-all duration-300;
+    box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  }
+
+  .bento-card:hover {
+    @apply border-primary/40 bg-white shadow-lg shadow-slate-200/50;
+  }
+
+  /* Premium Buttons */
+  .btn-premium {
+    @apply relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-xl bg-slate-900 px-8 py-4 font-sans text-sm font-semibold tracking-wide text-white transition-all duration-200;
+  }
+
+  .btn-premium:hover {
+    @apply bg-primary text-slate-900 shadow-md shadow-primary/10;
+  }
+
+  .btn-premium span {
+    @apply relative z-10;
+  }
+
+  /* Unique Badges */
+  .badge-modern {
+    @apply inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-4 py-2 text-[10px] font-bold uppercase tracking-widest text-slate-600;
+  }
+
+  .badge-modern span {
+    @apply h-1.5 w-1.5 rounded-full bg-primary;
+  }
+
+  /* Floating Elements */
+  .floating {
+    animation: floating 3s ease-in-out infinite;
+  }
+
+  @keyframes floating {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-15px); }
+    100% { transform: translateY(0px); }
+  }
+
+  /* Section Title Unique Style */
+  .unique-title {
+    @apply text-4xl md:text-6xl font-bold tracking-tight leading-tight;
+  }
+  
+  .unique-title span {
+    @apply text-primary font-bold;
+  }
+
+  .section-title {
+    @apply text-3xl md:text-5xl font-bold tracking-tight mb-6 leading-tight;
+  }
+
+  /* Form Styles */
+  .floating-label-group {
+    @apply relative mb-8;
+  }
+
+  .input-field {
+    @apply w-full px-5 py-3.5 bg-white border border-slate-200 rounded-xl outline-none transition-all duration-200;
+    @apply text-slate-900 font-medium placeholder-slate-400;
+  }
+
+  .input-field:focus {
+    @apply border-primary ring-4 ring-primary/10 bg-white;
+  }
+
+  .floating-label {
+    @apply absolute left-5 top-3.5 text-slate-400 font-semibold pointer-events-none transition-all duration-200 text-xs tracking-wide;
+    @apply flex items-center gap-2;
+  }
+
+  .input-field:focus ~ .floating-label,
+  .input-field:not(:placeholder-shown) ~ .floating-label,
+  .input-field.select-active ~ .floating-label {
+    @apply -top-2 left-4 px-2 bg-white text-primary scale-90 z-10;
+  }
+
+  .btn-yellow {
+    @apply bg-primary text-slate-900 font-bold px-8 py-4 rounded-xl flex items-center gap-2 hover:bg-slate-900 hover:text-white transition-all duration-300 shadow-sm;
+  }
+}
+
+/* Infinite Logo Scroll */
+.logo-scroll-container {
+  @apply relative flex overflow-hidden whitespace-nowrap py-16 bg-white border-y border-slate-100;
+}
+
+.logo-scroll-track {
+  @apply flex items-center;
+  animation: marquee 40s linear infinite;
+}
+
+.logo-scroll-track:hover {
+  animation-play-state: paused;
+}
+
+.logo-item {
+  @apply flex items-center justify-center px-16 hover:scale-110 transition-all duration-500 shrink-0;
+}
+
+.logo-item img {
+  height: 48px !important;
+  width: auto !important;
+  max-width: 180px !important;
+  display: block !important;
+  object-fit: contain !important;
+  /* NO GRAYSCALE HERE */
+}
+
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}

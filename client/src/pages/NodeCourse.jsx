@@ -11,7 +11,7 @@ import {
 
 // Import Assets
 import courseImg from '../assets/images/Glitch SM Poster 1.jpg (1).jpeg';
-import demoVideo from '../assets/images/VN20260412_231437.mp4';
+// import demoVideo from '../assets/images/VN20260412_231437.mp4';
 import LogoScroll from '../components/LogoScroll';
 
 const NodeCourse = () => {
@@ -197,8 +197,10 @@ const NodeCourse = () => {
         <div className="container mx-auto px-6">
           <div className="flex flex-col lg:flex-row items-center gap-20">
             <div className="flex-1 order-2 lg:order-1">
-               <div className="aspect-video rounded-[3rem] overflow-hidden shadow-2xl border border-white bg-slate-200">
-                  <video src={demoVideo} controls className="w-full h-full object-cover"></video>
+               <div className="aspect-video rounded-[3rem] overflow-hidden shadow-2xl border border-white bg-slate-900 flex flex-col items-center justify-center text-center p-8 group">
+                  <Play className="text-primary mb-6 animate-pulse" size={64} fill="currentColor" />
+                  <h3 className="text-white text-xl font-bold mb-2">Live Demo Session</h3>
+                  <p className="text-slate-400 text-sm">Experience our real-time MNC-style teaching methodology.</p>
                </div>
             </div>
             <div className="flex-1 order-1 lg:order-2">

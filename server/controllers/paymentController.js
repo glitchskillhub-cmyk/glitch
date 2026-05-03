@@ -4,10 +4,18 @@ const Payment = require('../models/Payment');
 const Student = require('../models/Student');
 const { sendReceiptEmail } = require('../utils/email');
 
-const razorpay = new Razorpay({
-  key_id: process.env.RAZORPAY_KEY_ID,
-  key_secret: process.env.RAZORPAY_KEY_SECRET,
-});
+// Lazy initialization — ensures env vars are loaded before creating the instance
+let razorpayInstance = null;
+const getRazorpay = () => {
+  if (!razorpayInstance) {
+    console.log('Initializing Razorpay with key:', process.env.RAZORPAY_KEY_ID ? '✅ Present' : '❌ MISSING');
+    razorpayInstance = new Razorpay({
+      key_id: process.env.RAZORPAY_KEY_ID,
+      key_secret: process.env.RAZORPAY_KEY_SECRET,
+    });
+  }
+  return razorpayInstance;
+};
 
 // Create Razorpay Order
 exports.createOrder = async (req, res, next) => {
@@ -32,7 +40,7 @@ exports.createOrder = async (req, res, next) => {
     };
     
     console.log('Razorpay order options:', options);
-    const order = await razorpay.orders.create(options);
+    const order = await getRazorpay().orders.create(options);
     console.log('Razorpay order created:', order.id);
 
     // Create pending payment record

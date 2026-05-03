@@ -58,50 +58,102 @@ const Settings = () => {
             <TabButton id="notifications" icon={Bell} label="Notifications" />
             <TabButton id="logs" icon={Activity} label="Activity Logs" />
          </div>
+    <div className="space-y-10 text-zinc-900 max-w-5xl">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <div>
+           <h1 className="text-4xl font-black uppercase tracking-tighter italic text-zinc-900">
+              Portal <span className="text-primary not-italic">Settings</span>
+           </h1>
+           <p className="text-zinc-500 text-sm mt-1 font-bold">Configure your administrative environment</p>
+        </div>
+      </div>
 
-         <div className="md:col-span-3 space-y-8">
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+         <div className="lg:col-span-1 space-y-2">
+            {tabs.map((tab) => (
+              <button 
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`
+                  w-full flex items-center gap-4 px-6 py-4 rounded-2xl transition-all duration-300
+                  ${activeTab === tab.id 
+                    ? 'bg-primary text-black shadow-lg shadow-primary/20 font-black italic' 
+                    : 'text-zinc-400 hover:bg-zinc-100 font-bold'}
+                `}
+              >
+                <tab.icon size={18} />
+                <span className="text-[10px] uppercase tracking-widest">{tab.label}</span>
+              </button>
+            ))}
+         </div>
+
+         <div className="lg:col-span-3 bg-white border border-zinc-100 rounded-[2.5rem] p-10 shadow-sm">
             {activeTab === 'profile' && (
-              <div className="bg-[#0a0a0a] border border-white/5 rounded-[2.5rem] p-10 animate-in fade-in slide-in-from-right-4 duration-500">
-                 <div className="flex items-center gap-6 mb-10">
-                    <div className="w-20 h-20 rounded-[2rem] bg-gradient-to-br from-primary to-yellow-600 p-[1px]">
-                       <div className="w-full h-full bg-black rounded-[2rem] flex items-center justify-center font-black text-primary text-2xl italic border border-black/50">T</div>
+              <div className="space-y-8 animate-in fade-in slide-in-from-right-4 duration-500">
+                 <div className="flex items-center gap-8">
+                    <div className="w-24 h-24 rounded-[2rem] bg-zinc-100 border border-zinc-200 flex items-center justify-center relative group">
+                       <div className="w-full h-full rounded-[2rem] bg-white flex items-center justify-center font-black text-3xl text-primary italic border border-zinc-100 shadow-inner">T</div>
+                       <button className="absolute -bottom-2 -right-2 p-3 bg-primary text-black rounded-xl shadow-lg opacity-0 group-hover:opacity-100 transition-all"><Camera size={16} /></button>
                     </div>
                     <div>
-                       <h3 className="text-2xl font-black uppercase tracking-tighter italic text-white">Tarun</h3>
-                       <p className="text-primary text-[10px] font-black uppercase tracking-widest mt-1">Super Administrator</p>
+                       <h3 className="text-xl font-black uppercase tracking-tighter italic text-zinc-900">Tarun</h3>
+                       <p className="text-zinc-400 text-xs font-bold uppercase tracking-widest mt-1">Root Administrator</p>
                     </div>
                  </div>
 
-                 <div className="space-y-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                       <div className="space-y-2">
-                          <label className="text-[10px] font-black uppercase tracking-widest text-zinc-600 ml-2">Display Name</label>
-                          <input type="text" defaultValue="Tarun" className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-sm focus:border-primary transition-all outline-none" />
-                       </div>
-                       <div className="space-y-2">
-                          <label className="text-[10px] font-black uppercase tracking-widest text-zinc-600 ml-2">Email Access</label>
-                          <input type="email" defaultValue="admin@glitch.com" className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-sm focus:border-primary transition-all outline-none" />
-                       </div>
+                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                       <label className="text-[10px] font-black uppercase tracking-widest text-zinc-400 ml-2">Full Name</label>
+                       <input type="text" className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl px-6 py-4 text-sm focus:border-primary transition-all outline-none text-zinc-900 font-bold" defaultValue="Tarun" />
                     </div>
                     <div className="space-y-2">
-                       <label className="text-[10px] font-black uppercase tracking-widest text-zinc-600 ml-2">Biography</label>
-                       <textarea className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-sm focus:border-primary transition-all outline-none min-h-[100px]">Head of operations at Glitch Skill Hub. Managing full-stack enrollments and mentor performance.</textarea>
+                       <label className="text-[10px] font-black uppercase tracking-widest text-zinc-400 ml-2">Email Address</label>
+                       <input type="email" className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl px-6 py-4 text-sm focus:border-primary transition-all outline-none text-zinc-900 font-bold" defaultValue="admin@glitch.com" />
                     </div>
+                 </div>
+
+                 <div className="space-y-2">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-zinc-400 ml-2">Bio / Admin Notes</label>
+                    <textarea className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl px-6 py-4 text-sm focus:border-primary transition-all outline-none text-zinc-600 min-h-[120px]" placeholder="Administrative bio..."></textarea>
+                 </div>
+
+                 <div className="pt-6 border-t border-zinc-100 flex justify-end">
+                    <button className="px-10 py-4 bg-zinc-900 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-primary hover:text-black transition-all shadow-lg">Save Changes</button>
                  </div>
               </div>
             )}
 
-            {activeTab === 'system' && (
-              <div className="bg-[#0a0a0a] border border-white/5 rounded-[2.5rem] p-10 animate-in fade-in slide-in-from-right-4 duration-500">
-                 <div className="flex items-center gap-4 mb-10">
-                    <Database size={24} className="text-primary" />
-                    <div>
-                       <h3 className="text-xl font-black uppercase tracking-tighter italic">Platform Core</h3>
-                       <p className="text-zinc-500 text-xs font-bold uppercase tracking-widest">Connect your external integrations</p>
+            {activeTab === 'security' && (
+              <div className="space-y-8 animate-in fade-in slide-in-from-right-4 duration-500">
+                 <div className="space-y-2">
+                    <h3 className="text-xl font-black uppercase tracking-tighter italic text-zinc-900">Password</h3>
+                    <p className="text-zinc-400 text-xs font-bold">Update your administrative credentials</p>
+                 </div>
+
+                 <div className="space-y-6 max-w-md">
+                    <div className="space-y-2">
+                       <label className="text-[10px] font-black uppercase tracking-widest text-zinc-400 ml-2">Current Password</label>
+                       <input type="password" placeholder="••••••••" className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl px-6 py-4 text-sm focus:border-primary transition-all outline-none text-zinc-900" />
+                    </div>
+                    <div className="space-y-2">
+                       <label className="text-[10px] font-black uppercase tracking-widest text-zinc-400 ml-2">New Password</label>
+                       <input type="password" placeholder="••••••••" className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl px-6 py-4 text-sm focus:border-primary transition-all outline-none text-zinc-900" />
                     </div>
                  </div>
 
-                 <div className="space-y-8">
+                 <div className="pt-6 border-t border-zinc-100">
+                    <button className="px-10 py-4 bg-zinc-900 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-primary hover:text-black transition-all shadow-lg">Update Password</button>
+                 </div>
+              </div>
+            )}
+
+            {activeTab === 'billing' && (
+              <div className="space-y-8 animate-in fade-in slide-in-from-right-4 duration-500">
+                 <div className="p-8 bg-zinc-50 border border-zinc-100 rounded-3xl">
+                    <div className="flex items-center gap-4 mb-6">
+                       <div className="w-10 h-10 bg-primary/20 text-primary rounded-xl flex items-center justify-center"><CreditCard size={20} /></div>
+                       <h4 className="text-sm font-black uppercase tracking-widest text-zinc-900">Payment Integration</h4>
+                    </div>
                     <div className="space-y-4">
                        <div className="flex items-center gap-3">
                           <Key size={16} className="text-zinc-500" />

@@ -70,9 +70,11 @@ const Students = () => {
   };
 
   const filtered = students.filter(s => {
-    const matchesSearch = s.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                          s.phone.includes(searchTerm) || 
-                          s.email.toLowerCase().includes(searchTerm.toLowerCase());
+    const nameMatch = (s.name || '').toLowerCase().includes(searchTerm.toLowerCase());
+    const phoneMatch = (s.phone || '').includes(searchTerm);
+    const emailMatch = (s.email || '').toLowerCase().includes(searchTerm.toLowerCase());
+    
+    const matchesSearch = nameMatch || phoneMatch || emailMatch;
     const matchesType = filterType === 'all' || s.collegeName === filterType;
     return matchesSearch && matchesType;
   });
@@ -91,7 +93,7 @@ const Students = () => {
     <div className="space-y-10">
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
         <div>
-           <h1 className="text-4xl font-black uppercase tracking-tighter italic">
+           <h1 className="text-4xl font-black uppercase tracking-tighter italic text-zinc-900">
               Student <span className="text-primary not-italic">Registry</span>
            </h1>
            <p className="text-zinc-500 text-sm mt-1 font-bold">Manage and monitor all hub participants</p>
@@ -99,7 +101,7 @@ const Students = () => {
         <div className="flex flex-wrap items-center gap-4">
            <button 
              onClick={downloadCSV}
-             className="flex items-center gap-2 px-6 py-3.5 bg-white/5 border border-white/10 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-white/10 transition-all"
+             className="flex items-center gap-2 px-6 py-3.5 bg-white border border-zinc-200 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-zinc-50 transition-all text-zinc-600"
            >
               <Download size={16} /> Export CSV
            </button>
@@ -113,20 +115,20 @@ const Students = () => {
       </div>
 
       {/* Filters */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 bg-[#0a0a0a] border border-white/5 p-6 rounded-[2rem]">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 bg-white border border-zinc-200 p-6 rounded-[2rem] shadow-sm">
          <div className="md:col-span-2 relative">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500" size={18} />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400" size={18} />
             <input 
               type="text" 
               placeholder="Search by name, email or phone..." 
-              className="w-full bg-black/40 border border-white/10 rounded-2xl pl-12 pr-6 py-3.5 text-sm focus:border-primary/50 transition-all"
+              className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl pl-12 pr-6 py-3.5 text-sm focus:border-primary transition-all outline-none text-zinc-900"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
          </div>
          <div>
             <select 
-              className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-3.5 text-[10px] font-black uppercase tracking-widest focus:border-primary/50 transition-all outline-none"
+              className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl px-6 py-3.5 text-[10px] font-black uppercase tracking-widest focus:border-primary transition-all outline-none text-zinc-900 cursor-pointer"
               value={filterType}
               onChange={(e) => setFilterType(e.target.value)}
             >
@@ -137,26 +139,26 @@ const Students = () => {
          </div>
          <button 
            onClick={fetchData}
-           className="flex items-center justify-center gap-2 bg-white/5 border border-white/10 rounded-2xl py-3.5 text-[10px] font-black uppercase tracking-widest hover:bg-primary hover:text-black transition-all group"
+           className="flex items-center justify-center gap-2 bg-zinc-50 border border-zinc-200 rounded-2xl py-3.5 text-[10px] font-black uppercase tracking-widest hover:bg-primary hover:text-black transition-all group text-zinc-600"
          >
             <RefreshCw size={16} className={loading ? 'animate-spin' : 'group-hover:rotate-180 transition-transform duration-500'} /> Sync Data
          </button>
       </div>
 
       {/* Students Table */}
-      <div className="bg-[#0a0a0a] border border-white/5 rounded-[2.5rem] overflow-hidden">
+      <div className="bg-white border border-zinc-200 rounded-[2.5rem] overflow-hidden shadow-sm">
          <div className="overflow-x-auto scrollbar-hide">
             <table className="w-full text-left">
                <thead>
-                  <tr className="border-b border-white/5 bg-white/[0.01]">
-                     <th className="px-8 py-6 text-[10px] font-black uppercase tracking-[0.2em] text-primary">Student Info</th>
-                     <th className="px-8 py-6 text-[10px] font-black uppercase tracking-[0.2em] text-primary">Contact</th>
-                     <th className="px-8 py-6 text-[10px] font-black uppercase tracking-[0.2em] text-primary">Course</th>
-                     <th className="px-8 py-6 text-[10px] font-black uppercase tracking-[0.2em] text-primary">Status</th>
-                     <th className="px-8 py-6 text-[10px] font-black uppercase tracking-[0.2em] text-primary text-right">Actions</th>
+                  <tr className="border-b border-zinc-100 bg-zinc-50">
+                     <th className="px-8 py-6 text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400">Student Info</th>
+                     <th className="px-8 py-6 text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400">Contact</th>
+                     <th className="px-8 py-6 text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400">Course</th>
+                     <th className="px-8 py-6 text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400">Status</th>
+                     <th className="px-8 py-6 text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400 text-right">Actions</th>
                </tr>
                </thead>
-               <tbody className="divide-y divide-white/5">
+               <tbody className="divide-y divide-zinc-50">
                   {loading ? (
                     [1,2,3,4,5].map(i => (
                       <tr key={i} className="animate-pulse">

@@ -161,7 +161,10 @@ const Registration = () => {
       rzp.on('payment.failed', () => toast.error('Payment failed. Try again.'));
       rzp.open();
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Submission failed.');
+      console.error('Registration Error:', error);
+      const serverMessage = error.response?.data?.message;
+      const errorMessage = serverMessage || error.message || 'Submission failed.';
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }

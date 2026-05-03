@@ -11,6 +11,7 @@ const fs = require('fs');
 // Create Student
 exports.createStudent = async (req, res, next) => {
   try {
+    console.log('Incoming Registration Request:', req.body);
     const { 
       name, phone, email, branch, rollNumber, collegeName, location, course,
       presentRole, experience, companyName 
@@ -21,6 +22,7 @@ exports.createStudent = async (req, res, next) => {
     });
     res.status(201).json({ success: true, studentId: student._id });
   } catch (error) {
+    console.error('Create Student Error:', error);
     next(error);
   }
 };

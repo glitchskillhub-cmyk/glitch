@@ -30,7 +30,7 @@ const SidebarItem = ({ to, icon: Icon, label, collapsed }) => (
         : 'text-zinc-500 hover:text-white hover:bg-white/5'}
     `}
   >
-    <Icon size={22} className={({ isActive }) => isActive ? 'text-black' : 'group-hover:scale-110 transition-transform'} />
+    <Icon size={22} className="group-hover:scale-110 transition-transform" />
     {!collapsed && <span className="text-[11px] uppercase tracking-widest leading-none">{label}</span>}
   </NavLink>
 );

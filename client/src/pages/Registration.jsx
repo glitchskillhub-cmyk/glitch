@@ -6,7 +6,7 @@ import { Loader2, User, CreditCard, ShieldCheck, MapPin, Building, GraduationCap
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 
-const RAZORPAY_KEY = import.meta.env.VITE_RAZORPAY_KEY_ID || 'rzp_test_SWzSNJa26LGjx2';
+const RAZORPAY_KEY = import.meta.env.VITE_RAZORPAY_KEY_ID || 'rzp_test_Skseh7l3ljLVO7';
 
 const InputField = ({ label, name, type = 'text', placeholder, icon: Icon, required = true, value, onChange, error }) => (
   <div className="floating-label-group">

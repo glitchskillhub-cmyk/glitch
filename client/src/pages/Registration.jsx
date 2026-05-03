@@ -68,6 +68,19 @@ const Registration = () => {
   const [loading, setLoading] = useState(false);
   const [isFormValid, setIsFormValid] = useState(false);
 
+  // Wake up server on load
+  useEffect(() => {
+    const wakeup = async () => {
+      try {
+        await getAllCourses(); // Smallest request to wake up the server
+        console.log('Server awakened! Ready for processing.');
+      } catch (e) {
+        console.log('Waking up server...');
+      }
+    };
+    wakeup();
+  }, []);
+
   const years = ['2020', '2021', '2022', '2023', '2024', '2025', '2026', '2027'];
   const employmentTypes = ['Fresher', 'Employee'];
 

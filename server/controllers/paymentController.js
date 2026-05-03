@@ -84,7 +84,8 @@ exports.verifyPayment = async (req, res, next) => {
       
       const student = await Student.findById(studentId);
       if (student) {
-        await sendReceiptEmail(student, updatedPayment);
+        // Send email in background (don't await)
+        sendReceiptEmail(student, updatedPayment).catch(err => console.error('Email sending failed:', err));
         
         // Find user by email and mark as enrolled
         const User = require('../models/User');
@@ -98,7 +99,6 @@ exports.verifyPayment = async (req, res, next) => {
         );
 
         if (user) {
-          // Find the course object by title
           const courseObj = await Course.findOne({ title: student.course });
           if (courseObj) {
             await Enrollment.create({
@@ -106,14 +106,11 @@ exports.verifyPayment = async (req, res, next) => {
               course: courseObj._id,
               status: 'ongoing'
             });
-          } else {
-            // Fallback if course model doesn't match string exactly
-            // You might want to seed courses first
           }
         }
       }
       
-      res.json({ success: true, message: 'Payment verified successfully.' });
+      return res.json({ success: true, message: 'Payment verified successfully.' });
     } else {
       await Payment.findOneAndUpdate(
         { razorpayOrderId },

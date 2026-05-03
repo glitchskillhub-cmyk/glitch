@@ -93,8 +93,11 @@ const Students = () => {
     <div className="space-y-10">
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
         <div>
-           <h1 className="text-4xl font-black uppercase tracking-tighter italic text-zinc-900">
+           <h1 className="text-4xl font-black uppercase tracking-tighter italic text-zinc-900 flex items-center gap-4">
               Student <span className="text-primary not-italic">Registry</span>
+              <span className="bg-primary/10 text-primary px-4 py-1 rounded-xl text-xs not-italic border border-primary/20">
+                {filtered.length} Total
+              </span>
            </h1>
            <p className="text-zinc-500 text-sm mt-1 font-bold">Manage and monitor all hub participants</p>
         </div>

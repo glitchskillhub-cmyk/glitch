@@ -11,19 +11,14 @@
       "use": "@vercel/node"
     }
   ],
-  "routes": [
+  "rewrites": [
     {
-      "src": "/api/(.*)",
-      "dest": "server/server.js"
+      "source": "/api/(.*)",
+      "destination": "https://glitch-azwb.onrender.com/api/$1"
     },
     {
-      "src": "/assets/(.*)",
-      "dest": "client/dist/assets/$1"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "client/$1",
-      "check": true
+      "source": "/(.*)",
+      "destination": "/index.html"
     }
   ]
 }

@@ -136,6 +136,7 @@ const Registration = () => {
         description: `Admission - ${formData.course}`,
         order_id: order.id,
         handler: async (response) => {
+          const verifyingToast = toast.loading('Verifying payment... Please wait.');
           try {
             await verifyRazorpayPayment({
               razorpayOrderId: response.razorpay_order_id,
@@ -143,10 +144,13 @@ const Registration = () => {
               razorpaySignature: response.razorpay_signature,
               studentId: studentId
             });
-            toast.success('Registration Successful 🎉');
+            toast.dismiss(verifyingToast);
+            toast.success('Payment Verified! Registration Complete 🎉', { duration: 5000 });
             navigate('/success');
           } catch (err) {
-            toast.error('Payment verification failed.');
+            toast.dismiss(verifyingToast);
+            console.error('Verification Error:', err);
+            toast.error(err.response?.data?.message || 'Payment verification failed. Please contact support.');
           }
         },
         prefill: {
@@ -158,7 +162,9 @@ const Registration = () => {
       };
 
       const rzp = new window.Razorpay(options);
-      rzp.on('payment.failed', () => toast.error('Payment failed. Try again.'));
+      rzp.on('payment.failed', function (response) {
+        toast.error(`Payment Failed: ${response.error.description}`);
+      });
       rzp.open();
     } catch (error) {
       console.error('Registration Error:', error);

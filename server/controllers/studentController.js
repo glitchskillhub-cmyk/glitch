@@ -11,8 +11,14 @@ const fs = require('fs');
 // Create Student
 exports.createStudent = async (req, res, next) => {
   try {
-    const { name, phone, email, branch, rollNumber, collegeName, location, course } = req.body;
-    const student = await Student.create({ name, phone, email, branch, rollNumber, collegeName, location, course });
+    const { 
+      name, phone, email, branch, rollNumber, collegeName, location, course,
+      presentRole, experience, companyName 
+    } = req.body;
+    const student = await Student.create({ 
+      name, phone, email, branch, rollNumber, collegeName, location, course,
+      presentRole, experience, companyName
+    });
     res.status(201).json({ success: true, studentId: student._id });
   } catch (error) {
     next(error);

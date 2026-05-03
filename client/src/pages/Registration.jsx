@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import { createStudent, createRazorpayOrder, verifyRazorpayPayment } from '../utils/api';
-import { Loader2, User, CreditCard, ShieldCheck, MapPin, Building, GraduationCap, Phone, Mail, BookOpen, Send, Sparkles, ChevronRight, Zap } from 'lucide-react';
+import { Loader2, User, CreditCard, ShieldCheck, MapPin, Building, GraduationCap, Phone, Mail, BookOpen, Send, Sparkles, ChevronRight, Zap, Briefcase, Clock } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 
@@ -62,6 +62,7 @@ const Registration = () => {
   const [formData, setFormData] = useState({
     name: '', phone: '', email: '', course: 'Node.js Full Stack',
     rollNumber: '', collegeName: '', location: '', branch: '',
+    presentRole: '', experience: '', companyName: ''
   });
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
@@ -251,20 +252,35 @@ const Registration = () => {
                           <InputField label="City" name="location" icon={MapPin} value={formData.location} onChange={handleInputChange} error={errors.location} />
                         </div>
 
+                        {formData.collegeName === 'Employee' && (
+                          <div className="animate-in fade-in slide-in-from-top-4 duration-500 space-y-8 pt-4">
+                            <div className="flex items-center gap-4 mb-2">
+                               <div className="h-px flex-1 bg-slate-100"></div>
+                               <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Work Details</span>
+                               <div className="h-px flex-1 bg-slate-100"></div>
+                            </div>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                               <InputField label="Present Role" name="presentRole" icon={Briefcase} value={formData.presentRole} onChange={handleInputChange} />
+                               <InputField label="Experience (Years)" name="experience" icon={Clock} value={formData.experience} onChange={handleInputChange} />
+                            </div>
+                            <InputField label="Company Name (Optional)" name="companyName" icon={Building} value={formData.companyName} onChange={handleInputChange} required={false} />
+                          </div>
+                        )}
+
                         <InputField label="Graduation" name="branch" icon={GraduationCap} value={formData.branch} onChange={handleInputChange} error={errors.branch} />
                       </div>
 
                       {/* Dynamic Payment Card */}
-                      <div className="mt-12 p-10 bg-slate-950 rounded-[3rem] text-white relative overflow-hidden group">
+                      <div className="mt-12 p-10 bg-slate-950 rounded-[3rem] text-white relative overflow-hidden group border border-white/5 shadow-2xl">
                         <div className="absolute top-0 right-0 p-6 opacity-20 group-hover:rotate-12 transition-transform duration-700">
                            <Zap size={100} className="text-primary" />
                         </div>
                         <div className="relative z-10">
                            <div className="flex flex-col md:flex-row justify-between items-end gap-10">
                               <div>
-                                 <p className="text-[10px] font-bold uppercase tracking-[0.4em] text-primary mb-2">Total Amount Due</p>
-                                 <h3 className="text-5xl font-bold italic">₹9,999</h3>
-                                 <p className="text-slate-500 text-xs mt-4 font-medium uppercase tracking-widest">Inclusive of all taxes & hub access</p>
+                                 <p className="text-[10px] font-black uppercase tracking-[0.4em] text-primary mb-3">Total Amount Due</p>
+                                 <h3 className="text-6xl font-black tracking-tighter text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]">₹9,999</h3>
+                                 <p className="text-slate-400 text-[10px] mt-6 font-bold uppercase tracking-[0.2em]">Inclusive of all taxes & hub access</p>
                               </div>
                               <button
                                 type="submit"

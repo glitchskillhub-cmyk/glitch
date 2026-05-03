@@ -31,13 +31,24 @@ import StudentSettings from './pages/student/Settings';
 
 import MentorDashboard from './pages/MentorDashboard';
 
-// Legacy SVAdmin Pages
-import AdminDashboard from './pages/AdminDashboard';
-import AddStudent from './pages/AddStudent';
-import StudentDetails from './pages/StudentDetails';
+// New Admin Portal Components
+import AdminLayout from './components/AdminLayout';
+import AdminDashboardV2 from './pages/admin/Dashboard';
+import AdminStudents from './pages/admin/Students';
+import AdminMentors from './pages/admin/Mentors';
+import AdminPrograms from './pages/admin/Programs';
+import AdminPayments from './pages/admin/Payments';
+import AdminSettingsV2 from './pages/admin/Settings';
+import { 
+  Curriculum as AdminCurriculum, 
+  Tasks as AdminTasks, 
+  CareerHub as AdminCareerHub, 
+  Certificates as AdminCertificates, 
+  Community as AdminCommunity 
+} from './pages/admin/Placeholders';
+
+// Legacy SVAdmin Pages (For Reference)
 import AdminLogin from './pages/AdminLogin';
-import AdminSettings from './pages/AdminSettings';
-import AddMentor from './pages/AddMentor';
 
 // Admin Auth Helper (Legacy)
 const AdminProtectedRoute = ({ children }) => {
@@ -99,33 +110,28 @@ function App() {
           </RoleProtectedRoute>
         } />
         
-        {/* Legacy Admin Routes (Preserved) */}
-        <Route path="/admin/login" element={<AdminLogin />} />
+        {/* New Professional Admin Portal */}
         <Route path="/admin" element={
           <AdminProtectedRoute>
-            <AdminDashboard />
+            <AdminLayout><Outlet /></AdminLayout>
           </AdminProtectedRoute>
-        } />
-        <Route path="/admin/add-student" element={
-          <AdminProtectedRoute>
-            <AddStudent />
-          </AdminProtectedRoute>
-        } />
-        <Route path="/admin/add-mentor" element={
-          <AdminProtectedRoute>
-            <AddMentor />
-          </AdminProtectedRoute>
-        } />
-        <Route path="/admin/student/:id" element={
-          <AdminProtectedRoute>
-            <StudentDetails />
-          </AdminProtectedRoute>
-        } />
-        <Route path="/admin/settings" element={
-          <AdminProtectedRoute>
-            <AdminSettings />
-          </AdminProtectedRoute>
-        } />
+        }>
+          <Route index element={<Navigate to="/admin/dashboard" />} />
+          <Route path="dashboard" element={<AdminDashboardV2 />} />
+          <Route path="students" element={<AdminStudents />} />
+          <Route path="mentors" element={<AdminMentors />} />
+          <Route path="programs" element={<AdminPrograms />} />
+          <Route path="curriculum" element={<AdminCurriculum />} />
+          <Route path="tasks" element={<AdminTasks />} />
+          <Route path="payments" element={<AdminPayments />} />
+          <Route path="certificates" element={<AdminCertificates />} />
+          <Route path="career" element={<AdminCareerHub />} />
+          <Route path="community" element={<AdminCommunity />} />
+          <Route path="settings" element={<AdminSettingsV2 />} />
+        </Route>
+
+        {/* Legacy Admin Auth */}
+        <Route path="/admin/login" element={<AdminLogin />} />
 
         {/* Catch-all */}
         <Route path="*" element={<NotFound />} />

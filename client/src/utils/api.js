@@ -43,6 +43,11 @@ export const getMyTasks = () => api.get('/my-tasks');
 export const getJobs = () => api.get('/jobs');
 export const getStudentStats = () => api.get('/student-stats');
 
+// Courses
+export const getAllCourses = () => api.get('/courses');
+export const createCourse = (data) => api.post('/courses', data);
+export const deleteCourse = (id) => api.delete(`/courses/${id}`);
+
 // Documents
 export const uploadDocuments = (studentId, formData) =>
   api.post(`/documents/upload/${studentId}`, formData, {

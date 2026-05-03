@@ -30,6 +30,8 @@ const Students = () => {
     rollNumber: '', collegeName: 'Fresher', location: '', branch: ''
   });
 
+  const [selectedStudent, setSelectedStudent] = useState(null);
+
   const fetchData = async () => {
     setLoading(true);
     try {
@@ -180,7 +182,7 @@ const Students = () => {
                                 {s.name.charAt(0)}
                              </div>
                              <div>
-                                <p className="font-bold text-sm text-white group-hover:text-primary transition-colors">{s.name}</p>
+                                <p className="font-bold text-sm text-zinc-900 group-hover:text-primary transition-colors">{s.name}</p>
                                 <p className="text-[10px] font-black uppercase tracking-widest text-zinc-500 mt-1">{s.collegeName} • {s.rollNumber}</p>
                              </div>
                           </div>
@@ -198,31 +200,34 @@ const Students = () => {
                           </div>
                        </td>
                        <td className="px-8 py-6">
-                          <div className="bg-white/5 border border-white/10 px-4 py-2 rounded-xl inline-block">
-                             <p className="text-[10px] font-black uppercase tracking-widest text-white">{s.course}</p>
+                          <div className="bg-zinc-50 border border-zinc-200 px-4 py-2 rounded-xl inline-block">
+                             <p className="text-[10px] font-black uppercase tracking-widest text-zinc-900">{s.course}</p>
                              <p className="text-[9px] font-bold text-zinc-500 uppercase tracking-widest mt-0.5">{s.branch}</p>
                           </div>
                        </td>
                        <td className="px-8 py-6">
                           <span className={`
                             inline-flex items-center gap-2 px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-wider
-                            ${s.status === 'Approved' ? 'bg-green-500/10 text-green-500' : 'bg-primary/10 text-primary'}
+                            ${s.status === 'Active' || s.status === 'Approved' ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700'}
                           `}>
-                             <span className={`w-1.5 h-1.5 rounded-full ${s.status === 'Approved' ? 'bg-green-500 shadow-[0_0_10px_rgba(34,197,94,0.5)]' : 'bg-primary animate-pulse'}`}></span>
-                             {s.status}
+                             <span className={`w-1.5 h-1.5 rounded-full ${s.status === 'Active' || s.status === 'Approved' ? 'bg-green-500 shadow-[0_0_10px_rgba(34,197,94,0.5)]' : 'bg-orange-500 animate-pulse'}`}></span>
+                             {s.status || 'Pending'}
                           </span>
                        </td>
                        <td className="px-8 py-6 text-right">
                           <div className="flex justify-end items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                             <button className="p-2.5 bg-white/5 text-zinc-400 rounded-xl hover:text-primary hover:bg-primary/10 transition-all">
+                             <button 
+                               onClick={() => setSelectedStudent(s)}
+                               className="p-2.5 bg-zinc-50 text-zinc-400 rounded-xl hover:text-primary hover:bg-primary/10 transition-all border border-zinc-100"
+                             >
                                 <Eye size={18} />
                              </button>
-                             <button className="p-2.5 bg-white/5 text-zinc-400 rounded-xl hover:text-primary hover:bg-primary/10 transition-all">
+                             <button className="p-2.5 bg-zinc-50 text-zinc-400 rounded-xl hover:text-primary hover:bg-primary/10 transition-all border border-zinc-100">
                                 <Edit size={18} />
                              </button>
                              <button 
                                onClick={() => handleDelete(s._id)}
-                               className="p-2.5 bg-white/5 text-zinc-400 rounded-xl hover:text-red-500 hover:bg-red-500/10 transition-all"
+                               className="p-2.5 bg-zinc-50 text-zinc-400 rounded-xl hover:text-red-500 hover:bg-red-500/10 transition-all border border-zinc-100"
                              >
                                 <Trash2 size={18} />
                              </button>
@@ -238,19 +243,19 @@ const Students = () => {
       {/* Add Student Modal */}
       {isAddModalOpen && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-6">
-           <div className="absolute inset-0 bg-black/90 backdrop-blur-md" onClick={() => setIsAddModalOpen(false)}></div>
-           <div className="relative w-full max-w-2xl bg-[#0a0a0a] border border-white/10 rounded-[3rem] p-10 shadow-2xl animate-in zoom-in-95 duration-300 overflow-y-auto max-h-[90vh] scrollbar-hide">
+           <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setIsAddModalOpen(false)}></div>
+           <div className="relative w-full max-w-2xl bg-white border border-zinc-200 rounded-[3rem] p-10 shadow-2xl animate-in zoom-in-95 duration-300 overflow-y-auto max-h-[90vh] scrollbar-hide">
               <div className="flex items-center justify-between mb-10">
                  <div className="flex items-center gap-4">
                     <div className="w-12 h-12 bg-primary rounded-2xl flex items-center justify-center text-black">
                        <UserPlus size={24} />
                     </div>
                     <div>
-                       <h3 className="text-2xl font-black uppercase tracking-tighter italic leading-none">Manual Entry</h3>
+                       <h3 className="text-2xl font-black uppercase tracking-tighter italic leading-none text-zinc-900">Manual Entry</h3>
                        <p className="text-zinc-500 text-xs font-bold mt-1 uppercase tracking-widest">Enroll a student into the hub</p>
                     </div>
                  </div>
-                 <button onClick={() => setIsAddModalOpen(false)} className="p-3 bg-white/5 text-zinc-500 hover:text-white rounded-2xl transition-all">
+                 <button onClick={() => setIsAddModalOpen(false)} className="p-3 bg-zinc-100 text-zinc-400 hover:text-zinc-900 rounded-2xl transition-all">
                     <X size={20} />
                  </button>
               </div>
@@ -258,53 +263,53 @@ const Students = () => {
               <form onSubmit={handleAddStudent} className="space-y-8">
                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div className="space-y-2">
-                       <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-2">Full Name</label>
+                       <label className="text-[10px] font-black uppercase tracking-widest text-zinc-400 ml-2">Full Name</label>
                        <input 
                          required
                          type="text" 
-                         className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-sm focus:border-primary transition-all outline-none"
+                         className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl px-6 py-4 text-sm focus:border-primary transition-all outline-none text-zinc-900"
                          placeholder="John Doe"
                          value={newStudent.name}
                          onChange={(e) => setNewStudent({...newStudent, name: e.target.value})}
                        />
                     </div>
                     <div className="space-y-2">
-                       <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-2">Email ID</label>
+                       <label className="text-[10px] font-black uppercase tracking-widest text-zinc-400 ml-2">Email ID</label>
                        <input 
                          required
                          type="email" 
-                         className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-sm focus:border-primary transition-all outline-none"
+                         className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl px-6 py-4 text-sm focus:border-primary transition-all outline-none text-zinc-900"
                          placeholder="john@example.com"
                          value={newStudent.email}
                          onChange={(e) => setNewStudent({...newStudent, email: e.target.value})}
                        />
                     </div>
                     <div className="space-y-2">
-                       <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-2">Phone Number</label>
+                       <label className="text-[10px] font-black uppercase tracking-widest text-zinc-400 ml-2">Phone Number</label>
                        <input 
                          required
                          type="tel" 
-                         className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-sm focus:border-primary transition-all outline-none"
+                         className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl px-6 py-4 text-sm focus:border-primary transition-all outline-none text-zinc-900"
                          placeholder="9876543210"
                          value={newStudent.phone}
                          onChange={(e) => setNewStudent({...newStudent, phone: e.target.value})}
                        />
                     </div>
                     <div className="space-y-2">
-                       <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-2">Passout Year</label>
+                       <label className="text-[10px] font-black uppercase tracking-widest text-zinc-400 ml-2">Passout Year</label>
                        <input 
                          required
                          type="text" 
-                         className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-sm focus:border-primary transition-all outline-none"
+                         className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl px-6 py-4 text-sm focus:border-primary transition-all outline-none text-zinc-900"
                          placeholder="2024"
                          value={newStudent.rollNumber}
                          onChange={(e) => setNewStudent({...newStudent, rollNumber: e.target.value})}
                        />
                     </div>
                     <div className="space-y-2">
-                       <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-2">Program Selection</label>
+                       <label className="text-[10px] font-black uppercase tracking-widest text-zinc-400 ml-2">Program Selection</label>
                        <select 
-                         className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-sm focus:border-primary transition-all outline-none"
+                         className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl px-6 py-4 text-sm focus:border-primary transition-all outline-none text-zinc-900 cursor-pointer"
                          value={newStudent.course}
                          onChange={(e) => setNewStudent({...newStudent, course: e.target.value})}
                        >
@@ -315,9 +320,9 @@ const Students = () => {
                        </select>
                     </div>
                     <div className="space-y-2">
-                       <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 ml-2">Current Status</label>
+                       <label className="text-[10px] font-black uppercase tracking-widest text-zinc-400 ml-2">Current Status</label>
                        <select 
-                         className="w-full bg-black/40 border border-white/10 rounded-2xl px-6 py-4 text-sm focus:border-primary transition-all outline-none"
+                         className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl px-6 py-4 text-sm focus:border-primary transition-all outline-none text-zinc-900 cursor-pointer"
                          value={newStudent.collegeName}
                          onChange={(e) => setNewStudent({...newStudent, collegeName: e.target.value})}
                        >
@@ -330,12 +335,69 @@ const Students = () => {
                  <div className="pt-6">
                     <button 
                       type="submit"
-                      className="w-full bg-primary text-black py-5 rounded-[2rem] text-xs font-black uppercase tracking-[0.3em] hover:scale-[1.02] active:scale-95 transition-all shadow-xl shadow-primary/20"
+                      className="w-full bg-zinc-900 text-white py-5 rounded-[2rem] text-xs font-black uppercase tracking-[0.3em] hover:bg-primary hover:text-black transition-all shadow-xl"
                     >
                        Initialize Enrollment
                     </button>
                  </div>
               </form>
+           </div>
+        </div>
+      )}
+      {/* View Details Modal */}
+      {selectedStudent && (
+        <div className="fixed inset-0 z-[110] flex items-center justify-center p-6">
+           <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setSelectedStudent(null)}></div>
+           <div className="relative w-full max-w-2xl bg-white border border-zinc-200 rounded-[3rem] p-10 shadow-2xl animate-in zoom-in-95 duration-300">
+              <div className="flex items-center justify-between mb-10">
+                 <div className="flex items-center gap-6">
+                    <div className="w-16 h-16 rounded-[1.5rem] bg-primary flex items-center justify-center font-black text-2xl italic text-black">
+                       {selectedStudent.name.charAt(0)}
+                    </div>
+                    <div>
+                       <h3 className="text-2xl font-black uppercase tracking-tighter italic text-zinc-900 leading-none">{selectedStudent.name}</h3>
+                       <p className="text-zinc-400 text-[10px] font-black uppercase tracking-[0.2em] mt-2">{selectedStudent.collegeName} • ID: {selectedStudent._id.slice(-8)}</p>
+                    </div>
+                 </div>
+                 <button onClick={() => setSelectedStudent(null)} className="p-3 bg-zinc-100 text-zinc-400 hover:text-zinc-900 rounded-2xl transition-all">
+                    <X size={20} />
+                 </button>
+              </div>
+
+              <div className="grid grid-cols-2 gap-8 mb-10">
+                 <div className="space-y-1">
+                    <p className="text-[9px] font-black uppercase tracking-widest text-zinc-400">Email Address</p>
+                    <p className="text-sm font-bold text-zinc-900">{selectedStudent.email}</p>
+                 </div>
+                 <div className="space-y-1">
+                    <p className="text-[9px] font-black uppercase tracking-widest text-zinc-400">Phone Number</p>
+                    <p className="text-sm font-bold text-zinc-900">{selectedStudent.phone}</p>
+                 </div>
+                 <div className="space-y-1">
+                    <p className="text-[9px] font-black uppercase tracking-widest text-zinc-400">Current Program</p>
+                    <p className="text-sm font-bold text-zinc-900">{selectedStudent.course}</p>
+                 </div>
+                 <div className="space-y-1">
+                    <p className="text-[9px] font-black uppercase tracking-widest text-zinc-400">Batch / Branch</p>
+                    <p className="text-sm font-bold text-zinc-900">{selectedStudent.branch || 'Not Specified'}</p>
+                 </div>
+                 <div className="space-y-1">
+                    <p className="text-[9px] font-black uppercase tracking-widest text-zinc-400">Passout Year</p>
+                    <p className="text-sm font-bold text-zinc-900">{selectedStudent.rollNumber}</p>
+                 </div>
+                 <div className="space-y-1">
+                    <p className="text-[9px] font-black uppercase tracking-widest text-zinc-400">Hub Status</p>
+                    <div className="flex items-center gap-2 mt-1">
+                       <span className={`w-2 h-2 rounded-full ${selectedStudent.status === 'Active' || selectedStudent.status === 'Approved' ? 'bg-green-500' : 'bg-orange-500'}`}></span>
+                       <p className="text-sm font-black uppercase text-zinc-900 italic">{selectedStudent.status || 'Pending'}</p>
+                    </div>
+                 </div>
+              </div>
+
+              <div className="flex gap-4">
+                 <button className="flex-1 bg-zinc-900 text-white py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-primary hover:text-black transition-all">Edit Record</button>
+                 <button className="flex-1 bg-zinc-100 text-zinc-400 py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:text-red-500 transition-all border border-zinc-200">Close Profile</button>
+              </div>
            </div>
         </div>
       )}

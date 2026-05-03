@@ -82,7 +82,12 @@ exports.verifyPayment = async (req, res, next) => {
         { new: true }
       );
       
-      const student = await Student.findById(studentId);
+      const student = await Student.findByIdAndUpdate(
+        studentId,
+        { status: 'Active' },
+        { new: true }
+      );
+
       if (student) {
         // Send email in background (don't await)
         sendReceiptEmail(student, updatedPayment).catch(err => console.error('Email sending failed:', err));

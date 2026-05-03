@@ -13,7 +13,7 @@ const razorpay = new Razorpay({
 exports.createOrder = async (req, res, next) => {
   try {
     const { studentId, course } = req.body;
-    const amountInPaise = 200; // Fixed amount ₹2 = 200 paise
+    const amountInPaise = 999900; // ₹9,999 = 999,900 paise
     const options = {
       amount: amountInPaise,
       currency: 'INR',
@@ -24,7 +24,7 @@ exports.createOrder = async (req, res, next) => {
     // Create pending payment record
     await Payment.create({
       studentId,
-      amount: 2, // Fixed ₹2
+      amount: 9999, // ₹9,999
       razorpayOrderId: order.id,
       status: 'Pending'
     });

@@ -1,12 +1,12 @@
 {
-  "routes": [
+  "rewrites": [
     {
-      "src": "^/api/(.*)",
-      "dest": "https://glitch-azwb.onrender.com/api/$1"
+      "source": "/api/:path*",
+      "destination": "https://glitch-azwb.onrender.com/api/:path*"
     },
     {
-      "src": "^(?!/api/).*",
-      "dest": "/index.html"
+      "source": "/((?!api|assets|favicon).*)",
+      "destination": "/index.html"
     }
   ]
 }

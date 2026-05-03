@@ -12,7 +12,7 @@ const studentSchema = new mongoose.Schema({
   presentRole: { type: String },
   experience: { type: String },
   companyName: { type: String },
-  status: { type: String, enum: ['Pending', 'Approved', 'Rejected'], default: 'Pending' },
+  status: { type: String, enum: ['Pending', 'Active', 'Approved', 'Rejected'], default: 'Pending' },
   createdAt: { type: Date, default: Date.now },
 });
 

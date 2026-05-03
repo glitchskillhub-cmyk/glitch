@@ -41,6 +41,7 @@ router.post('/students', validateStudentSubmission, studentController.createStud
 router.get('/students', studentController.getAllStudents);
 router.get('/students/:id', studentController.getStudentDetails);
 router.put('/students/:id/status', studentController.updateStudentStatus);
+router.put('/students/:id', studentController.updateStudent);
 router.delete('/students/:id', studentController.deleteStudent);
 
 // Dashboard Stats

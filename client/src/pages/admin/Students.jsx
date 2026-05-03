@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { getAllStudents, deleteStudent, createStudent } from '../../utils/api';
+import { getAllStudents, deleteStudent, createStudent, updateStudent } from '../../utils/api';
 import { 
   Search, 
   Plus, 
@@ -15,7 +15,10 @@ import {
   Mail,
   Phone,
   Calendar,
-  Building
+  Building,
+  Save,
+  CreditCard,
+  MapPin
 } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 
@@ -31,6 +34,8 @@ const Students = () => {
   });
 
   const [selectedStudent, setSelectedStudent] = useState(null);
+  const [editStudent, setEditStudent] = useState(null);
+  const [editForm, setEditForm] = useState({});
 
   const fetchData = async () => {
     setLoading(true);
@@ -69,6 +74,35 @@ const Students = () => {
     } catch {
       toast.error('Failed to add student.');
     }
+  };
+
+  const openEditModal = (s) => {
+    setEditStudent(s);
+    setEditForm({
+      name: s.name || '', phone: s.phone || '', email: s.email || '',
+      course: s.course || 'Node.js Full Stack', rollNumber: s.rollNumber || '',
+      collegeName: s.collegeName || 'Fresher', location: s.location || '',
+      branch: s.branch || '', status: s.status || 'Pending'
+    });
+  };
+
+  const handleEditStudent = async (e) => {
+    e.preventDefault();
+    try {
+      await updateStudent(editStudent._id, editForm);
+      toast.success('Student updated successfully!');
+      setEditStudent(null);
+      fetchData();
+    } catch {
+      toast.error('Failed to update student.');
+    }
+  };
+
+  const getDisplayStatus = (s) => {
+    if (s.paymentStatus === 'Paid' || s.status === 'Active') return 'Active';
+    if (s.status === 'Approved') return 'Approved';
+    if (s.paymentStatus === 'Failed') return 'Failed';
+    return s.status || 'Pending';
   };
 
   const filtered = students.filter(s => {
@@ -206,33 +240,41 @@ const Students = () => {
                           </div>
                        </td>
                        <td className="px-8 py-6">
-                          <span className={`
-                            inline-flex items-center gap-2 px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-wider
-                            ${s.status === 'Active' || s.status === 'Approved' ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700'}
-                          `}>
-                             <span className={`w-1.5 h-1.5 rounded-full ${s.status === 'Active' || s.status === 'Approved' ? 'bg-green-500 shadow-[0_0_10px_rgba(34,197,94,0.5)]' : 'bg-orange-500 animate-pulse'}`}></span>
-                             {s.status || 'Pending'}
-                          </span>
-                       </td>
-                       <td className="px-8 py-6 text-right">
-                          <div className="flex justify-end items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                             <button 
-                               onClick={() => setSelectedStudent(s)}
-                               className="p-2.5 bg-zinc-50 text-zinc-400 rounded-xl hover:text-primary hover:bg-primary/10 transition-all border border-zinc-100"
-                             >
-                                <Eye size={18} />
-                             </button>
-                             <button className="p-2.5 bg-zinc-50 text-zinc-400 rounded-xl hover:text-primary hover:bg-primary/10 transition-all border border-zinc-100">
-                                <Edit size={18} />
-                             </button>
-                             <button 
-                               onClick={() => handleDelete(s._id)}
-                               className="p-2.5 bg-zinc-50 text-zinc-400 rounded-xl hover:text-red-500 hover:bg-red-500/10 transition-all border border-zinc-100"
-                             >
-                                <Trash2 size={18} />
-                             </button>
-                          </div>
-                       </td>
+                           {(() => { const ds = getDisplayStatus(s); const isActive = ds === 'Active' || ds === 'Approved'; const isFailed = ds === 'Failed'; return (
+                           <span className={`
+                             inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-[9px] font-black uppercase tracking-wider
+                             ${isActive ? 'bg-green-100 text-green-700' : isFailed ? 'bg-red-100 text-red-600' : 'bg-orange-100 text-orange-700'}
+                           `}>
+                              <span className={`w-1.5 h-1.5 rounded-full ${isActive ? 'bg-green-500 shadow-[0_0_10px_rgba(34,197,94,0.5)]' : isFailed ? 'bg-red-500' : 'bg-orange-500 animate-pulse'}`}></span>
+                              {ds}
+                           </span>
+                           ); })()}
+                        </td>
+                        <td className="px-8 py-6 text-right">
+                           <div className="flex justify-end items-center gap-2">
+                              <button 
+                                onClick={() => setSelectedStudent(s)}
+                                title="View Details"
+                                className="p-2.5 bg-zinc-100 text-zinc-500 rounded-xl hover:text-primary hover:bg-primary/10 transition-all border border-zinc-200"
+                              >
+                                 <Eye size={16} />
+                              </button>
+                              <button 
+                                onClick={() => openEditModal(s)}
+                                title="Edit Student"
+                                className="p-2.5 bg-zinc-100 text-zinc-500 rounded-xl hover:text-primary hover:bg-primary/10 transition-all border border-zinc-200"
+                              >
+                                 <Edit size={16} />
+                              </button>
+                              <button 
+                                onClick={() => handleDelete(s._id)}
+                                title="Delete Student"
+                                className="p-2.5 bg-zinc-100 text-zinc-500 rounded-xl hover:text-red-500 hover:bg-red-500/10 transition-all border border-zinc-200"
+                              >
+                                 <Trash2 size={16} />
+                              </button>
+                           </div>
+                        </td>
                     </tr>
                   ))}
                </tbody>
@@ -345,62 +387,171 @@ const Students = () => {
         </div>
       )}
       {/* View Details Modal */}
-      {selectedStudent && (
-        <div className="fixed inset-0 z-[110] flex items-center justify-center p-6">
-           <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setSelectedStudent(null)}></div>
-           <div className="relative w-full max-w-2xl bg-white border border-zinc-200 rounded-[3rem] p-10 shadow-2xl animate-in zoom-in-95 duration-300">
-              <div className="flex items-center justify-between mb-10">
-                 <div className="flex items-center gap-6">
-                    <div className="w-16 h-16 rounded-[1.5rem] bg-primary flex items-center justify-center font-black text-2xl italic text-black">
-                       {selectedStudent.name.charAt(0)}
-                    </div>
-                    <div>
-                       <h3 className="text-2xl font-black uppercase tracking-tighter italic text-zinc-900 leading-none">{selectedStudent.name}</h3>
-                       <p className="text-zinc-400 text-[10px] font-black uppercase tracking-[0.2em] mt-2">{selectedStudent.collegeName} • ID: {selectedStudent._id.slice(-8)}</p>
-                    </div>
-                 </div>
-                 <button onClick={() => setSelectedStudent(null)} className="p-3 bg-zinc-100 text-zinc-400 hover:text-zinc-900 rounded-2xl transition-all">
-                    <X size={20} />
-                 </button>
-              </div>
+       {selectedStudent && (
+         <div className="fixed inset-0 z-[110] flex items-center justify-center p-6">
+            <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setSelectedStudent(null)}></div>
+            <div className="relative w-full max-w-2xl bg-white border border-zinc-200 rounded-[3rem] p-10 shadow-2xl">
+               <div className="flex items-center justify-between mb-8">
+                  <div className="flex items-center gap-5">
+                     <div className="w-16 h-16 rounded-[1.5rem] bg-primary flex items-center justify-center font-black text-2xl italic text-black">
+                        {selectedStudent.name.charAt(0)}
+                     </div>
+                     <div>
+                        <h3 className="text-2xl font-black uppercase tracking-tighter italic text-zinc-900 leading-none">{selectedStudent.name}</h3>
+                        <p className="text-zinc-500 text-xs font-bold mt-2">{selectedStudent.collegeName} • ID: {selectedStudent._id.slice(-8)}</p>
+                     </div>
+                  </div>
+                  <button onClick={() => setSelectedStudent(null)} className="p-3 bg-zinc-100 text-zinc-400 hover:text-zinc-900 rounded-2xl transition-all">
+                     <X size={20} />
+                  </button>
+               </div>
 
-              <div className="grid grid-cols-2 gap-8 mb-10">
-                 <div className="space-y-1">
-                    <p className="text-[9px] font-black uppercase tracking-widest text-zinc-400">Email Address</p>
-                    <p className="text-sm font-bold text-zinc-900">{selectedStudent.email}</p>
-                 </div>
-                 <div className="space-y-1">
-                    <p className="text-[9px] font-black uppercase tracking-widest text-zinc-400">Phone Number</p>
-                    <p className="text-sm font-bold text-zinc-900">{selectedStudent.phone}</p>
-                 </div>
-                 <div className="space-y-1">
-                    <p className="text-[9px] font-black uppercase tracking-widest text-zinc-400">Current Program</p>
-                    <p className="text-sm font-bold text-zinc-900">{selectedStudent.course}</p>
-                 </div>
-                 <div className="space-y-1">
-                    <p className="text-[9px] font-black uppercase tracking-widest text-zinc-400">Batch / Branch</p>
-                    <p className="text-sm font-bold text-zinc-900">{selectedStudent.branch || 'Not Specified'}</p>
-                 </div>
-                 <div className="space-y-1">
-                    <p className="text-[9px] font-black uppercase tracking-widest text-zinc-400">Passout Year</p>
-                    <p className="text-sm font-bold text-zinc-900">{selectedStudent.rollNumber}</p>
-                 </div>
-                 <div className="space-y-1">
-                    <p className="text-[9px] font-black uppercase tracking-widest text-zinc-400">Hub Status</p>
-                    <div className="flex items-center gap-2 mt-1">
-                       <span className={`w-2 h-2 rounded-full ${selectedStudent.status === 'Active' || selectedStudent.status === 'Approved' ? 'bg-green-500' : 'bg-orange-500'}`}></span>
-                       <p className="text-sm font-black uppercase text-zinc-900 italic">{selectedStudent.status || 'Pending'}</p>
-                    </div>
-                 </div>
-              </div>
+               <div className="grid grid-cols-2 gap-6 mb-8">
+                  <div className="bg-zinc-50 rounded-2xl p-4 border border-zinc-100">
+                     <div className="flex items-center gap-2 mb-2">
+                        <Mail size={14} className="text-primary" />
+                        <p className="text-[10px] font-black uppercase tracking-widest text-zinc-400">Email Address</p>
+                     </div>
+                     <p className="text-sm font-bold text-zinc-900 break-all">{selectedStudent.email}</p>
+                  </div>
+                  <div className="bg-zinc-50 rounded-2xl p-4 border border-zinc-100">
+                     <div className="flex items-center gap-2 mb-2">
+                        <Phone size={14} className="text-primary" />
+                        <p className="text-[10px] font-black uppercase tracking-widest text-zinc-400">Phone Number</p>
+                     </div>
+                     <p className="text-sm font-bold text-zinc-900 font-mono">{selectedStudent.phone}</p>
+                  </div>
+                  <div className="bg-zinc-50 rounded-2xl p-4 border border-zinc-100">
+                     <div className="flex items-center gap-2 mb-2">
+                        <Building size={14} className="text-primary" />
+                        <p className="text-[10px] font-black uppercase tracking-widest text-zinc-400">Current Program</p>
+                     </div>
+                     <p className="text-sm font-bold text-zinc-900">{selectedStudent.course}</p>
+                  </div>
+                  <div className="bg-zinc-50 rounded-2xl p-4 border border-zinc-100">
+                     <div className="flex items-center gap-2 mb-2">
+                        <Calendar size={14} className="text-primary" />
+                        <p className="text-[10px] font-black uppercase tracking-widest text-zinc-400">Batch / Branch</p>
+                     </div>
+                     <p className="text-sm font-bold text-zinc-900">{selectedStudent.branch || 'Not Specified'}</p>
+                  </div>
+                  <div className="bg-zinc-50 rounded-2xl p-4 border border-zinc-100">
+                     <div className="flex items-center gap-2 mb-2">
+                        <Calendar size={14} className="text-primary" />
+                        <p className="text-[10px] font-black uppercase tracking-widest text-zinc-400">Passout Year</p>
+                     </div>
+                     <p className="text-sm font-bold text-zinc-900">{selectedStudent.rollNumber}</p>
+                  </div>
+                  <div className="bg-zinc-50 rounded-2xl p-4 border border-zinc-100">
+                     <div className="flex items-center gap-2 mb-2">
+                        <CreditCard size={14} className="text-primary" />
+                        <p className="text-[10px] font-black uppercase tracking-widest text-zinc-400">Payment Status</p>
+                     </div>
+                     {(() => { const ds = getDisplayStatus(selectedStudent); const isActive = ds === 'Active' || ds === 'Approved'; return (
+                     <div className="flex items-center gap-2">
+                        <span className={`w-2 h-2 rounded-full ${isActive ? 'bg-green-500' : 'bg-orange-500'}`}></span>
+                        <p className={`text-sm font-black uppercase ${isActive ? 'text-green-600' : 'text-orange-600'}`}>{ds}</p>
+                     </div>
+                     ); })()}
+                  </div>
+                  {selectedStudent.location && (
+                  <div className="bg-zinc-50 rounded-2xl p-4 border border-zinc-100 col-span-2">
+                     <div className="flex items-center gap-2 mb-2">
+                        <MapPin size={14} className="text-primary" />
+                        <p className="text-[10px] font-black uppercase tracking-widest text-zinc-400">Location</p>
+                     </div>
+                     <p className="text-sm font-bold text-zinc-900">{selectedStudent.location}</p>
+                  </div>
+                  )}
+               </div>
 
-              <div className="flex gap-4">
-                 <button className="flex-1 bg-zinc-900 text-white py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-primary hover:text-black transition-all">Edit Record</button>
-                 <button className="flex-1 bg-zinc-100 text-zinc-400 py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:text-red-500 transition-all border border-zinc-200">Close Profile</button>
-              </div>
-           </div>
-        </div>
-      )}
+               <div className="flex gap-4">
+                  <button onClick={() => { setSelectedStudent(null); openEditModal(selectedStudent); }} className="flex-1 bg-zinc-900 text-white py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-primary hover:text-black transition-all flex items-center justify-center gap-2">
+                     <Edit size={14} /> Edit Record
+                  </button>
+                  <button onClick={() => setSelectedStudent(null)} className="flex-1 bg-zinc-100 text-zinc-600 py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:text-zinc-900 transition-all border border-zinc-200">Close Profile</button>
+               </div>
+            </div>
+         </div>
+       )}
+
+       {/* Edit Student Modal */}
+       {editStudent && (
+         <div className="fixed inset-0 z-[120] flex items-center justify-center p-6">
+            <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setEditStudent(null)}></div>
+            <div className="relative w-full max-w-2xl bg-white border border-zinc-200 rounded-[3rem] p-10 shadow-2xl overflow-y-auto max-h-[90vh] scrollbar-hide">
+               <div className="flex items-center justify-between mb-8">
+                  <div className="flex items-center gap-4">
+                     <div className="w-12 h-12 bg-primary rounded-2xl flex items-center justify-center text-black">
+                        <Edit size={22} />
+                     </div>
+                     <div>
+                        <h3 className="text-2xl font-black uppercase tracking-tighter italic leading-none text-zinc-900">Edit Student</h3>
+                        <p className="text-zinc-500 text-xs font-bold mt-1">Update {editStudent.name}'s record</p>
+                     </div>
+                  </div>
+                  <button onClick={() => setEditStudent(null)} className="p-3 bg-zinc-100 text-zinc-400 hover:text-zinc-900 rounded-2xl transition-all">
+                     <X size={20} />
+                  </button>
+               </div>
+
+               <form onSubmit={handleEditStudent} className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                     <div className="space-y-2">
+                        <label className="text-[10px] font-black uppercase tracking-widest text-zinc-400 ml-2">Full Name</label>
+                        <input required type="text" className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl px-6 py-4 text-sm focus:border-primary transition-all outline-none text-zinc-900" value={editForm.name} onChange={(e) => setEditForm({...editForm, name: e.target.value})} />
+                     </div>
+                     <div className="space-y-2">
+                        <label className="text-[10px] font-black uppercase tracking-widest text-zinc-400 ml-2">Email ID</label>
+                        <input required type="email" className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl px-6 py-4 text-sm focus:border-primary transition-all outline-none text-zinc-900" value={editForm.email} onChange={(e) => setEditForm({...editForm, email: e.target.value})} />
+                     </div>
+                     <div className="space-y-2">
+                        <label className="text-[10px] font-black uppercase tracking-widest text-zinc-400 ml-2">Phone Number</label>
+                        <input required type="tel" className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl px-6 py-4 text-sm focus:border-primary transition-all outline-none text-zinc-900" value={editForm.phone} onChange={(e) => setEditForm({...editForm, phone: e.target.value})} />
+                     </div>
+                     <div className="space-y-2">
+                        <label className="text-[10px] font-black uppercase tracking-widest text-zinc-400 ml-2">Passout Year</label>
+                        <input required type="text" className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl px-6 py-4 text-sm focus:border-primary transition-all outline-none text-zinc-900" value={editForm.rollNumber} onChange={(e) => setEditForm({...editForm, rollNumber: e.target.value})} />
+                     </div>
+                     <div className="space-y-2">
+                        <label className="text-[10px] font-black uppercase tracking-widest text-zinc-400 ml-2">Program</label>
+                        <select className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl px-6 py-4 text-sm focus:border-primary transition-all outline-none text-zinc-900 cursor-pointer" value={editForm.course} onChange={(e) => setEditForm({...editForm, course: e.target.value})}>
+                           <option>Node.js Full Stack</option>
+                           <option>React & Frontend</option>
+                           <option>UI/UX Design</option>
+                           <option>Python Data Science</option>
+                        </select>
+                     </div>
+                     <div className="space-y-2">
+                        <label className="text-[10px] font-black uppercase tracking-widest text-zinc-400 ml-2">Type</label>
+                        <select className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl px-6 py-4 text-sm focus:border-primary transition-all outline-none text-zinc-900 cursor-pointer" value={editForm.collegeName} onChange={(e) => setEditForm({...editForm, collegeName: e.target.value})}>
+                           <option value="Fresher">Fresher</option>
+                           <option value="Employee">Employee</option>
+                        </select>
+                     </div>
+                     <div className="space-y-2">
+                        <label className="text-[10px] font-black uppercase tracking-widest text-zinc-400 ml-2">Branch</label>
+                        <input type="text" className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl px-6 py-4 text-sm focus:border-primary transition-all outline-none text-zinc-900" value={editForm.branch} onChange={(e) => setEditForm({...editForm, branch: e.target.value})} placeholder="e.g. CSE, ECE" />
+                     </div>
+                     <div className="space-y-2">
+                        <label className="text-[10px] font-black uppercase tracking-widest text-zinc-400 ml-2">Status</label>
+                        <select className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl px-6 py-4 text-sm focus:border-primary transition-all outline-none text-zinc-900 cursor-pointer" value={editForm.status} onChange={(e) => setEditForm({...editForm, status: e.target.value})}>
+                           <option value="Pending">Pending</option>
+                           <option value="Active">Active</option>
+                           <option value="Approved">Approved</option>
+                           <option value="Rejected">Rejected</option>
+                        </select>
+                     </div>
+                  </div>
+                  <div className="pt-4">
+                     <button type="submit" className="w-full bg-zinc-900 text-white py-5 rounded-[2rem] text-xs font-black uppercase tracking-[0.3em] hover:bg-primary hover:text-black transition-all shadow-xl flex items-center justify-center gap-3">
+                        <Save size={16} /> Save Changes
+                     </button>
+                  </div>
+               </form>
+            </div>
+         </div>
+       )}
     </div>
   );
 };

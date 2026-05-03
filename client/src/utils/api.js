@@ -34,6 +34,7 @@ export const createStudent = (data) => api.post('/students', data);
 export const getAllStudents = () => api.get('/students');
 export const getStudentDetails = (id) => api.get(`/students/${id}`);
 export const updateStudentStatus = (id, status) => api.put(`/students/${id}/status`, { status });
+export const updateStudent = (id, data) => api.put(`/students/${id}`, data);
 export const deleteStudent = (id) => api.delete(`/students/${id}`);
 
 // Dashboard

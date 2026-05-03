@@ -131,6 +131,27 @@ exports.updateStudentStatus = async (req, res, next) => {
   } catch (error) { next(error); }
 };
 
+// Update Student (Full Edit)
+exports.updateStudent = async (req, res, next) => {
+  try {
+    const { name, phone, email, branch, rollNumber, collegeName, location, course, status } = req.body;
+    const updateData = {};
+    if (name) updateData.name = name;
+    if (phone) updateData.phone = phone;
+    if (email) updateData.email = email;
+    if (branch !== undefined) updateData.branch = branch;
+    if (rollNumber) updateData.rollNumber = rollNumber;
+    if (collegeName) updateData.collegeName = collegeName;
+    if (location !== undefined) updateData.location = location;
+    if (course) updateData.course = course;
+    if (status) updateData.status = status;
+
+    const student = await Student.findByIdAndUpdate(req.params.id, updateData, { new: true });
+    if (!student) { res.status(404); throw new Error('Student not found'); }
+    res.json({ success: true, student });
+  } catch (error) { next(error); }
+};
+
 // Delete Student
 exports.deleteStudent = async (req, res, next) => {
   try {

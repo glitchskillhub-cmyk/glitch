@@ -53,10 +53,13 @@ exports.createOrder = async (req, res, next) => {
 
     res.json({ success: true, order });
   } catch (error) {
-    console.error('❌ Create Order Error:', error.message || error);
+    console.error('❌ Create Order Error:', error);
+    // Capture specific Razorpay error details if available
+    const errorMessage = error.error?.description || error.message || 'Failed to create payment order.';
     res.status(500).json({ 
       success: false, 
-      message: error.message || 'Failed to create payment order. Please try again.' 
+      message: errorMessage,
+      details: error.error || error
     });
   }
 };

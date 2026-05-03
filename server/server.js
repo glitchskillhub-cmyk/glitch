@@ -47,24 +47,6 @@ app.get('/', (req, res) => {
   res.send('API Running');
 });
 
-// Test email endpoint (temporary - for debugging)
-app.get('/api/test-email', async (req, res) => {
-  try {
-    const { sendReceiptEmail } = require('./utils/email');
-    const hasCredentials = !!(process.env.EMAIL_USER && process.env.EMAIL_PASS);
-    if (!hasCredentials) {
-      return res.json({ success: false, message: 'EMAIL_USER or EMAIL_PASS not set', EMAIL_USER: !!process.env.EMAIL_USER, EMAIL_PASS: !!process.env.EMAIL_PASS });
-    }
-    await sendReceiptEmail(
-      { name: 'Tarun', email: 'tarun.raiseup@gmail.com', course: 'Node.js Full Stack' },
-      { amount: 9999, razorpayPaymentId: 'pay_TEST_RENDER_CHECK' }
-    );
-    res.json({ success: true, message: 'Test email sent to tarun.raiseup@gmail.com' });
-  } catch (err) {
-    res.json({ success: false, message: err.message });
-  }
-});
-
 // API Routes
 // MOUNT MORE SPECIFIC ROUTES FIRST
 app.use('/api/auth', authRoutes);

@@ -56,6 +56,32 @@ exports.verifyPayment = async (req, res, next) => {
       const student = await Student.findById(studentId);
       if (student) {
         await sendReceiptEmail(student, updatedPayment);
+        
+        // Find user by email and mark as enrolled
+        const User = require('../models/User');
+        const Enrollment = require('../models/Enrollment');
+        const Course = require('../models/Course');
+
+        const user = await User.findOneAndUpdate(
+          { email: student.email.toLowerCase() },
+          { isEnrolled: true },
+          { new: true }
+        );
+
+        if (user) {
+          // Find the course object by title
+          const courseObj = await Course.findOne({ title: student.course });
+          if (courseObj) {
+            await Enrollment.create({
+              student: user._id,
+              course: courseObj._id,
+              status: 'ongoing'
+            });
+          } else {
+            // Fallback if course model doesn't match string exactly
+            // You might want to seed courses first
+          }
+        }
       }
       
       res.json({ success: true, message: 'Payment verified successfully.' });

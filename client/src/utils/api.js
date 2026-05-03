@@ -1,8 +1,33 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'http://localhost:5000/api',
+  baseURL: 'https://glitch-azwb.onrender.com/api',
 });
+
+// Add a request interceptor to attach the JWT token
+api.interceptors.request.use(
+  (config) => {
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (user && user.token) {
+      config.headers.Authorization = `Bearer ${user.token}`;
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
+
+// Add a response interceptor to handle global errors
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    const message = error.response?.data?.message || 'Server is waking up or down. Please try again.';
+    // You can use window.toast or similar if available, or just log it
+    // Since I don't want to add a new dependency here, I'll just log it
+    // But the components can handle individual errors too.
+    console.error("API Error:", message);
+    return Promise.reject(error);
+  }
+);
 
 // Student
 export const createStudent = (data) => api.post('/students', data);
@@ -13,6 +38,10 @@ export const deleteStudent = (id) => api.delete(`/students/${id}`);
 
 // Dashboard
 export const getDashboardStats = () => api.get('/dashboard/stats');
+export const getMyEnrollments = () => api.get('/my-enrollments');
+export const getMyTasks = () => api.get('/my-tasks');
+export const getJobs = () => api.get('/jobs');
+export const getStudentStats = () => api.get('/student-stats');
 
 // Documents
 export const uploadDocuments = (studentId, formData) =>

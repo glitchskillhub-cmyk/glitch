@@ -1,11 +1,41 @@
-import React from 'react';
-import { Layers, Download, ExternalLink, ShieldCheck, Clock, Zap } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Layers, Download, ExternalLink, ShieldCheck, Clock, Zap, Loader2 } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
+import { getStudentPayments } from '../../utils/api';
 
 const Payments = () => {
-  const history = [
-    { id: "PAY-9012", date: "April 15, 2026", amount: "₹9,999", status: "Success", method: "UPI" },
-    { id: "PAY-8821", date: "March 10, 2026", amount: "₹500", status: "Success", method: "Card" },
-  ];
+  const { user } = useAuth();
+  const [history, setHistory] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchPayments = async () => {
+      try {
+        const res = await getStudentPayments(user?._id);
+        setHistory(res.data.map(p => ({
+          id: p.razorpayPaymentId || p._id.slice(-6).toUpperCase(),
+          date: new Date(p.createdAt).toLocaleDateString(),
+          amount: `₹${p.amount}`,
+          status: p.status,
+          method: p.razorpayPaymentId ? 'Razorpay' : 'Other'
+        })));
+      } catch (error) {
+        console.error("Failed to fetch payments", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    if (user?._id) fetchPayments();
+    else setLoading(false);
+  }, [user]);
+
+  if (loading) {
+    return (
+      <div className="h-[60vh] flex items-center justify-center">
+        <Loader2 className="animate-spin text-primary" size={48} />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-10 animate-in fade-in duration-700">

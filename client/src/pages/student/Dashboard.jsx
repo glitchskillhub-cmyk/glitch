@@ -1,16 +1,41 @@
-import React from 'react';
-import { Zap, Target, Award, MessageSquare, ChevronRight, Clock, BookOpen, Briefcase } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Zap, Target, Award, MessageSquare, ChevronRight, Clock, BookOpen, Briefcase, Loader2 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
+import { getStudentStats } from '../../utils/api';
 
 const Dashboard = () => {
   const { user } = useAuth();
+  const [statsData, setStatsData] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const res = await getStudentStats();
+        setStatsData(res.data);
+      } catch (error) {
+        console.error("Failed to fetch stats", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchStats();
+  }, []);
 
   const stats = [
-    { label: "Course Progress", value: "65%", icon: Zap, color: "text-blue-500", bg: "bg-blue-50" },
-    { label: "Tasks Completed", value: "12/18", icon: Target, color: "text-green-500", bg: "bg-green-50" },
-    { label: "Learning Hours", value: "48h", icon: Clock, color: "text-purple-500", bg: "bg-purple-50" },
-    { label: "Certificates", value: "2", icon: Award, color: "text-yellow-600", bg: "bg-yellow-50" },
+    { label: "Course Progress", value: statsData?.progress || "0%", icon: Zap, color: "text-blue-500", bg: "bg-blue-50" },
+    { label: "Tasks Completed", value: statsData?.tasks || "0/5", icon: Target, color: "text-green-500", bg: "bg-green-50" },
+    { label: "Learning Hours", value: statsData?.learningHours || "0h", icon: Clock, color: "text-purple-500", bg: "bg-purple-50" },
+    { label: "Certificates", value: statsData?.certificates || "0", icon: Award, color: "text-yellow-600", bg: "bg-yellow-50" },
   ];
+
+  if (loading) {
+    return (
+      <div className="h-[60vh] flex items-center justify-center">
+        <Loader2 className="animate-spin text-primary" size={48} />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-10 animate-in fade-in duration-700">
@@ -56,32 +81,56 @@ const Dashboard = () => {
                     <BookOpen size={24} />
                   </div>
                   <div>
-                    <h2 className="text-2xl font-black uppercase tracking-tight">Active Program</h2>
-                    <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">MERN Stack Engineering</p>
+                    <h2 className="text-2xl font-black uppercase tracking-tight">
+                      {user?.isEnrolled ? "Active Program" : "Get Started"}
+                    </h2>
+                    <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">
+                      {user?.isEnrolled ? "MERN Stack Engineering" : "Unlock Your Career"}
+                    </p>
                   </div>
                 </div>
-                <div className="text-right">
-                  <p className="text-[10px] font-black text-primary uppercase tracking-widest mb-1">65% Done</p>
-                  <div className="w-32 h-2 bg-slate-100 rounded-full overflow-hidden">
-                    <div className="h-full bg-primary" style={{ width: '65%' }}></div>
+                {user?.isEnrolled && (
+                  <div className="text-right">
+                    <p className="text-[10px] font-black text-primary uppercase tracking-widest mb-1">
+                      {statsData?.progress} Done
+                    </p>
+                    <div className="w-32 h-2 bg-slate-100 rounded-full overflow-hidden">
+                      <div className="h-full bg-primary" style={{ width: statsData?.progress }}></div>
+                    </div>
                   </div>
-                </div>
+                )}
               </div>
 
               <div className="mb-10">
-                <h3 className="text-xl font-bold mb-4">Node.js Full Stack Development</h3>
+                <h3 className="text-xl font-bold mb-4">
+                  {user?.isEnrolled ? "Node.js Full Stack Development" : "No Active Program Found"}
+                </h3>
                 <p className="text-slate-500 text-sm leading-relaxed mb-6 max-w-xl">
-                  Currently learning: <span className="font-bold text-slate-900">Module 4 - Express.js Middleware & Security</span>
+                  {user?.isEnrolled 
+                    ? `Currently learning: Module 4 - Express.js Middleware & Security`
+                    : "You haven't enrolled in any program yet. Complete your payment to unlock exclusive high-performance engineering courses."}
                 </p>
-                <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-slate-400">
-                  <Clock size={12} /> Last accessed: 2 hours ago
-                </div>
+                {user?.isEnrolled && (
+                  <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-slate-400">
+                    <Clock size={12} /> Last accessed: Just now
+                  </div>
+                )}
               </div>
 
-              <button className="btn-premium py-5 px-10 group w-full md:w-auto">
-                <span>Continue Learning</span>
-                <ChevronRight size={18} className="group-hover:translate-x-1 transition-transform" />
-              </button>
+              {user?.isEnrolled ? (
+                <button className="btn-premium py-5 px-10 group w-full md:w-auto">
+                  <span>Continue Learning</span>
+                  <ChevronRight size={18} className="group-hover:translate-x-1 transition-transform" />
+                </button>
+              ) : (
+                <button 
+                  onClick={() => window.location.href = '/student/payments'}
+                  className="btn-premium py-5 px-10 group w-full md:w-auto bg-primary text-black"
+                >
+                  <span>Enroll Now</span>
+                  <ChevronRight size={18} className="group-hover:translate-x-1 transition-transform" />
+                </button>
+              )}
             </div>
           </div>
 

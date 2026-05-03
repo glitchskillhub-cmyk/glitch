@@ -1,12 +1,32 @@
-import React from 'react';
-import { Briefcase, Target, Zap, ExternalLink, Search, Rocket, FileText } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Briefcase, Target, Zap, ExternalLink, Search, Rocket, FileText, Loader2 } from 'lucide-react';
+import { getJobs } from '../../utils/api';
 
 const CareerHub = () => {
-  const jobs = [
-    { title: "Jr. Backend Developer", company: "TechCorp Solutions", location: "Remote / Hyderabad", salary: "6-8 LPA", tags: ["Node.js", "MongoDB"] },
-    { title: "Full Stack Intern", company: "InnovateX AI", location: "Bangalore", salary: "₹20k - 25k", tags: ["React", "Express"] },
-    { title: "Software Engineer Trainee", company: "CloudScale Inc", location: "Pune", salary: "4.5 LPA", tags: ["JavaScript", "AWS"] },
-  ];
+  const [jobs, setJobs] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchJobs = async () => {
+      try {
+        const res = await getJobs();
+        setJobs(res.data);
+      } catch (error) {
+        console.error("Failed to fetch jobs", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchJobs();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="h-[60vh] flex items-center justify-center">
+        <Loader2 className="animate-spin text-primary" size={48} />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-10 animate-in fade-in duration-700">

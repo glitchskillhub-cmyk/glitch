@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   CheckCircle2, 
   Clock, 
@@ -7,40 +7,28 @@ import {
   MessageSquare, 
   Code,
   FileText,
-  ExternalLink
+  ExternalLink,
+  Loader2
 } from 'lucide-react';
+import { getMyTasks } from '../../utils/api';
 
 const Tasks = () => {
-  const tasks = [
-    {
-      id: "T-8901",
-      title: "Express.js REST API Challenge",
-      module: "Module 4",
-      deadline: "Friday, May 8",
-      status: "Pending",
-      type: "Coding",
-      points: 100
-    },
-    {
-      id: "T-8902",
-      title: "React State Management Quiz",
-      module: "Module 3",
-      deadline: "Completed",
-      status: "Reviewed",
-      grade: "A+",
-      type: "Quiz",
-      points: 50
-    },
-    {
-      id: "T-8903",
-      title: "UI Design Portfolio Page",
-      module: "Module 2",
-      deadline: "Completed",
-      status: "Submitted",
-      type: "Design",
-      points: 150
-    }
-  ];
+  const [tasks, setTasks] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchTasks = async () => {
+      try {
+        const res = await getMyTasks();
+        setTasks(res.data);
+      } catch (error) {
+        console.error("Failed to fetch tasks", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchTasks();
+  }, []);
 
   const getStatusStyle = (status) => {
     switch (status) {
@@ -50,6 +38,14 @@ const Tasks = () => {
       default: return 'bg-slate-50 text-slate-600 border-slate-100';
     }
   };
+
+  if (loading) {
+    return (
+      <div className="h-[60vh] flex items-center justify-center">
+        <Loader2 className="animate-spin text-primary" size={48} />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-10 animate-in slide-in-from-right-4 duration-700">

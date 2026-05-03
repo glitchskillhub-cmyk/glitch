@@ -34,6 +34,7 @@ const docUpload = upload.fields([
 ]);
 
 const { validateStudentSubmission } = require('../validation/studentValidation');
+const { protect } = require('../middleware/authMiddleware');
 
 // Student Routes
 router.post('/students', validateStudentSubmission, studentController.createStudent);
@@ -44,6 +45,12 @@ router.delete('/students/:id', studentController.deleteStudent);
 
 // Dashboard Stats
 router.get('/dashboard/stats', studentController.getDashboardStats);
+
+// Student Dashboard Specifics
+router.get('/my-enrollments', protect, studentController.getMyEnrollments);
+router.get('/my-tasks', protect, studentController.getMyTasks);
+router.get('/student-stats', protect, studentController.getStudentDashboardStats);
+router.get('/jobs', studentController.getAllJobs);
 
 // Document Routes
 router.post('/documents/upload/:studentId', docUpload, studentController.uploadDocuments);

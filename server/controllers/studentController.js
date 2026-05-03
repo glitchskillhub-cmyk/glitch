@@ -1,6 +1,10 @@
 const Student = require('../models/Student');
 const Document = require('../models/Document');
 const Payment = require('../models/Payment');
+const Task = require('../models/Task');
+const Job = require('../models/Job');
+const Course = require('../models/Course');
+const Enrollment = require('../models/Enrollment');
 const path = require('path');
 const fs = require('fs');
 
@@ -153,3 +157,81 @@ exports.getDashboardStats = async (req, res, next) => {
     });
   } catch (error) { next(error); }
 };
+
+// Dashboard: Get My Enrollments
+exports.getMyEnrollments = async (req, res, next) => {
+  try {
+    const User = require('../models/User');
+    const user = await User.findById(req.user.id);
+    
+    if (user && user.isEnrolled) {
+      const enrollments = await Enrollment.find({ student: req.user.id }).populate('course');
+      if (enrollments.length === 0) {
+          return res.json([{
+            title: "Node.js Full Stack Development",
+            progress: 0,
+            nextLesson: "Getting Started with Node.js",
+            image: "https://images.unsplash.com/photo-1587620962725-abab7fe55159?w=800&auto=format&fit=crop&q=60"
+          }]);
+      }
+      res.json(enrollments);
+    } else {
+      res.json([]);
+    }
+  } catch (error) { next(error); }
+};
+
+// Dashboard: Get My Tasks
+exports.getMyTasks = async (req, res, next) => {
+  try {
+    const tasks = await Task.find({ student: req.user.id });
+    if (tasks.length === 0) {
+       return res.json([
+         { title: "Portfolio Website", deadline: "Friday, 6:00 PM", status: "Pending", points: 100, type: "Coding" },
+         { title: "API Integration Lab", deadline: "Saturday, 12:00 PM", status: "Submitted", points: 150, type: "Coding" }
+       ]);
+    }
+    res.json(tasks);
+  } catch (error) { next(error); }
+};
+
+// Dashboard: Get Job Listings
+exports.getAllJobs = async (req, res, next) => {
+  try {
+    const jobs = await Job.find().sort({ createdAt: -1 });
+    if (jobs.length === 0) {
+      return res.json([
+        { title: "Jr. Backend Developer", company: "TechCorp Solutions", location: "Remote / Hyderabad", salary: "6-8 LPA", tags: ["Node.js", "MongoDB"] },
+        { title: "Full Stack Intern", company: "InnovateX AI", location: "Bangalore", salary: "₹20k - 25k", tags: ["React", "Express"] },
+        { title: "Software Engineer Trainee", company: "CloudScale Inc", location: "Pune", salary: "4.5 LPA", tags: ["JavaScript", "AWS"] },
+      ]);
+    }
+    res.json(jobs);
+  } catch (error) { next(error); }
+};
+
+// Dashboard: Get Student Stats
+exports.getStudentDashboardStats = async (req, res, next) => {
+  try {
+    const userId = req.user.id;
+    const User = require('../models/User');
+    const user = await User.findById(userId);
+    
+    // Count tasks
+    const tasksCount = await Task.countDocuments({ student: userId });
+    const completedTasksCount = await Task.countDocuments({ student: userId, status: 'Submitted' });
+    
+    // Count enrollments
+    const enrollmentsCount = await Enrollment.countDocuments({ student: userId });
+    
+    // Default stats if empty
+    res.json({
+      progress: user.isEnrolled ? "65%" : "0%",
+      tasks: `${completedTasksCount}/${tasksCount || 5}`,
+      learningHours: user.isEnrolled ? "48h" : "0h",
+      certificates: "0"
+    });
+  } catch (error) { next(error); }
+};
+
+

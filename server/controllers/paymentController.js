@@ -12,14 +12,28 @@ const razorpay = new Razorpay({
 // Create Razorpay Order
 exports.createOrder = async (req, res, next) => {
   try {
+    // Check if Razorpay keys are configured
+    if (!process.env.RAZORPAY_KEY_ID || !process.env.RAZORPAY_KEY_SECRET) {
+      console.error('❌ RAZORPAY_KEY_ID or RAZORPAY_KEY_SECRET is missing from environment variables!');
+      return res.status(500).json({ 
+        success: false, 
+        message: 'Payment gateway is not configured. Please contact support.' 
+      });
+    }
+
     const { studentId, course } = req.body;
+    console.log('Creating order for student:', studentId, 'course:', course);
+
     const amountInPaise = 999900; // ₹9,999 = 999,900 paise
     const options = {
       amount: amountInPaise,
       currency: 'INR',
       receipt: `rcpt_${studentId.toString().slice(-14)}_${Date.now().toString().slice(-4)}`,
     };
+    
+    console.log('Razorpay order options:', options);
     const order = await razorpay.orders.create(options);
+    console.log('Razorpay order created:', order.id);
 
     // Create pending payment record
     await Payment.create({
@@ -31,7 +45,11 @@ exports.createOrder = async (req, res, next) => {
 
     res.json({ success: true, order });
   } catch (error) {
-    next(error);
+    console.error('❌ Create Order Error:', error.message || error);
+    res.status(500).json({ 
+      success: false, 
+      message: error.message || 'Failed to create payment order. Please try again.' 
+    });
   }
 };
 

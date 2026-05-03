@@ -29,7 +29,12 @@ if (!fs.existsSync('./uploads')) {
 app.use(helmet({ crossOriginResourcePolicy: false }));
 app.use(morgan('dev'));
 app.use(cors({
-  origin: ["http://localhost:5173", "https://glitch-skill-hub.vercel.app", "https://glitch-dashboard-client.onrender.com"], // Add your actual frontend URLs here
+  origin: [
+    "http://localhost:5173", 
+    "https://glitch-skill-hub.vercel.app", 
+    "https://glitch-dashboard-client.onrender.com",
+    "https://glitch-ashen-iota.vercel.app"
+  ],
   credentials: true
 }));
 app.use(express.json());

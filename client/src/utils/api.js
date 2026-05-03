@@ -53,6 +53,7 @@ export const uploadDocuments = (studentId, formData) =>
 export const createRazorpayOrder = (data) => api.post('/payments/create-order', data);
 export const verifyRazorpayPayment = (data) => api.post('/payments/verify', data);
 export const savePayment = (studentId, data) => api.post(`/payments/${studentId}`, data);
+export const getStudentPayments = (studentId) => api.get(`/payments/${studentId}`);
 
 // Auth/Admin
 export const registerMentorByAdmin = (data) => api.post('/auth/admin/register-mentor', data);

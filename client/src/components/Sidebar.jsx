@@ -1,78 +1,99 @@
-import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Users, LayoutDashboard, Settings, ShieldCheck, LogOut, UserPlus, Sparkles } from 'lucide-react';
-import { toast } from 'react-hot-toast';
+import React from 'react';
+import { NavLink, useNavigate } from 'react-router-dom';
+import { 
+  Layers, 
+  BookOpen, 
+  Target, 
+  CheckCircle2, 
+  CreditCard, 
+  Award, 
+  Users, 
+  Settings, 
+  LogOut,
+  Lock,
+  Zap,
+  MessageSquare,
+  Briefcase
+} from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 
 const Sidebar = () => {
-  const location = useLocation();
+  const { user, logout } = useAuth();
   const navigate = useNavigate();
 
-  const menuItems = [
-    { title: 'Dashboard', icon: <LayoutDashboard size={20} />, path: '/admin' },
-    { title: 'Add Student', icon: <UserPlus size={20} />, path: '/admin/add-student' },
-    { title: 'Add Mentor', icon: <Users size={20} />, path: '/admin/add-mentor' },
-    { title: 'Settings', icon: <Settings size={20} />, path: '/admin/settings' },
+  // Mock enrollment status - in real app, this would come from user data or a context
+  const isEnrolled = user?.isEnrolled || false;
+
+  const navItems = [
+    { name: 'Dashboard', icon: Layers, path: '/student/dashboard', locked: false },
+    { name: 'Programs', icon: BookOpen, path: '/student/programs', locked: false },
+    { name: 'Curriculum', icon: BookOpen, path: '/student/curriculum', locked: !isEnrolled },
+    { name: 'Tasks', icon: CheckCircle2, path: '/student/tasks', locked: !isEnrolled },
+    { name: 'Payments', icon: CreditCard, path: '/student/payments', locked: false },
+    { name: 'Certificates', icon: Award, path: '/student/certificates', locked: false },
+    { name: 'Career Hub', icon: Briefcase, path: '/student/career', locked: false },
+    { name: 'Community', icon: MessageSquare, path: '/student/community', locked: false },
+    { name: 'Settings', icon: Settings, path: '/student/settings', locked: false },
   ];
 
   const handleLogout = () => {
-    localStorage.removeItem('isSVAdmin');
-    toast.success('Logged out securely.');
-    navigate('/admin/login');
+    logout();
+    navigate('/login');
   };
 
   return (
-    <aside className="w-64 bg-black h-full flex flex-col fixed left-0 top-0 border-r border-white/5 shadow-2xl z-50 transition-all duration-300">
-      <div className="p-8 pb-10">
-        <div className="flex flex-col gap-2">
-          <div className="flex items-center gap-3">
-            <div className="bg-primary p-2 rounded-xl shadow-[0_0_20px_rgba(255,215,0,0.3)]">
-              <ShieldCheck className="text-black" size={24} />
-            </div>
-            <h2 className="text-white font-display font-black text-xl tracking-tighter uppercase italic">
-              GLITCH
-            </h2>
+    <aside className="fixed left-0 top-0 h-screen w-72 bg-sidebar border-r border-slate-800 flex flex-col z-50 transition-all duration-300">
+      {/* Logo Section */}
+      <div className="p-8">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center text-black shadow-lg shadow-primary/20">
+            <Zap size={24} fill="currentColor" />
           </div>
-          <p className="text-primary text-[10px] font-black tracking-[0.3em] uppercase ml-1">
-            Skill Hub
-          </p>
+          <div>
+            <h1 className="text-xl font-black text-white tracking-tighter">GLITCH<span className="text-primary italic">HUB</span></h1>
+            <p className="text-[8px] font-bold text-slate-500 uppercase tracking-[0.2em]">Student Portal</p>
+          </div>
         </div>
       </div>
 
-      <nav className="flex-1 px-4 py-6 space-y-2">
-        <div className="px-4 mb-4">
-          <p className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-600">Main Menu</p>
-        </div>
-        {menuItems.map((item, index) => (
-          <Link
-            key={index}
-            to={item.path}
-            className={`flex items-center space-x-3 px-5 py-4 rounded-2xl font-black uppercase tracking-widest text-[11px] transition-all duration-300 group ${
-              location.pathname === item.path 
-                ? 'bg-primary text-black shadow-[0_0_30px_rgba(255,215,0,0.2)]' 
-                : 'text-zinc-500 hover:bg-white/5 hover:text-white'
-            }`}
+      {/* Nav Links */}
+      <nav className="flex-1 px-4 space-y-2 overflow-y-auto py-4 scrollbar-hide">
+        {navItems.map((item) => (
+          <NavLink
+            key={item.name}
+            to={item.locked ? '#' : item.path}
+            className={({ isActive }) => 
+              `sidebar-link group ${isActive && !item.locked ? 'active' : ''} ${item.locked ? 'locked' : ''}`
+            }
+            onClick={(e) => item.locked && e.preventDefault()}
           >
-            <span className={location.pathname === item.path ? 'scale-110' : 'group-hover:text-primary transition-all group-hover:scale-110'}>
-              {item.icon}
-            </span>
-            <span>{item.title}</span>
-          </Link>
+            <item.icon size={18} className="transition-transform group-hover:scale-110" />
+            <span className="flex-1">{item.name}</span>
+            {item.locked && <Lock size={14} className="text-slate-600" />}
+          </NavLink>
         ))}
       </nav>
 
-      <div className="p-6 border-t border-white/5">
-        <div className="bg-white/5 rounded-2xl p-4 mb-4 border border-white/5">
-            <p className="text-[9px] font-black uppercase tracking-widest text-zinc-500">Registry Status</p>
-            <div className="flex items-center gap-2 mt-2">
-                <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></div>
-                <p className="text-[10px] font-bold text-white uppercase italic">Live Encrypted</p>
+      {/* Bottom Section */}
+      <div className="p-6 border-t border-slate-800">
+        <div className="bg-slate-800/50 rounded-2xl p-4 mb-4">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-full bg-slate-700 border-2 border-primary/50 flex items-center justify-center text-white font-bold">
+              {user?.name?.charAt(0)}
             </div>
+            <div className="overflow-hidden">
+              <p className="text-white text-xs font-black truncate uppercase">{user?.name}</p>
+              <p className="text-slate-500 text-[10px] truncate">{user?.email}</p>
+            </div>
+          </div>
         </div>
+        
         <button 
           onClick={handleLogout}
-          className="flex items-center space-x-3 px-5 py-4 rounded-2xl text-zinc-500 hover:bg-red-500/10 hover:text-red-500 transition-all w-full font-black uppercase tracking-widest text-[11px]"
+          className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-red-400 hover:bg-red-500/10 transition-all font-bold text-xs uppercase tracking-widest"
         >
-          <LogOut size={20} />
-          <span>Security Logout</span>
+          <LogOut size={18} />
+          Logout
         </button>
       </div>
     </aside>

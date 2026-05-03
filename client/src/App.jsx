@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, Outlet } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { useAuth } from './context/AuthContext';
 
@@ -18,7 +18,17 @@ import Login from './pages/Login';
 import Signup from './pages/Signup';
 
 // Dashboards
-import StudentDashboard from './pages/StudentDashboard';
+import StudentLayout from './components/StudentLayout';
+import StudentDashboardHome from './pages/student/Dashboard';
+import StudentPrograms from './pages/student/StudentPrograms';
+import StudentCurriculum from './pages/student/Curriculum';
+import StudentTasks from './pages/student/Tasks';
+import StudentPayments from './pages/student/Payments';
+import StudentCertificates from './pages/student/Certificates';
+import StudentCareerHub from './pages/student/CareerHub';
+import StudentCommunity from './pages/student/Community';
+import StudentSettings from './pages/student/Settings';
+
 import MentorDashboard from './pages/MentorDashboard';
 
 // Legacy SVAdmin Pages
@@ -43,7 +53,7 @@ const RoleProtectedRoute = ({ children, allowedRoles }) => {
   if (!user) return <Navigate to="/login" />;
   if (!allowedRoles.includes(user.role)) return <Navigate to="/" />;
 
-  return children;
+  return children ? children : <Outlet />;
 };
 
 function App() {
@@ -66,12 +76,21 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
 
-        {/* Student Dashboard */}
-        <Route path="/student/dashboard" element={
-          <RoleProtectedRoute allowedRoles={['student']}>
-            <StudentDashboard />
-          </RoleProtectedRoute>
-        } />
+        {/* Student Dashboard Routes */}
+        <Route element={<RoleProtectedRoute allowedRoles={['student']} />}>
+          <Route path="/student" element={<StudentLayout><Outlet /></StudentLayout>}>
+            <Route index element={<Navigate to="/student/dashboard" />} />
+            <Route path="dashboard" element={<StudentDashboardHome />} />
+            <Route path="programs" element={<StudentPrograms />} />
+            <Route path="curriculum" element={<StudentCurriculum />} />
+            <Route path="tasks" element={<StudentTasks />} />
+            <Route path="payments" element={<StudentPayments />} />
+            <Route path="certificates" element={<StudentCertificates />} />
+            <Route path="career" element={<StudentCareerHub />} />
+            <Route path="community" element={<StudentCommunity />} />
+            <Route path="settings" element={<StudentSettings />} />
+          </Route>
+        </Route>
 
         {/* Mentor Dashboard */}
         <Route path="/mentor/dashboard" element={

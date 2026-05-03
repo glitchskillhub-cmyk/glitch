@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { CheckCircle2, Home, Sparkles, Send, ArrowRight } from 'lucide-react';
+import { CheckCircle2, Home, Sparkles, Send, ArrowRight, ChevronRight } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 

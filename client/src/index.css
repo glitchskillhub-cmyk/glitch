@@ -3,16 +3,17 @@
 @theme {
   --color-primary: #facc15;
   --color-primary-dark: #eab308;
-  --color-primary-glow: rgba(250, 204, 21, 0.2);
+  --color-primary-glow: rgba(250, 204, 21, 0.4);
   --color-secondary: #0f172a;
   --color-accent: #f8fafc;
   --color-dark: #0f172a;
-  --color-bg: #ffffff;
+  --color-bg: #f8fafc;
   --color-card: #ffffff;
   --color-border: #e2e8f0;
+  --color-sidebar: #0f172a;
 
   --font-sans: 'Inter', system-ui, sans-serif;
-  --font-display: 'Inter', sans-serif;
+  --font-display: 'Outfit', sans-serif;
 }
 
 @layer base {
@@ -136,6 +137,31 @@
 
   .btn-yellow {
     @apply bg-primary text-slate-900 font-bold px-8 py-4 rounded-xl flex items-center gap-2 hover:bg-slate-900 hover:text-white transition-all duration-300 shadow-sm;
+  }
+
+  /* Sidebar Specifics */
+  .sidebar-link {
+    @apply flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 font-bold text-xs uppercase tracking-widest text-slate-400;
+  }
+
+  .sidebar-link:hover {
+    @apply bg-slate-800 text-white;
+  }
+
+  .sidebar-link.active {
+    @apply bg-primary text-slate-900 shadow-[0_0_20px_rgba(250,204,21,0.3)];
+  }
+
+  .sidebar-link.locked {
+    @apply opacity-50 cursor-not-allowed grayscale;
+  }
+
+  .glass-card {
+    @apply bg-white/70 backdrop-blur-xl border border-white/20 shadow-xl shadow-slate-200/50;
+  }
+
+  .premium-glow {
+    box-shadow: 0 0 40px -10px var(--color-primary-glow);
   }
 }
 

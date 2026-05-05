@@ -4,10 +4,6 @@ import {
   Mail, 
   MapPin, 
   Phone, 
-  Instagram, 
-  Twitter, 
-  Linkedin, 
-  Youtube, 
   ArrowUpRight,
   Globe
 } from 'lucide-react';
@@ -52,18 +48,14 @@ const Footer = () => {
               Bridging the gap between traditional education and high-performance software engineering with curriculum designed by MNC veterans.
             </p>
             <div className="flex gap-4">
-              {[
-                { icon: Twitter, link: '#' },
-                { icon: Linkedin, link: '#' },
-                { icon: Instagram, link: '#' },
-                { icon: Youtube, link: '#' }
-              ].map((social, idx) => (
+              {['Twitter', 'Linkedin', 'Instagram', 'Youtube'].map((social, idx) => (
                 <a 
                   key={idx} 
-                  href={social.link} 
+                  href="#" 
                   className="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-slate-400 hover:bg-primary hover:text-slate-900 hover:border-primary transition-all duration-300"
+                  aria-label={social}
                 >
-                  <social.icon size={20} />
+                  <Globe size={20} />
                 </a>
               ))}
             </div>
@@ -149,4 +141,3 @@ const Footer = () => {
 };
 
 export default Footer;
-;

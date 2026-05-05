@@ -1,22 +1,29 @@
 const nodemailer = require('nodemailer');
-
 const dns = require('dns');
-dns.setDefaultResultOrder('ipv4first');
+const { promisify } = require('util');
 
-const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  host: 'smtp.gmail.com',
-  port: 465,
-  secure: true,
-  family: 4, // force IPv4 to avoid ENETUNREACH IPv6 errors on Render
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
-  tls: {
-    rejectUnauthorized: false
-  }
-});
+const lookupIPv4 = promisify(dns.lookup);
+
+// Lazy transporter — resolves smtp.gmail.com to IPv4 before each send
+// This guarantees we never attempt an IPv6 connection (which fails on Render)
+const createTransporter = async () => {
+  const { address } = await lookupIPv4('smtp.gmail.com', { family: 4 });
+  console.log('📧 Resolved smtp.gmail.com →', address);
+
+  return nodemailer.createTransport({
+    host: address,
+    port: 465,
+    secure: true,
+    auth: {
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASS,
+    },
+    tls: {
+      servername: 'smtp.gmail.com', // needed for TLS cert validation when using raw IP
+      rejectUnauthorized: false,
+    },
+  });
+};
 
 const sendReceiptEmail = async (studentDetails, paymentDetails) => {
   const amount = paymentDetails?.amount || 9999;
@@ -181,6 +188,7 @@ const sendReceiptEmail = async (studentDetails, paymentDetails) => {
   };
 
   try {
+    const transporter = await createTransporter();
     await transporter.sendMail(mailOptions);
     console.log('✅ Payment receipt email sent to:', studentDetails.email);
   } catch (error) {

@@ -90,14 +90,10 @@ exports.verifyPayment = async (req, res, next) => {
 
       if (student) {
         // Send payment confirmation email
-        if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
-          console.log('⏳ Attempting to send receipt email to:', student.email);
-          sendReceiptEmail(student, updatedPayment).catch(err => 
-            console.error('❌ Email sending failed:', err.message)
-          );
-        } else {
-          console.error('❌ EMAIL_USER or EMAIL_PASS not set — skipping receipt email for:', student.email);
-        }
+        console.log('⏳ Attempting to send receipt email to:', student.email);
+        sendReceiptEmail(student, updatedPayment).catch(err => 
+          console.error('❌ Email sending failed:', err.message)
+        );
         
         // Find user by email and mark as enrolled
         const User = require('../models/User');

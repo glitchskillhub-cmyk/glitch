@@ -1,29 +1,7 @@
-const nodemailer = require('nodemailer');
-const dns = require('dns');
-const { promisify } = require('util');
+const { Resend } = require('resend');
 
-const lookupIPv4 = promisify(dns.lookup);
-
-// Lazy transporter — resolves smtp.gmail.com to IPv4 before each send
-// This guarantees we never attempt an IPv6 connection (which fails on Render)
-const createTransporter = async () => {
-  const { address } = await lookupIPv4('smtp.gmail.com', { family: 4 });
-  console.log('📧 Resolved smtp.gmail.com →', address);
-
-  return nodemailer.createTransport({
-    host: address,
-    port: 465,
-    secure: true,
-    auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASS,
-    },
-    tls: {
-      servername: 'smtp.gmail.com', // needed for TLS cert validation when using raw IP
-      rejectUnauthorized: false,
-    },
-  });
-};
+// Initialize Resend with the provided API key
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 const sendReceiptEmail = async (studentDetails, paymentDetails) => {
   const amount = paymentDetails?.amount || 9999;
@@ -36,10 +14,9 @@ const sendReceiptEmail = async (studentDetails, paymentDetails) => {
   });
 
   const mailOptions = {
-    from: `"Glitch Skill Hub" <${process.env.EMAIL_USER}>`,
+    from: 'Glitch Skill Hub <info@glitchedu.online>',
     to: studentDetails.email,
     subject: `✅ Payment Confirmed — Welcome to ${studentDetails.course} | Glitch Skill Hub`,
-    text: `Hi ${studentDetails.name},\n\nYour payment of ₹${amount.toLocaleString('en-IN')} has been successfully received!\n\nPayment Details:\n- Name: ${studentDetails.name}\n- Course: ${studentDetails.course}\n- Amount: ₹${amount.toLocaleString('en-IN')}\n- Payment ID: ${paymentId}\n- Date: ${paymentDate}\n- Status: Successful\n\nYou are now officially enrolled. Our team will reach out shortly with your onboarding details.\n\nIf you have any questions, feel free to reach us:\nPhone: +91 6300127932\nEmail: info@glitchedu.online\n\nBest regards,\nTeam Glitch Skill Hub`,
     html: `
 <!DOCTYPE html>
 <html>
@@ -188,9 +165,14 @@ const sendReceiptEmail = async (studentDetails, paymentDetails) => {
   };
 
   try {
-    const transporter = await createTransporter();
-    await transporter.sendMail(mailOptions);
-    console.log('✅ Payment receipt email sent to:', studentDetails.email);
+    const { data, error } = await resend.emails.send(mailOptions);
+
+    if (error) {
+      console.error('❌ Resend API Error:', error.message);
+      throw new Error(error.message);
+    }
+
+    console.log('✅ Payment receipt email sent to:', studentDetails.email, 'Data:', data);
   } catch (error) {
     console.error('❌ Error sending email:', error.message);
     throw error;
@@ -198,3 +180,4 @@ const sendReceiptEmail = async (studentDetails, paymentDetails) => {
 };
 
 module.exports = { sendReceiptEmail };
+

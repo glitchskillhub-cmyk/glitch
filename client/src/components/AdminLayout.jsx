@@ -19,7 +19,8 @@ import {
   Menu,
   X,
   ChevronRight,
-  Layers
+  Layers,
+  Megaphone
 } from 'lucide-react';
 
 const SidebarItem = ({ to, icon: Icon, label, collapsed }) => (
@@ -66,7 +67,7 @@ const AdminLayout = ({ children }) => {
     { section: 'Career & More', items: [
       { to: '/admin/certificates', icon: Award, label: 'Certificates' },
       { to: '/admin/career', icon: Briefcase, label: 'Career Hub' },
-      { to: '/admin/community', icon: MessageSquare, label: 'Community' },
+      { to: '/admin/community', icon: Megaphone, label: 'Announcements' },
     ]},
     { section: 'System', items: [
       { to: '/admin/settings', icon: Settings, label: 'Settings' },

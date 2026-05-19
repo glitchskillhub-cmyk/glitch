@@ -13,7 +13,8 @@ import {
   Lock,
   Zap,
   MessageSquare,
-  Briefcase
+  Briefcase,
+  Megaphone
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import logo from '../assets/images/glitch-logo.webp';
@@ -33,7 +34,7 @@ const Sidebar = () => {
     { name: 'Payments', icon: CreditCard, path: '/student/payments', locked: false },
     { name: 'Certificates', icon: Award, path: '/student/certificates', locked: false },
     { name: 'Career Hub', icon: Briefcase, path: '/student/career', locked: false },
-    { name: 'Community', icon: MessageSquare, path: '/student/community', locked: false },
+    { name: 'Announcements', icon: Megaphone, path: '/student/community', locked: false },
     { name: 'Settings', icon: Settings, path: '/student/settings', locked: false },
   ];
 

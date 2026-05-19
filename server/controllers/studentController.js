@@ -669,11 +669,34 @@ exports.updateJobApplicationStatus = async (req, res, next) => {
 exports.issueCertificateByAdmin = async (req, res, next) => {
   try {
     const Certificate = require('../models/Certificate');
+    const Student = require('../models/Student');
+    const User = require('../models/User');
     const { studentId, title, fileUrl } = req.body;
     
+    let targetUserId = studentId;
+
+    // Check if studentId is a Student document ID
+    const studentDoc = await Student.findById(studentId);
+    if (studentDoc) {
+      // Find corresponding User account by email
+      let userDoc = await User.findOne({ email: studentDoc.email.toLowerCase() });
+      if (!userDoc) {
+        // Automatically create User account if they don't have one, so they can log in
+        userDoc = await User.create({
+          name: studentDoc.name,
+          email: studentDoc.email.toLowerCase(),
+          password: 'student@123', // default credentials
+          role: 'student',
+          phone: studentDoc.phone,
+          isVerified: true
+        });
+      }
+      targetUserId = userDoc._id;
+    }
+
     const certificateId = 'GSH-CERT-' + Math.floor(100000 + Math.random() * 900000);
     const certificate = await Certificate.create({
-      student: studentId,
+      student: targetUserId,
       title,
       certificateId,
       fileUrl: fileUrl || ''
@@ -687,6 +710,22 @@ exports.issueCertificateByAdmin = async (req, res, next) => {
 exports.getAllCertificates = async (req, res, next) => {
   try {
     const Certificate = require('../models/Certificate');
+    const Student = require('../models/Student');
+    const User = require('../models/User');
+
+    // Healing loop: auto-update certificates that point to Student ID instead of User ID
+    const allCerts = await Certificate.find();
+    for (const cert of allCerts) {
+      const studentDoc = await Student.findById(cert.student);
+      if (studentDoc) {
+        const userDoc = await User.findOne({ email: studentDoc.email.toLowerCase() });
+        if (userDoc) {
+          cert.student = userDoc._id;
+          await cert.save();
+        }
+      }
+    }
+
     const certificates = await Certificate.find()
       .populate('student', 'name email')
       .sort({ issueDate: -1 });

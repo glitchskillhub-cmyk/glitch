@@ -54,7 +54,7 @@ const Services = () => {
       <Navbar />
       
       {/* Header */}
-      <section className="pt-56 pb-24 relative overflow-hidden">
+      <section className="pt-36 md:pt-48 pb-14 md:pb-20 relative overflow-hidden">
         <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_30%_30%,rgba(255,215,0,0.05)_0%,transparent_50%)]"></div>
         <div className="container mx-auto px-6 relative z-10 text-center">
           <div className="badge-modern mx-auto mb-8">
@@ -151,10 +151,10 @@ const Services = () => {
       </section>
 
       {/* MEET YOUR MENTORS */}
-      <section className="py-32 bg-slate-950 text-white relative overflow-hidden">
+      <section className="py-16 md:py-24 bg-slate-950 text-white relative overflow-hidden">
         <div className="absolute top-0 right-0 w-full h-full bg-[radial-gradient(circle_at_70%_70%,rgba(255,215,0,0.05)_0%,transparent_50%)]"></div>
         <div className="container mx-auto px-6">
-           <div className="text-center mb-20">
+           <div className="text-center mb-10 md:mb-16">
               <div className="badge-modern mx-auto mb-8 border-white/10 text-white"><span></span> Expertise</div>
               <h2 className="text-3xl md:text-5xl font-bold tracking-tight mb-8">Meet Your <span className="text-primary italic">Mentors.</span></h2>
            </div>
@@ -189,7 +189,7 @@ const Services = () => {
       </section>
 
       {/* Certification */}
-      <section className="py-32">
+      <section className="py-16 md:py-24">
         <div className="container mx-auto px-6">
            <div className="glass-card p-12 md:p-20 rounded-[4rem] bg-slate-900 text-white relative overflow-hidden">
               <div className="absolute top-[-20%] right-[-10%] w-[50%] h-[50%] bg-primary/20 rounded-full blur-[100px] pointer-events-none"></div>

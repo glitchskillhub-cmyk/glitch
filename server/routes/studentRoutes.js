@@ -50,8 +50,28 @@ router.get('/dashboard/stats', studentController.getDashboardStats);
 // Student Dashboard Specifics
 router.get('/my-enrollments', protect, studentController.getMyEnrollments);
 router.get('/my-tasks', protect, studentController.getMyTasks);
+router.post('/my-tasks/:taskId/submit', protect, studentController.submitTask);
+router.post('/my-enrollments/:enrollmentId/mark-lesson', protect, studentController.markLessonComplete);
 router.get('/student-stats', protect, studentController.getStudentDashboardStats);
-router.get('/jobs', studentController.getAllJobs);
+router.get('/jobs', protect, studentController.getAllJobs);
+router.post('/jobs/:jobId/apply', protect, studentController.applyJob);
+
+// Admin Task Control Routes
+router.post('/admin/tasks', protect, studentController.createTaskByAdmin);
+router.get('/admin/tasks/submissions', protect, studentController.getAllTaskSubmissions);
+router.post('/admin/tasks/:taskId/review', protect, studentController.reviewTaskSubmission);
+
+// Admin Career Hub Routes
+router.post('/admin/jobs', protect, studentController.createJobByAdmin);
+router.delete('/admin/jobs/:jobId', protect, studentController.deleteJobByAdmin);
+router.get('/admin/jobs/applications', protect, studentController.getAllJobApplications);
+router.put('/admin/jobs/applications/:appId', protect, studentController.updateJobApplicationStatus);
+
+// Certificate Routes
+router.post('/admin/certificates', protect, studentController.issueCertificateByAdmin);
+router.get('/admin/certificates', protect, studentController.getAllCertificates);
+router.get('/my-certificates', protect, studentController.getMyCertificates);
+router.get('/certificates/verify/:certId', studentController.verifyCertificate);
 
 // Document Routes
 router.post('/documents/upload/:studentId', docUpload, studentController.uploadDocuments);

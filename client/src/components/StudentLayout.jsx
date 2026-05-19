@@ -41,7 +41,7 @@ const StudentLayout = ({ children }) => {
             <div className="flex items-center gap-3 pl-4 border-l border-slate-100">
               <div className="text-right hidden md:block">
                 <p className="text-xs font-black uppercase tracking-tight">{user?.name}</p>
-                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Student ID: #GS-8949</p>
+                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Student ID: #GS-{(user?._id || user?.id)?.slice(-6).toUpperCase()}</p>
               </div>
               <div className="w-10 h-10 rounded-xl bg-slate-900 flex items-center justify-center text-white font-bold text-sm border-2 border-white shadow-sm">
                 {user?.name?.charAt(0)}

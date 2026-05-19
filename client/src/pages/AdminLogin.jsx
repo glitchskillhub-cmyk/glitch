@@ -2,30 +2,39 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import { ShieldCheck, Mail, Lock, LogIn } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 
 const AdminLogin = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const { login } = useAuth();
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
     setLoading(true);
 
-    setTimeout(() => {
-      if (email === 'admin@glitch.com' || email === 'admin@svsolutions.com') { // Support both for now
-         if (password === 'admin@123') {
-            localStorage.setItem('isSVAdmin', 'true');
-            toast.success('Access Granted');
-            navigate('/admin');
-            setLoading(false);
-            return;
-         }
+    try {
+      // Authenticate admin with the backend to retrieve signed JWT token
+      const userData = await login(email, password);
+      
+      if (userData.role === 'admin') {
+         localStorage.setItem('isSVAdmin', 'true'); // For client router compatibility
+         toast.success('Access Granted');
+         navigate('/admin');
+      } else {
+         toast.error('Security Breach: Access Denied. Not an Admin.');
+         // Clean up session if they are not admin
+         localStorage.removeItem('user');
+         localStorage.removeItem('isSVAdmin');
       }
-      toast.error('Security Breach: Invalid Credentials');
+    } catch (error) {
+      console.error('Admin Login Error:', error);
+      toast.error(error.response?.data?.message || 'Security Breach: Invalid Credentials');
+    } finally {
       setLoading(false);
-    }, 1000);
+    }
   };
 
   return (

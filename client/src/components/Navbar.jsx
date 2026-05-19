@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Menu, X, Sparkles, ChevronRight, User } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
@@ -11,6 +11,7 @@ const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { user } = useAuth();
   const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -29,8 +30,23 @@ const Navbar = () => {
   ];
 
   const getDashboardPath = () => {
-    if (!user) return '/register';
+    if (!user) return '/login';
     return user.role === 'mentor' ? '/mentor/dashboard' : '/student/dashboard';
+  };
+
+  const getProfilePath = () => {
+    if (!user) return '/login';
+    return user.role === 'mentor' ? '/mentor/dashboard' : '/student/settings';
+  };
+
+  const handleProfileClick = (e) => {
+    e.preventDefault();
+    navigate(getProfilePath());
+  };
+
+  const handleHubClick = (e) => {
+    e.preventDefault();
+    navigate(getDashboardPath());
   };
 
   return (
@@ -58,21 +74,27 @@ const Navbar = () => {
           ))}
         </div>
 
-        {/* Action Button */}
+        {/* Action Buttons */}
         <div className="hidden md:flex items-center gap-4">
           {!user ? (
             <Link to="/login" className="text-xs font-bold uppercase tracking-widest hover:text-primary transition-colors">
               Login
             </Link>
           ) : (
-            <Link to={getDashboardPath()} className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-slate-400 hover:text-black transition-colors">
+            <button 
+              onClick={handleProfileClick}
+              className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-slate-400 hover:text-black transition-colors cursor-pointer"
+            >
               <User size={16} /> Profile
-            </Link>
+            </button>
           )}
-          <Link to={getDashboardPath()} className="btn-premium py-2 px-6 text-xs group">
+          <button 
+            onClick={handleHubClick}
+            className="btn-premium py-2 px-6 text-xs group cursor-pointer"
+          >
             <span>{user ? 'My Hub' : 'Join Hub'}</span>
             <ChevronRight size={14} className="group-hover:translate-x-1 transition-transform" />
-          </Link>
+          </button>
         </div>
 
         {/* Mobile Toggle */}
@@ -97,13 +119,12 @@ const Navbar = () => {
               {link.name}
             </Link>
           ))}
-          <Link 
-            to={getDashboardPath()}
-            onClick={() => setIsMobileMenuOpen(false)}
+          <button 
+            onClick={() => { setIsMobileMenuOpen(false); navigate(getDashboardPath()); }}
             className="btn-premium py-5 mt-4"
           >
             <span>{user ? 'My Dashboard' : 'Join The Hub'}</span>
-          </Link>
+          </button>
         </div>
       </div>
     </nav>

@@ -1,31 +1,54 @@
 import React, { useState, useEffect } from 'react';
 import { Layers, Download, ExternalLink, ShieldCheck, Clock, Zap, Loader2 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
-import { getStudentPayments } from '../../utils/api';
+import { getStudentPayments, getMyEnrollments } from '../../utils/api';
 
 const Payments = () => {
   const { user } = useAuth();
   const [history, setHistory] = useState([]);
+  const [activePlan, setActivePlan] = useState('');
+  const [totalPaid, setTotalPaid] = useState(0);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchPayments = async () => {
+    const fetchPaymentsAndEnrollments = async () => {
       try {
-        const res = await getStudentPayments(user?._id);
-        setHistory(res.data.map(p => ({
+        const studentId = user?._id || user?.id;
+        const [payRes, enrollRes] = await Promise.all([
+          getStudentPayments(studentId),
+          getMyEnrollments()
+        ]);
+        
+        const paymentsData = payRes.data || [];
+        setHistory(paymentsData.map(p => ({
           id: p.razorpayPaymentId || p._id.slice(-6).toUpperCase(),
           date: new Date(p.createdAt).toLocaleDateString(),
           amount: `₹${p.amount}`,
           status: p.status,
           method: p.razorpayPaymentId ? 'Razorpay' : 'Other'
         })));
+
+        // Calculate sum of Paid status payments
+        const paidSum = paymentsData
+          .filter(p => p.status === 'Paid')
+          .reduce((sum, p) => sum + Number(p.amount), 0);
+        setTotalPaid(paidSum);
+
+        // Fetch enrolled course names
+        if (enrollRes.data && enrollRes.data.length > 0) {
+          const courseNames = enrollRes.data.map(e => e.course?.title || e.title);
+          setActivePlan(courseNames.join(', '));
+        } else {
+          setActivePlan('No Active Plan');
+        }
       } catch (error) {
-        console.error("Failed to fetch payments", error);
+        console.error("Failed to fetch payments or enrollments", error);
       } finally {
         setLoading(false);
       }
     };
-    if (user?._id) fetchPayments();
+    
+    if (user?._id || user?.id) fetchPaymentsAndEnrollments();
     else setLoading(false);
   }, [user]);
 
@@ -58,7 +81,7 @@ const Payments = () => {
                  <div className="flex justify-between items-start mb-10">
                     <div>
                        <p className="text-[10px] font-black text-primary uppercase tracking-widest mb-2">Active Plan</p>
-                       <h2 className="text-3xl font-black uppercase tracking-tight">Full Stack Engineering</h2>
+                       <h2 className="text-3xl font-black uppercase tracking-tight text-white">{activePlan}</h2>
                     </div>
                     <div className="w-12 h-12 bg-primary rounded-xl flex items-center justify-center text-slate-900 shadow-lg shadow-primary/20">
                        <Zap size={24} fill="currentColor" />
@@ -71,7 +94,7 @@ const Payments = () => {
                     </div>
                     <div>
                        <p className="text-slate-400 text-[10px] font-bold uppercase tracking-widest">Total Paid</p>
-                       <p className="text-xl font-bold">₹9,999</p>
+                       <p className="text-xl font-bold">₹{totalPaid.toLocaleString()}</p>
                     </div>
                  </div>
                  <button className="bg-primary text-slate-900 px-8 py-4 rounded-xl font-black text-xs uppercase tracking-widest hover:bg-white transition-colors">
@@ -101,7 +124,13 @@ const Payments = () => {
                             <td className="py-4 text-xs font-medium text-slate-500">{pay.date}</td>
                             <td className="py-4 text-xs font-black text-slate-900">{pay.amount}</td>
                             <td className="py-4">
-                               <span className="text-[10px] font-black text-green-500 bg-green-50 px-2 py-1 rounded-full uppercase tracking-widest border border-green-100">{pay.status}</span>
+                               <span className={`text-[10px] font-black px-2 py-1 rounded-full uppercase tracking-widest border ${
+                                 pay.status === 'Paid' 
+                                   ? 'text-green-500 bg-green-50 border-green-100' 
+                                   : pay.status === 'Pending'
+                                   ? 'text-amber-500 bg-amber-50 border-amber-100'
+                                   : 'text-red-500 bg-red-50 border-red-100'
+                               }`}>{pay.status}</span>
                             </td>
                             <td className="py-4 text-right">
                                <button className="p-2 text-slate-400 hover:text-primary transition-colors">

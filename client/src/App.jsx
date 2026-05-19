@@ -39,13 +39,11 @@ import AdminMentors from './pages/admin/Mentors';
 import AdminPrograms from './pages/admin/Programs';
 import AdminPayments from './pages/admin/Payments';
 import AdminSettingsV2 from './pages/admin/Settings';
-import { 
-  Curriculum as AdminCurriculum, 
-  Tasks as AdminTasks, 
-  CareerHub as AdminCareerHub, 
-  Certificates as AdminCertificates, 
-  Community as AdminCommunity 
-} from './pages/admin/Placeholders';
+import AdminCurriculum from './pages/admin/Curriculum';
+import AdminTasks from './pages/admin/Tasks';
+import AdminCareerHub from './pages/admin/CareerHub';
+import AdminCertificates from './pages/admin/Certificates';
+import AdminCommunity from './pages/admin/Community';
 
 // Legacy SVAdmin Pages (For Reference)
 import AdminLogin from './pages/AdminLogin';

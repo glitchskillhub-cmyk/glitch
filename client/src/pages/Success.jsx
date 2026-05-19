@@ -9,7 +9,7 @@ const Success = () => {
     <div className="min-h-screen bg-white">
       <Navbar />
       
-      <main className="flex flex-col items-center justify-center pt-48 pb-24 px-6 relative overflow-hidden">
+      <main className="flex flex-col items-center justify-center pt-36 md:pt-48 pb-14 md:pb-20 px-6 relative overflow-hidden">
         {/* Background Decor */}
         <div className="absolute top-0 right-0 w-1/3 h-1/3 bg-primary/10 blur-[120px] -z-0 rounded-full"></div>
         

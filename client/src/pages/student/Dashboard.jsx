@@ -1,25 +1,30 @@
 import React, { useState, useEffect } from 'react';
 import { Zap, Target, Award, MessageSquare, ChevronRight, Clock, BookOpen, Briefcase, Loader2 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
-import { getStudentStats } from '../../utils/api';
+import { getStudentStats, getMyEnrollments } from '../../utils/api';
 
 const Dashboard = () => {
   const { user } = useAuth();
   const [statsData, setStatsData] = useState(null);
+  const [activeEnrollments, setActiveEnrollments] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchStats = async () => {
+    const fetchDashboardData = async () => {
       try {
-        const res = await getStudentStats();
-        setStatsData(res.data);
+        const [statsRes, enrollmentsRes] = await Promise.all([
+          getStudentStats(),
+          getMyEnrollments()
+        ]);
+        setStatsData(statsRes.data);
+        setActiveEnrollments(enrollmentsRes.data || []);
       } catch (error) {
-        console.error("Failed to fetch stats", error);
+        console.error("Failed to fetch dashboard data", error);
       } finally {
         setLoading(false);
       }
     };
-    fetchStats();
+    fetchDashboardData();
   }, []);
 
   const stats = [
@@ -82,20 +87,20 @@ const Dashboard = () => {
                   </div>
                   <div>
                     <h2 className="text-2xl font-black uppercase tracking-tight">
-                      {user?.isEnrolled ? "Active Program" : "Get Started"}
+                      {user?.isEnrolled && activeEnrollments.length > 0 ? "Active Program" : "Get Started"}
                     </h2>
                     <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">
-                      {user?.isEnrolled ? "MERN Stack Engineering" : "Unlock Your Career"}
+                      {user?.isEnrolled && activeEnrollments.length > 0 ? "MERN Stack Engineering" : "Unlock Your Career"}
                     </p>
                   </div>
                 </div>
-                {user?.isEnrolled && (
+                {user?.isEnrolled && activeEnrollments.length > 0 && (
                   <div className="text-right">
                     <p className="text-[10px] font-black text-primary uppercase tracking-widest mb-1">
-                      {statsData?.progress} Done
+                      {activeEnrollments[0].progress || 0}% Done
                     </p>
                     <div className="w-32 h-2 bg-slate-100 rounded-full overflow-hidden">
-                      <div className="h-full bg-primary" style={{ width: statsData?.progress }}></div>
+                      <div className="h-full bg-primary" style={{ width: `${activeEnrollments[0].progress || 0}%` }}></div>
                     </div>
                   </div>
                 )}
@@ -103,22 +108,27 @@ const Dashboard = () => {
 
               <div className="mb-10">
                 <h3 className="text-xl font-bold mb-4">
-                  {user?.isEnrolled ? "Node.js Full Stack Development" : "No Active Program Found"}
+                  {user?.isEnrolled && activeEnrollments.length > 0
+                    ? (activeEnrollments[0].course?.title || activeEnrollments[0].title)
+                    : "No Active Program Found"}
                 </h3>
                 <p className="text-slate-500 text-sm leading-relaxed mb-6 max-w-xl">
-                  {user?.isEnrolled 
-                    ? `Currently learning: Module 4 - Express.js Middleware & Security`
-                    : "You haven't enrolled in any program yet. Complete your payment to unlock exclusive high-performance engineering courses."}
+                  {user?.isEnrolled && activeEnrollments.length > 0
+                    ? (activeEnrollments[0].course?.description || activeEnrollments[0].description)
+                    : "You haven't enrolled in any active program yet. Complete your enrollment or contact support to start learning."}
                 </p>
-                {user?.isEnrolled && (
+                {user?.isEnrolled && activeEnrollments.length > 0 && (
                   <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-slate-400">
                     <Clock size={12} /> Last accessed: Just now
                   </div>
                 )}
               </div>
 
-              {user?.isEnrolled ? (
-                <button className="btn-premium py-5 px-10 group w-full md:w-auto">
+              {user?.isEnrolled && activeEnrollments.length > 0 ? (
+                <button 
+                  onClick={() => window.location.href = '/student/programs'}
+                  className="btn-premium py-5 px-10 group w-full md:w-auto"
+                >
                   <span>Continue Learning</span>
                   <ChevronRight size={18} className="group-hover:translate-x-1 transition-transform" />
                 </button>

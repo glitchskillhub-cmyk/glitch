@@ -55,7 +55,7 @@ const Mentors = () => {
       <Navbar />
       
       {/* Header */}
-      <section className="pt-56 pb-24 relative overflow-hidden bg-slate-950 text-white">
+      <section className="pt-36 md:pt-48 pb-14 md:pb-20 relative overflow-hidden bg-slate-950 text-white">
         <div className="absolute top-0 right-0 w-full h-full bg-[radial-gradient(circle_at_70%_30%,rgba(250,204,21,0.1)_0%,transparent_50%)]"></div>
         <div className="container mx-auto px-6 relative z-10 text-center">
           <div className="badge-modern mx-auto mb-8 border-white/10 text-white">
@@ -72,7 +72,7 @@ const Mentors = () => {
       </section>
 
       {/* Mentor Grid */}
-      <section className="py-32 bg-white">
+      <section className="py-16 md:py-24 bg-white">
         <div className="container mx-auto px-6">
            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
               {mentors.map((mentor, i) => (
@@ -119,10 +119,10 @@ const Mentors = () => {
       </section>
 
       {/* Partnerships */}
-      <section className="py-32 bg-slate-50">
+      <section className="py-16 md:py-24 bg-slate-50">
         <div className="container mx-auto px-6 text-center">
            <div className="badge-modern mx-auto mb-8"><span></span> Network</div>
-           <h2 className="section-title mb-20">Mentors From <span className="text-primary">Top Firms.</span></h2>
+           <h2 className="section-title mb-10 md:mb-16">Mentors From <span className="text-primary">Top Firms.</span></h2>
            <LogoScroll />
         </div>
       </section>

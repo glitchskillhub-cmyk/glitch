@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
-import { createStudent, createRazorpayOrder, verifyRazorpayPayment } from '../utils/api';
+import { createStudent, createRazorpayOrder, verifyRazorpayPayment, getAllCourses } from '../utils/api';
+import { useAuth } from '../context/AuthContext';
 import { Loader2, User, CreditCard, ShieldCheck, MapPin, Building, GraduationCap, Phone, Mail, BookOpen, Send, Sparkles, ChevronRight, Zap, Briefcase, Clock } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
@@ -59,27 +60,51 @@ const SelectField = ({ label, name, options, icon: Icon, required = true, value,
 
 const Registration = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [formData, setFormData] = useState({
-    name: '', phone: '', email: '', course: 'Node.js Full Stack',
+    name: '', phone: '', email: '', course: '',
     rollNumber: '', collegeName: '', location: '', branch: '',
     presentRole: '', experience: '', companyName: ''
   });
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const [isFormValid, setIsFormValid] = useState(false);
+  const [courses, setCourses] = useState([]);
 
-  // Wake up server on load
+  // Fetch courses and handle url params on load
   useEffect(() => {
-    const wakeup = async () => {
+    const fetchCourses = async () => {
       try {
-        await getAllCourses(); // Smallest request to wake up the server
-        console.log('Server awakened! Ready for processing.');
+        const res = await getAllCourses();
+        setCourses(res.data);
+        
+        const queryParams = new URLSearchParams(window.location.search);
+        const courseParam = queryParams.get('course');
+        
+        if (courseParam) {
+          setFormData(prev => ({ ...prev, course: courseParam }));
+        } else if (res.data.length > 0) {
+          setFormData(prev => ({ ...prev, course: res.data[0].title }));
+        }
+        console.log('Courses fetched for registration selection!');
       } catch (e) {
-        console.log('Waking up server...');
+        console.error('Error fetching courses:', e);
       }
     };
-    wakeup();
+    fetchCourses();
   }, []);
+
+  // Pre-fill student info if they are already logged in
+  useEffect(() => {
+    if (user) {
+      setFormData(prev => ({
+        ...prev,
+        name: user.name || prev.name,
+        email: user.email || prev.email,
+        phone: user.phone || prev.phone
+      }));
+    }
+  }, [user]);
 
   const years = ['2020', '2021', '2022', '2023', '2024', '2025', '2026', '2027'];
   const employmentTypes = ['Fresher', 'Employee'];
@@ -124,7 +149,46 @@ const Registration = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!isFormValid) return toast.error('Please complete the form correctly.');
+
+    // Map fields to user-friendly label names
+    const requiredFields = [
+      { key: 'name', label: 'Full Name' },
+      { key: 'phone', label: 'Phone Number' },
+      { key: 'email', label: 'Gmail ID' },
+      { key: 'course', label: 'Course' },
+      { key: 'rollNumber', label: 'Passout Year' },
+      { key: 'collegeName', label: 'Fresher / Employee' },
+      { key: 'location', label: 'City' },
+      { key: 'branch', label: 'Graduation' }
+    ];
+
+    let validationErrors = {};
+    let missingLabels = [];
+
+    requiredFields.forEach(field => {
+      const val = formData[field.key];
+      const err = validateField(field.key, val);
+      if (err || !val || val.toString().trim() === '') {
+        validationErrors[field.key] = err || 'This field is required.';
+        missingLabels.push(field.label);
+      }
+    });
+
+    if (missingLabels.length > 0) {
+      setErrors(prev => ({ ...prev, ...validationErrors }));
+      
+      // Auto-scroll to the first invalid field for maximum convenience
+      const firstMissingKey = requiredFields.find(f => validationErrors[f.key])?.key;
+      const element = document.getElementsByName(firstMissingKey)[0];
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        element.focus();
+      }
+
+      toast.error(`Please fill out all mandatory fields: ${missingLabels.join(', ')}`);
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -189,11 +253,15 @@ const Registration = () => {
     }
   };
 
+  // Find currently selected course to display its dynamic price
+  const selectedCourseObj = courses.find(c => c.title === formData.course);
+  const currentPrice = selectedCourseObj && selectedCourseObj.price ? Number(selectedCourseObj.price) : 9999;
+
   return (
     <div className="min-h-screen bg-slate-50 selection:bg-primary selection:text-black">
       <Navbar />
 
-      <section className="pt-56 pb-24 relative overflow-hidden">
+      <section className="pt-36 md:pt-48 pb-14 md:pb-20 relative overflow-hidden">
         <div className="absolute top-0 right-0 w-1/2 h-1/2 bg-primary/10 blur-[150px] -z-0"></div>
         <div className="container mx-auto px-6 relative z-10">
           <div className="flex flex-col lg:flex-row gap-16 items-start">
@@ -227,7 +295,16 @@ const Registration = () => {
                       </div>
                       <div>
                         <h2 className="text-3xl font-bold tracking-tight">Candidate Info</h2>
-                        <p className="text-[10px] text-slate-400 font-bold uppercase tracking-[0.3em]">Fill the details below</p>
+                        {user ? (
+                          <p className="text-[10px] text-green-500 font-black uppercase tracking-[0.2em] flex items-center gap-1.5 mt-1">
+                            <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                            Logged in as: <span className="text-slate-900 font-black">{user.name} ({user.email})</span>
+                          </p>
+                        ) : (
+                          <p className="text-[10px] text-slate-400 font-bold uppercase tracking-[0.3em] mt-1">
+                            Fill the details below. Already registered? <Link to="/login" className="text-primary hover:underline font-black">Login here</Link>
+                          </p>
+                        )}
                       </div>
                    </div>
 
@@ -245,7 +322,7 @@ const Registration = () => {
                             label="Course" 
                             name="course" 
                             icon={BookOpen} 
-                            options={['Node.js Full Stack']} 
+                            options={courses.map(c => c.title)} 
                             value={formData.course} 
                             onChange={handleInputChange} 
                             error={errors.course} 
@@ -301,12 +378,12 @@ const Registration = () => {
                            <div className="flex flex-col md:flex-row justify-between items-end gap-10">
                               <div>
                                  <p className="text-[10px] font-black uppercase tracking-[0.4em] text-primary mb-3">Total Amount Due</p>
-                                 <h3 className="text-6xl font-black tracking-tighter text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]">₹9,999</h3>
+                                 <h3 className="text-6xl font-black tracking-tighter text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]">₹{currentPrice.toLocaleString()}</h3>
                                  <p className="text-slate-400 text-[10px] mt-6 font-bold uppercase tracking-[0.2em]">Inclusive of all taxes & hub access</p>
                               </div>
                               <button
                                 type="submit"
-                                disabled={loading || !isFormValid}
+                                disabled={loading}
                                 className="btn-premium py-6 px-12 bg-white text-black hover:bg-primary"
                               >
                                 {loading ? (

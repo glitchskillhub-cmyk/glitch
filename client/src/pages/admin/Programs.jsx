@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { getAllCourses, deleteCourse, createCourse } from '../../utils/api';
+import { getAllCourses, deleteCourse, createCourse, updateCourse } from '../../utils/api';
 import { 
   Plus, 
   Search, 
@@ -20,9 +20,12 @@ const Programs = () => {
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [editingCourseId, setEditingCourseId] = useState(null);
+  
   const [newCourse, setNewCourse] = useState({
     title: '', description: '', price: '9999', duration: '6 Months',
-    instructor: 'Glitch Team', thumbnail: ''
+    instructor: 'Glitch Team', thumbnail: '', readMoreLink: '', startDate: ''
   });
 
   const fetchData = async () => {
@@ -48,16 +51,42 @@ const Programs = () => {
     } catch { toast.error('Delete failed.'); }
   };
 
-  const handleAddCourse = async (e) => {
+  const handleEditClick = (course) => {
+    setIsEditMode(true);
+    setEditingCourseId(course._id);
+    setNewCourse({
+      title: course.title || '',
+      description: course.description || '',
+      price: course.price?.toString() || '9999',
+      duration: course.duration || '6 Months',
+      instructor: course.instructor || 'Glitch Team',
+      thumbnail: course.thumbnail || '',
+      readMoreLink: course.readMoreLink || '',
+      startDate: course.startDate || ''
+    });
+    setIsAddModalOpen(true);
+  };
+
+  const handleSaveCourse = async (e) => {
     e.preventDefault();
     try {
-      await createCourse(newCourse);
-      toast.success('Course added successfully!');
+      if (isEditMode) {
+        await updateCourse(editingCourseId, newCourse);
+        toast.success('Course updated successfully!');
+      } else {
+        await createCourse(newCourse);
+        toast.success('Course added successfully!');
+      }
       setIsAddModalOpen(false);
-      setNewCourse({ title: '', description: '', price: '9999', duration: '6 Months', instructor: 'Glitch Team', thumbnail: '' });
+      setIsEditMode(false);
+      setEditingCourseId(null);
+      setNewCourse({ 
+        title: '', description: '', price: '9999', duration: '6 Months', 
+        instructor: 'Glitch Team', thumbnail: '', readMoreLink: '', startDate: '' 
+      });
       fetchData();
     } catch {
-      toast.error('Failed to add course.');
+      toast.error(isEditMode ? 'Failed to update course.' : 'Failed to add course.');
     }
   };
 
@@ -71,7 +100,12 @@ const Programs = () => {
            <p className="text-zinc-500 text-sm mt-1 font-bold">Curate and control all hub offerings</p>
         </div>
         <button 
-          onClick={() => setIsAddModalOpen(true)}
+          onClick={() => {
+            setIsEditMode(false);
+            setEditingCourseId(null);
+            setNewCourse({ title: '', description: '', price: '9999', duration: '6 Months', instructor: 'Glitch Team', thumbnail: '', readMoreLink: '', startDate: '' });
+            setIsAddModalOpen(true);
+          }}
           className="flex items-center gap-2 px-8 py-4 bg-primary text-black rounded-2xl text-[10px] font-black uppercase tracking-widest hover:scale-[1.02] active:scale-95 transition-all shadow-xl shadow-primary/20"
         >
            <Plus size={16} /> New Program
@@ -85,7 +119,17 @@ const Programs = () => {
           <div className="col-span-full py-20 text-center bg-white rounded-[2.5rem] border border-zinc-100 border-dashed">
              <BookOpen className="mx-auto text-zinc-300 mb-4" size={48} />
              <p className="text-zinc-400 font-bold italic text-lg uppercase tracking-widest">No active programs found</p>
-             <button onClick={() => setIsAddModalOpen(true)} className="mt-4 text-primary text-[10px] font-black uppercase tracking-[0.2em] hover:underline">Add one now</button>
+             <button 
+               onClick={() => {
+                 setIsEditMode(false);
+                 setEditingCourseId(null);
+                 setNewCourse({ title: '', description: '', price: '9999', duration: '6 Months', instructor: 'Glitch Team', thumbnail: '', readMoreLink: '', startDate: '' });
+                 setIsAddModalOpen(true);
+               }} 
+               className="mt-4 text-primary text-[10px] font-black uppercase tracking-[0.2em] hover:underline"
+             >
+                Add one now
+             </button>
           </div>
         ) : courses.map((course) => (
           <div key={course._id} className="bg-white border border-zinc-100 rounded-[2.5rem] overflow-hidden group hover:border-primary/30 transition-all duration-500 flex flex-col h-full shadow-sm hover:shadow-2xl">
@@ -97,7 +141,10 @@ const Programs = () => {
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
                 <div className="absolute top-6 right-6 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                   <button className="p-2.5 bg-white/90 backdrop-blur-md text-zinc-900 rounded-xl hover:text-primary transition-all shadow-lg">
+                   <button 
+                     onClick={() => handleEditClick(course)}
+                     className="p-2.5 bg-white/90 backdrop-blur-md text-zinc-900 rounded-xl hover:text-primary transition-all shadow-lg"
+                   >
                       <Edit size={16} />
                    </button>
                    <button 
@@ -122,6 +169,12 @@ const Programs = () => {
                    <p className="text-zinc-500 text-xs font-bold line-clamp-2 mt-2 leading-relaxed">
                       {course.description}
                    </p>
+                   {course.startDate && (
+                     <p className="text-[10px] font-black uppercase tracking-widest text-zinc-400 mt-3 flex items-center gap-1.5">
+                        <Clock size={12} className="text-primary" />
+                        Starts: <span className="text-zinc-950 font-black">{course.startDate}</span>
+                     </p>
+                   )}
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
@@ -142,16 +195,27 @@ const Programs = () => {
                       </div>
                       <p className="text-[10px] font-black uppercase tracking-widest text-zinc-500">{course.instructor}</p>
                    </div>
-                   <button className="text-[10px] font-black uppercase tracking-widest text-zinc-400 hover:text-primary flex items-center gap-1 group/btn">
-                      Syllabus <ChevronRight size={14} className="group-hover/btn:translate-x-1 transition-transform" />
-                   </button>
+                   {course.readMoreLink ? (
+                     <a 
+                       href={course.readMoreLink} 
+                       target="_blank" 
+                       rel="noopener noreferrer"
+                       className="text-[10px] font-black uppercase tracking-widest text-primary hover:underline flex items-center gap-1 group/btn"
+                     >
+                        Info/Read More <ChevronRight size={14} className="group-hover/btn:translate-x-1 transition-transform" />
+                     </a>
+                   ) : (
+                     <button className="text-[10px] font-black uppercase tracking-widest text-zinc-400 hover:text-primary flex items-center gap-1 group/btn">
+                        Syllabus <ChevronRight size={14} className="group-hover/btn:translate-x-1 transition-transform" />
+                     </button>
+                   )}
                 </div>
              </div>
           </div>
         ))}
       </div>
 
-      {/* Add Course Modal */}
+      {/* Add/Edit Course Modal */}
       {isAddModalOpen && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-6">
            <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setIsAddModalOpen(false)}></div>
@@ -162,8 +226,12 @@ const Programs = () => {
                        <Layout size={24} />
                     </div>
                     <div>
-                       <h3 className="text-2xl font-black uppercase tracking-tighter italic leading-none text-zinc-900">New Program</h3>
-                       <p className="text-zinc-500 text-xs font-bold mt-1 uppercase tracking-widest">Create a course entry</p>
+                       <h3 className="text-2xl font-black uppercase tracking-tighter italic leading-none text-zinc-900">
+                          {isEditMode ? 'Edit Program' : 'New Program'}
+                       </h3>
+                       <p className="text-zinc-500 text-xs font-bold mt-1 uppercase tracking-widest">
+                          {isEditMode ? 'Modify course parameters' : 'Create a course entry'}
+                       </p>
                     </div>
                  </div>
                  <button onClick={() => setIsAddModalOpen(false)} className="p-3 bg-zinc-100 text-zinc-400 hover:text-zinc-900 rounded-2xl transition-all">
@@ -171,7 +239,7 @@ const Programs = () => {
                  </button>
               </div>
 
-              <form onSubmit={handleAddCourse} className="space-y-6">
+              <form onSubmit={handleSaveCourse} className="space-y-6">
                  <div className="space-y-2">
                     <label className="text-[10px] font-black uppercase tracking-widest text-zinc-400 ml-2">Program Title</label>
                     <input 
@@ -188,7 +256,7 @@ const Programs = () => {
                     <label className="text-[10px] font-black uppercase tracking-widest text-zinc-400 ml-2">Description</label>
                     <textarea 
                       required
-                      className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl px-6 py-4 text-sm focus:border-primary transition-all outline-none text-zinc-600 min-h-[100px]"
+                      className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl px-6 py-4 text-sm focus:border-primary transition-all outline-none text-zinc-600 min-h-[80px]"
                       placeholder="What will students learn in this course?"
                       value={newCourse.description}
                       onChange={(e) => setNewCourse({...newCourse, description: e.target.value})}
@@ -220,12 +288,35 @@ const Programs = () => {
                     </div>
                  </div>
 
+                 <div className="grid grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                       <label className="text-[10px] font-black uppercase tracking-widest text-zinc-400 ml-2">Course Start Date</label>
+                       <input 
+                         type="text" 
+                         className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl px-6 py-4 text-sm focus:border-primary transition-all outline-none text-zinc-900 font-bold"
+                         placeholder="e.g. June 15, 2026"
+                         value={newCourse.startDate}
+                         onChange={(e) => setNewCourse({...newCourse, startDate: e.target.value})}
+                       />
+                    </div>
+                    <div className="space-y-2">
+                       <label className="text-[10px] font-black uppercase tracking-widest text-zinc-400 ml-2">Read More Link</label>
+                       <input 
+                         type="url" 
+                         className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl px-6 py-4 text-sm focus:border-primary transition-all outline-none text-zinc-900 font-bold"
+                         placeholder="https://glitchskillhub.com/course"
+                         value={newCourse.readMoreLink}
+                         onChange={(e) => setNewCourse({...newCourse, readMoreLink: e.target.value})}
+                       />
+                    </div>
+                 </div>
+
                  <div className="pt-6">
                     <button 
                       type="submit"
                       className="w-full bg-primary text-black py-5 rounded-[2rem] text-xs font-black uppercase tracking-[0.3em] hover:scale-[1.02] active:scale-95 transition-all shadow-xl shadow-primary/20"
                     >
-                       Create Program
+                       {isEditMode ? 'Save Changes' : 'Create Program'}
                     </button>
                  </div>
               </form>

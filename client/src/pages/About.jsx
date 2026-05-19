@@ -15,7 +15,7 @@ const About = () => {
       <Navbar />
       
       {/* Header */}
-      <section className="pt-56 pb-24 relative overflow-hidden bg-slate-50/50">
+      <section className="pt-36 md:pt-48 pb-14 md:pb-20 relative overflow-hidden bg-slate-50/50">
         <div className="container mx-auto px-6 text-center">
           <div className="badge-modern mx-auto mb-8">
             <span></span> Our Identity
@@ -30,9 +30,9 @@ const About = () => {
       </section>
 
       {/* Story Section */}
-      <section className="py-32">
+      <section className="py-16 md:py-24">
         <div className="container mx-auto px-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 md:gap-16 items-center">
             <div className="relative">
               <div className="bento-card aspect-square bg-slate-900 overflow-hidden relative p-0 group border-none shadow-2xl">
                  <img src={codingImg} alt="Practical Coding" className="absolute inset-0 w-full h-full object-cover opacity-50 group-hover:opacity-70 transition-opacity" />
@@ -80,7 +80,7 @@ const About = () => {
       </section>
 
       {/* Mission & Vision */}
-      <section className="py-32 bg-slate-50">
+      <section className="py-16 md:py-24 bg-slate-50">
         <div className="container mx-auto px-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
              <div className="bento-card bg-white p-12">

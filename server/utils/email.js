@@ -179,5 +179,123 @@ const sendReceiptEmail = async (studentDetails, paymentDetails) => {
   }
 };
 
-module.exports = { sendReceiptEmail };
+const sendOTPEmail = async (email, name, otp) => {
+  const mailOptions = {
+    from: 'Glitch Skill Hub <info@glitchedu.online>',
+    to: email,
+    subject: `🔐 Reset Your Password — OTP: ${otp} | Glitch Skill Hub`,
+    html: `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body style="margin: 0; padding: 0; background-color: #f4f4f5; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
+  <div style="max-width: 600px; margin: 0 auto; padding: 40px 20px;">
+    
+    <!-- Header -->
+    <div style="background: linear-gradient(135deg, #18181b 0%, #27272a 100%); border-radius: 20px 20px 0 0; padding: 40px 40px 30px; text-align: center;">
+      <div style="display: inline-block; background-color: #facc15; width: 56px; height: 56px; border-radius: 14px; line-height: 56px; text-align: center; margin-bottom: 16px;">
+        <span style="font-size: 24px; font-weight: 900; color: #18181b; font-style: italic;">G</span>
+      </div>
+      <h1 style="margin: 0; color: #ffffff; font-size: 22px; font-weight: 800; letter-spacing: -0.5px;">
+        GLITCH <span style="color: #facc15;">SKILL HUB</span>
+      </h1>
+      <p style="color: #a1a1aa; font-size: 11px; text-transform: uppercase; letter-spacing: 3px; margin-top: 6px;">
+        Build. Code. Conquer.
+      </p>
+    </div>
+
+    <!-- OTP Banner -->
+    <div style="background-color: #ffffff; padding: 30px 40px;">
+      <p style="color: #3f3f46; font-size: 15px; line-height: 1.7; margin: 0 0 20px;">
+        Hi <strong style="color: #18181b;">${name}</strong>,
+      </p>
+      <p style="color: #3f3f46; font-size: 15px; line-height: 1.7; margin: 0 0 30px;">
+        We received a request to reset the password for your Glitch Skill Hub account. Use the verification code below to proceed with setting up a new password:
+      </p>
+
+      <!-- OTP Display -->
+      <div style="background: linear-gradient(135deg, #fefce8 0%, #fffbeb 100%); border: 1px solid #fde68a; border-radius: 16px; padding: 30px; text-align: center; margin-bottom: 28px;">
+        <div style="color: #854d0e; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 12px;">
+          Your One-Time Password (OTP)
+        </div>
+        <div style="font-family: 'Courier New', Courier, monospace; font-size: 38px; font-weight: 800; letter-spacing: 8px; color: #18181b; background-color: #ffffff; border: 2px dashed #facc15; padding: 14px 20px; display: inline-block; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
+          ${otp}
+        </div>
+        <p style="margin: 16px 0 0; color: #713f12; font-size: 13px; font-weight: 600;">
+          This OTP is valid for <strong>10 minutes</strong>.
+        </p>
+      </div>
+
+      <p style="color: #71717a; font-size: 13px; line-height: 1.6; margin: 0 0 24px;">
+        🔒 For security reasons, do not share this OTP with anyone. Our support team will never ask for your passwords or OTPs.
+      </p>
+
+      <p style="color: #71717a; font-size: 13px; line-height: 1.6; margin: 0;">
+        If you did not request a password reset, you can safely ignore this email — your password will remain unchanged and your account is secure.
+      </p>
+
+      <!-- Divider -->
+      <hr style="border: none; border-top: 1px solid #e4e4e7; margin: 30px 0;">
+
+      <!-- Support Details -->
+      <div style="text-align: center; margin-bottom: 10px;">
+        <p style="color: #71717a; font-size: 13px; margin: 0 0 16px;">
+          Need assistance? We're here to help!
+        </p>
+        <table style="margin: 0 auto; border-collapse: collapse;">
+          <tr>
+            <td style="padding: 8px 20px; text-align: center;">
+              <div style="font-size: 20px; margin-bottom: 4px;">📞</div>
+              <a href="tel:+916300127932" style="color: #18181b; font-size: 14px; font-weight: 700; text-decoration: none;">
+                +91 6300127932
+              </a>
+            </td>
+            <td style="padding: 8px 20px; text-align: center; border-left: 1px solid #e4e4e7;">
+              <div style="font-size: 20px; margin-bottom: 4px;">✉️</div>
+              <a href="mailto:info@glitchedu.online" style="color: #18181b; font-size: 14px; font-weight: 700; text-decoration: none;">
+                info@glitchedu.online
+              </a>
+            </td>
+          </tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div style="background: linear-gradient(135deg, #18181b 0%, #27272a 100%); border-radius: 0 0 20px 20px; padding: 30px 40px; text-align: center;">
+      <p style="color: #facc15; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 3px; margin: 0 0 8px;">
+        Glitch Skill Hub
+      </p>
+      <p style="color: #71717a; font-size: 11px; margin: 0 0 4px;">
+        Your Future Starts Here — Build. Code. Conquer.
+      </p>
+      <p style="color: #52525b; font-size: 10px; margin: 12px 0 0;">
+        © ${new Date().getFullYear()} Glitch Skill Hub. All rights reserved.
+      </p>
+    </div>
+
+  </div>
+</body>
+</html>
+    `,
+  };
+
+  try {
+    const { data, error } = await resend.emails.send(mailOptions);
+    if (error) {
+      console.error('❌ Resend OTP Email Error:', error.message);
+      throw new Error(error.message);
+    }
+    console.log('✅ OTP email sent successfully to:', email, 'Data:', data);
+    return data;
+  } catch (error) {
+    console.error('❌ Error sending OTP email:', error.message);
+    throw error;
+  }
+};
+
+module.exports = { sendReceiptEmail, sendOTPEmail };
 

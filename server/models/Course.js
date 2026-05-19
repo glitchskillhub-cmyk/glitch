@@ -21,11 +21,27 @@ const courseSchema = new mongoose.Schema({
   },
   category: {
     type: String,
-    required: true
+    default: 'Development'
   },
   price: {
     type: Number,
     default: 0
+  },
+  readMoreLink: {
+    type: String,
+    default: ''
+  },
+  startDate: {
+    type: String,
+    default: ''
+  },
+  duration: {
+    type: String,
+    default: '6 Months'
+  },
+  instructor: {
+    type: String,
+    default: 'Glitch Team'
   },
   modules: [{
     title: String,

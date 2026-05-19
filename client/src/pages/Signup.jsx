@@ -40,7 +40,7 @@ const Signup = () => {
     <div className="min-h-screen bg-white">
       <Navbar />
       
-      <section className="pt-56 pb-24 relative overflow-hidden">
+      <section className="pt-36 md:pt-48 pb-14 md:pb-20 relative overflow-hidden">
         <div className="absolute top-0 left-0 w-1/2 h-full bg-primary/5 blur-[150px]"></div>
         
         <div className="container mx-auto px-6">

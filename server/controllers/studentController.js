@@ -94,6 +94,7 @@ exports.savePayment = async (req, res, next) => {
   try {
     const { studentId } = req.params;
     const { amount, razorpayOrderId, razorpayPaymentId, razorpaySignature, status } = req.body;
+    
     const payment = await Payment.create({
       studentId, amount,
       razorpayOrderId: razorpayOrderId || '',
@@ -101,6 +102,54 @@ exports.savePayment = async (req, res, next) => {
       razorpaySignature: razorpaySignature || '',
       status: status || 'Paid'
     });
+
+    // If payment is successfully marked as Paid, set student to Active and provision their User account!
+    if (status === 'Paid') {
+      const student = await Student.findByIdAndUpdate(
+        studentId,
+        { status: 'Active' },
+        { new: true }
+      );
+
+      if (student) {
+        const User = require('../models/User');
+        const Enrollment = require('../models/Enrollment');
+        const Course = require('../models/Course');
+
+        let user = await User.findOne({ email: student.email.toLowerCase() });
+
+        if (!user) {
+          console.log(`🌱 Auto-creating User account for manually enrolled student: ${student.email}`);
+          user = await User.create({
+            name: student.name,
+            email: student.email.toLowerCase(),
+            password: 'student@123', // Standard default password
+            phone: student.phone,
+            role: 'student',
+            isVerified: true,
+            isEnrolled: true
+          });
+        } else {
+          user.isEnrolled = true;
+          await user.save();
+        }
+
+        if (user) {
+          const courseObj = await Course.findOne({ title: student.course });
+          if (courseObj) {
+            const existingEnrollment = await Enrollment.findOne({ student: user._id, course: courseObj._id });
+            if (!existingEnrollment) {
+              await Enrollment.create({
+                student: user._id,
+                course: courseObj._id,
+                status: 'ongoing'
+              });
+            }
+          }
+        }
+      }
+    }
+
     res.json({ success: true, payment });
   } catch (error) {
     next(error);
@@ -118,7 +167,48 @@ exports.getStudentDocuments = async (req, res, next) => {
 // Get Payments
 exports.getStudentPayments = async (req, res, next) => {
   try {
-    const payments = await Payment.find({ studentId: req.params.studentId });
+    const studentId = req.params.studentId;
+    
+    const User = require('../models/User');
+    const Student = require('../models/Student');
+    const mongoose = require('mongoose');
+    
+    let studentIds = [studentId];
+    let targetEmail = '';
+    
+    // Check if the query parameter is a valid MongoDB ObjectId
+    const isValidObjectId = mongoose.Types.ObjectId.isValid(studentId);
+    
+    if (isValidObjectId) {
+      // 1. Try to find if it's a User ID
+      const userObj = await User.findById(studentId);
+      if (userObj) {
+        targetEmail = userObj.email.toLowerCase();
+      } else {
+        // 2. Try to find if it's a Student registration ID
+        const studentObj = await Student.findById(studentId);
+        if (studentObj) {
+          targetEmail = studentObj.email.toLowerCase();
+        }
+      }
+    } else if (studentId && studentId.length === 8) {
+      // 3. Handle shortened user IDs (first 8 hex characters of ObjectId)
+      const users = await User.find({});
+      const matchedUser = users.find(u => u._id.toString().substring(0, 8).toLowerCase() === studentId.toLowerCase());
+      if (matchedUser) {
+        targetEmail = matchedUser.email.toLowerCase();
+      }
+    }
+    
+    // If we successfully resolved a student email, fetch all payments under any registrations matching that email
+    if (targetEmail) {
+      const registrations = await Student.find({ email: targetEmail });
+      if (registrations.length > 0) {
+        studentIds = registrations.map(r => r._id);
+      }
+    }
+    
+    const payments = await Payment.find({ studentId: { $in: studentIds } }).sort({ createdAt: -1 });
     res.json(payments);
   } catch (error) { next(error); }
 };
@@ -126,7 +216,55 @@ exports.getStudentPayments = async (req, res, next) => {
 // Update Status
 exports.updateStudentStatus = async (req, res, next) => {
   try {
-    const student = await Student.findByIdAndUpdate(req.params.id, { status: req.body.status }, { new: true });
+    const { status } = req.body;
+    const student = await Student.findByIdAndUpdate(req.params.id, { status }, { new: true });
+
+    if (student) {
+      const User = require('../models/User');
+      const Enrollment = require('../models/Enrollment');
+      const Course = require('../models/Course');
+
+      const isActiveOrApproved = status === 'Active' || status === 'Approved';
+      let user = await User.findOne({ email: student.email.toLowerCase() });
+
+      if (isActiveOrApproved) {
+        if (!user) {
+          console.log(`🌱 Auto-creating User account for activated student: ${student.email}`);
+          user = await User.create({
+            name: student.name,
+            email: student.email.toLowerCase(),
+            password: 'student@123',
+            phone: student.phone,
+            role: 'student',
+            isVerified: true,
+            isEnrolled: true
+          });
+        } else {
+          user.isEnrolled = true;
+          await user.save();
+        }
+
+        if (user) {
+          const courseObj = await Course.findOne({ title: student.course });
+          if (courseObj) {
+            const existingEnrollment = await Enrollment.findOne({ student: user._id, course: courseObj._id });
+            if (!existingEnrollment) {
+              await Enrollment.create({
+                student: user._id,
+                course: courseObj._id,
+                status: 'ongoing'
+              });
+            }
+          }
+        }
+      } else {
+        if (user) {
+          user.isEnrolled = false;
+          await user.save();
+        }
+      }
+    }
+
     res.json({ success: true, student });
   } catch (error) { next(error); }
 };
@@ -148,6 +286,57 @@ exports.updateStudent = async (req, res, next) => {
 
     const student = await Student.findByIdAndUpdate(req.params.id, updateData, { new: true });
     if (!student) { res.status(404); throw new Error('Student not found'); }
+
+    // Sync with User status if email or status is changed
+    if (student) {
+      const User = require('../models/User');
+      const Enrollment = require('../models/Enrollment');
+      const Course = require('../models/Course');
+
+      const isActiveOrApproved = student.status === 'Active' || student.status === 'Approved';
+      let user = await User.findOne({ email: student.email.toLowerCase() });
+
+      if (isActiveOrApproved) {
+        if (!user) {
+          console.log(`🌱 Auto-creating User account on student update: ${student.email}`);
+          user = await User.create({
+            name: student.name,
+            email: student.email.toLowerCase(),
+            password: 'student@123',
+            phone: student.phone,
+            role: 'student',
+            isVerified: true,
+            isEnrolled: true
+          });
+        } else {
+          // Update details on the user too
+          user.name = student.name;
+          user.phone = student.phone;
+          user.isEnrolled = true;
+          await user.save();
+        }
+
+        if (user) {
+          const courseObj = await Course.findOne({ title: student.course });
+          if (courseObj) {
+            const existingEnrollment = await Enrollment.findOne({ student: user._id, course: courseObj._id });
+            if (!existingEnrollment) {
+              await Enrollment.create({
+                student: user._id,
+                course: courseObj._id,
+                status: 'ongoing'
+              });
+            }
+          }
+        }
+      } else {
+        if (user) {
+          user.isEnrolled = false;
+          await user.save();
+        }
+      }
+    }
+
     res.json({ success: true, student });
   } catch (error) { next(error); }
 };
@@ -195,15 +384,7 @@ exports.getMyEnrollments = async (req, res, next) => {
     
     if (user && user.isEnrolled) {
       const enrollments = await Enrollment.find({ student: req.user.id }).populate('course');
-      if (enrollments.length === 0) {
-          return res.json([{
-            title: "Node.js Full Stack Development",
-            progress: 0,
-            nextLesson: "Getting Started with Node.js",
-            image: "https://images.unsplash.com/photo-1587620962725-abab7fe55159?w=800&auto=format&fit=crop&q=60"
-          }]);
-      }
-      res.json(enrollments);
+      res.json(enrollments || []);
     } else {
       res.json([]);
     }
@@ -215,12 +396,31 @@ exports.getMyTasks = async (req, res, next) => {
   try {
     const tasks = await Task.find({ student: req.user.id });
     if (tasks.length === 0) {
-       return res.json([
-         { title: "Portfolio Website", deadline: "Friday, 6:00 PM", status: "Pending", points: 100, type: "Coding" },
-         { title: "API Integration Lab", deadline: "Saturday, 12:00 PM", status: "Submitted", points: 150, type: "Coding" }
-       ]);
+       return res.json([]);
     }
     res.json(tasks);
+  } catch (error) { next(error); }
+};
+
+// Submit Task
+exports.submitTask = async (req, res, next) => {
+  try {
+    const { taskId } = req.params;
+    const { link } = req.body;
+    const task = await Task.findOne({ _id: taskId, student: req.user.id });
+    
+    if (!task) {
+      res.status(404);
+      throw new Error('Task not found');
+    }
+    
+    task.status = 'Submitted';
+    task.submission = {
+      link,
+      submittedAt: Date.now()
+    };
+    await task.save();
+    res.json({ success: true, task });
   } catch (error) { next(error); }
 };
 
@@ -229,13 +429,51 @@ exports.getAllJobs = async (req, res, next) => {
   try {
     const jobs = await Job.find().sort({ createdAt: -1 });
     if (jobs.length === 0) {
-      return res.json([
-        { title: "Jr. Backend Developer", company: "TechCorp Solutions", location: "Remote / Hyderabad", salary: "6-8 LPA", tags: ["Node.js", "MongoDB"] },
-        { title: "Full Stack Intern", company: "InnovateX AI", location: "Bangalore", salary: "₹20k - 25k", tags: ["React", "Express"] },
-        { title: "Software Engineer Trainee", company: "CloudScale Inc", location: "Pune", salary: "4.5 LPA", tags: ["JavaScript", "AWS"] },
-      ]);
+      return res.json([]);
     }
     res.json(jobs);
+  } catch (error) { next(error); }
+};
+
+// Apply for Job
+exports.applyJob = async (req, res, next) => {
+  try {
+    const JobApplication = require('../models/JobApplication');
+    const { jobId } = req.params;
+    
+    // Check if already applied
+    const existing = await JobApplication.findOne({ student: req.user.id, job: jobId });
+    if (existing) {
+      return res.status(400).json({ message: 'Already applied to this job' });
+    }
+    
+    const application = await JobApplication.create({
+      student: req.user.id,
+      job: jobId
+    });
+    
+    res.status(201).json({ success: true, application });
+  } catch (error) { next(error); }
+};
+
+// Mark Lesson Complete
+exports.markLessonComplete = async (req, res, next) => {
+  try {
+    const { enrollmentId } = req.params;
+    const { lessonId } = req.body; // Can be title or ID string
+    
+    const enrollment = await Enrollment.findOne({ _id: enrollmentId, student: req.user.id });
+    if (!enrollment) {
+      return res.status(404).json({ message: 'Enrollment not found' });
+    }
+    
+    if (!enrollment.completedLessons.includes(lessonId)) {
+      enrollment.completedLessons.push(lessonId);
+      // Optional: calculate progress here if we know total lessons
+      await enrollment.save();
+    }
+    
+    res.json({ success: true, enrollment });
   } catch (error) { next(error); }
 };
 
@@ -250,16 +488,188 @@ exports.getStudentDashboardStats = async (req, res, next) => {
     const tasksCount = await Task.countDocuments({ student: userId });
     const completedTasksCount = await Task.countDocuments({ student: userId, status: 'Submitted' });
     
-    // Count enrollments
-    const enrollmentsCount = await Enrollment.countDocuments({ student: userId });
+    // Fetch active enrollment
+    const activeEnrollment = await Enrollment.findOne({ student: userId });
     
-    // Default stats if empty
+    // Calculate stats
+    const progress = activeEnrollment ? `${activeEnrollment.progress || 0}%` : "0%";
+    const learningHours = activeEnrollment ? `${Math.round((activeEnrollment.completedLessons?.length || 0) * 1.5)}h` : "0h";
+    
+    const Certificate = require('../models/Certificate');
+    const certificatesCount = await Certificate.countDocuments({ student: userId });
+
     res.json({
-      progress: user.isEnrolled ? "65%" : "0%",
+      progress,
       tasks: `${completedTasksCount}/${tasksCount || 5}`,
-      learningHours: user.isEnrolled ? "48h" : "0h",
-      certificates: "0"
+      learningHours,
+      certificates: certificatesCount.toString()
     });
+  } catch (error) { next(error); }
+};
+
+// Admin: Create a Task for a student
+exports.createTaskByAdmin = async (req, res, next) => {
+  try {
+    const { studentId, title, description, points, type, deadline } = req.body;
+    const task = await Task.create({
+      student: studentId,
+      title,
+      description,
+      points: points || 100,
+      type: type || 'Coding',
+      deadline: deadline || null,
+      status: 'Pending'
+    });
+    res.status(201).json({ success: true, task });
+  } catch (error) { next(error); }
+};
+
+// Admin: Get all tasks/submissions
+exports.getAllTaskSubmissions = async (req, res, next) => {
+  try {
+    const tasks = await Task.find()
+      .populate('student', 'name email')
+      .populate('course', 'title')
+      .sort({ createdAt: -1 });
+    res.json(tasks);
+  } catch (error) { next(error); }
+};
+
+// Admin: Review a task submission
+exports.reviewTaskSubmission = async (req, res, next) => {
+  try {
+    const { taskId } = req.params;
+    const { grade, feedback } = req.body;
+    
+    const task = await Task.findById(taskId);
+    if (!task) {
+      return res.status(404).json({ message: 'Task not found' });
+    }
+    
+    task.status = 'Reviewed';
+    if (task.submission) {
+      task.submission.grade = grade;
+      task.submission.feedback = feedback;
+    } else {
+      task.submission = {
+        link: '',
+        submittedAt: Date.now(),
+        grade,
+        feedback
+      };
+    }
+    
+    await task.save();
+    res.json({ success: true, task });
+  } catch (error) { next(error); }
+};
+
+// Admin: Create a Job
+exports.createJobByAdmin = async (req, res, next) => {
+  try {
+    const { title, company, location, salary, description, requirements, link, type } = req.body;
+    const job = await Job.create({
+      title,
+      company,
+      location,
+      salary: salary || 'Not Disclosed',
+      description,
+      requirements: requirements || [],
+      link: link || '',
+      type: type || 'Full-time',
+      postedBy: req.user.id
+    });
+    res.status(201).json({ success: true, job });
+  } catch (error) { next(error); }
+};
+
+// Admin: Delete a Job
+exports.deleteJobByAdmin = async (req, res, next) => {
+  try {
+    const { jobId } = req.params;
+    const job = await Job.findByIdAndDelete(jobId);
+    if (!job) return res.status(404).json({ message: 'Job not found' });
+    res.json({ success: true, message: 'Job deleted successfully' });
+  } catch (error) { next(error); }
+};
+
+// Admin: Get all job applications
+exports.getAllJobApplications = async (req, res, next) => {
+  try {
+    const JobApplication = require('../models/JobApplication');
+    const applications = await JobApplication.find()
+      .populate('student', 'name email phone')
+      .populate('job')
+      .sort({ appliedAt: -1 });
+    res.json(applications);
+  } catch (error) { next(error); }
+};
+
+// Admin: Update job application status
+exports.updateJobApplicationStatus = async (req, res, next) => {
+  try {
+    const JobApplication = require('../models/JobApplication');
+    const { appId } = req.params;
+    const { status } = req.body;
+    
+    const application = await JobApplication.findByIdAndUpdate(
+      appId,
+      { status },
+      { new: true }
+    );
+    if (!application) return res.status(404).json({ message: 'Application not found' });
+    res.json({ success: true, application });
+  } catch (error) { next(error); }
+};
+
+// Admin: Issue Certificate
+exports.issueCertificateByAdmin = async (req, res, next) => {
+  try {
+    const Certificate = require('../models/Certificate');
+    const { studentId, title, fileUrl } = req.body;
+    
+    const certificateId = 'GSH-CERT-' + Math.floor(100000 + Math.random() * 900000);
+    const certificate = await Certificate.create({
+      student: studentId,
+      title,
+      certificateId,
+      fileUrl: fileUrl || ''
+    });
+    
+    res.status(201).json({ success: true, certificate });
+  } catch (error) { next(error); }
+};
+
+// Admin: Get all issued certificates
+exports.getAllCertificates = async (req, res, next) => {
+  try {
+    const Certificate = require('../models/Certificate');
+    const certificates = await Certificate.find()
+      .populate('student', 'name email')
+      .sort({ issueDate: -1 });
+    res.json(certificates);
+  } catch (error) { next(error); }
+};
+
+// Student: Get my certificates
+exports.getMyCertificates = async (req, res, next) => {
+  try {
+    const Certificate = require('../models/Certificate');
+    const certificates = await Certificate.find({ student: req.user.id })
+      .sort({ issueDate: -1 });
+    res.json(certificates);
+  } catch (error) { next(error); }
+};
+
+// Public/Student: Verify certificate
+exports.verifyCertificate = async (req, res, next) => {
+  try {
+    const Certificate = require('../models/Certificate');
+    const { certId } = req.params;
+    const certificate = await Certificate.findOne({ certificateId: certId })
+      .populate('student', 'name email');
+    if (!certificate) return res.status(404).json({ message: 'Certificate invalid or not found' });
+    res.json({ success: true, certificate });
   } catch (error) { next(error); }
 };
 

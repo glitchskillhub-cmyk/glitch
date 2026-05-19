@@ -11,6 +11,7 @@ const connectDB = require('./config/db');
 const studentRoutes = require('./routes/studentRoutes');
 const authRoutes = require('./routes/authRoutes');
 const courseRoutes = require('./routes/courseRoutes');
+const communityRoutes = require('./routes/communityRoutes');
 const errorHandler = require('./middleware/errorMiddleware');
 const path = require('path');
 const fs = require('fs');
@@ -30,7 +31,10 @@ app.use(helmet({ crossOriginResourcePolicy: false }));
 app.use(morgan('dev'));
 app.use(cors({
   origin: [
-    "http://localhost:5173", 
+    "http://localhost:5173",
+    "http://localhost:5174",
+    "http://localhost:5175",
+    "http://localhost:5176",
     "https://glitch-skill-hub.vercel.app", 
     "https://glitch-dashboard-client.onrender.com",
     "https://glitch-ashen-iota.vercel.app"
@@ -51,6 +55,7 @@ app.get('/', (req, res) => {
 // MOUNT MORE SPECIFIC ROUTES FIRST
 app.use('/api/auth', authRoutes);
 app.use('/api/courses', courseRoutes);
+app.use('/api/community', communityRoutes);
 app.use('/api', studentRoutes);
 
 // Error handler
@@ -62,6 +67,24 @@ const PORT = process.env.PORT || 5000;
 const startServer = async () => {
   try {
     await connectDB();
+    
+    // Seed default admin accounts if they don't exist
+    const User = require('./models/User');
+    const adminEmails = ['admin@glitch.com', 'admin@svsolutions.com'];
+    for (const email of adminEmails) {
+      const adminExists = await User.findOne({ email });
+      if (!adminExists) {
+        console.log(`🌱 Seeding admin account: ${email}`);
+        await User.create({
+          name: email === 'admin@glitch.com' ? 'Glitch Admin' : 'SV Admin',
+          email,
+          password: 'admin@123',
+          role: 'admin',
+          isVerified: true
+        });
+      }
+    }
+
     app.listen(PORT, () => {
       console.log(`🚀 Server running on port ${PORT}`);
     });

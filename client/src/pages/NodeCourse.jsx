@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
@@ -6,243 +6,325 @@ import {
   CheckCircle2, Clock, Calendar, Zap, Rocket, Users, 
   Terminal, Code, Database, Layout, ShieldCheck, 
   ArrowRight, Phone, Mail, Play, Star, ChevronRight,
-  BookOpen, Target, Award, Cpu
+  BookOpen, Target, Award, Cpu, Monitor, Globe,
+  MessageSquare, FileCode, Briefcase, TrendingUp,
+  ChevronDown, Layers, GitBranch, Server, Cloud
 } from 'lucide-react';
 
-// Import Assets
 import courseImg from '../assets/images/Glitch SM Poster 1.jpg (1).jpeg';
-// import demoVideo from '../assets/images/VN20260412_231437.mp4';
+import codingImg from '../assets/images/coding.png';
 import LogoScroll from '../components/LogoScroll';
+import './NodeCourse.css';
 
 const NodeCourse = () => {
   const whatsappLink = "https://wa.me/916300127932?text=Hi%2C%20I%20am%20interested%20in%20the%20Node.js%20Full%20Stack%20Course.%20Please%20provide%20more%20details.";
+  const [openFaq, setOpenFaq] = useState(null);
 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
-  const coursePath = [
+  const highlights = [
+    { icon: Terminal, title: "Real-World Projects", desc: "Build 5+ production-grade apps from scratch — not toy demos." },
+    { icon: Users, title: "MNC-Trained Engineers", desc: "Learn from engineers at Google, TCS, Accenture & more." },
+    { icon: Target, title: "Resume & Job Prep", desc: "Mock interviews, portfolio building & direct referrals." },
+    { icon: ShieldCheck, title: "Live Doubt Solving", desc: "Unlimited doubt sessions with 1-on-1 mentor support." }
+  ];
+
+  const routine = [
+    { time: "8:00 PM", label: "Live Class Begins", icon: Monitor, desc: "Join the live session with your mentor. Concepts + live coding." },
+    { time: "9:00 PM", label: "Hands-on Practice", icon: Code, desc: "Work on real tasks with mentor guidance in real-time." },
+    { time: "9:30 PM", label: "Doubt Clearing", icon: MessageSquare, desc: "Get every question answered before the session ends." },
+    { time: "Friday", label: "Weekly Project Task", icon: FileCode, desc: "Industry-standard assignments graded by MNC engineers." }
+  ];
+
+  const differentiators = [
+    { icon: Zap, title: "100% Practical Training", desc: "Zero slides. Every session is live coding on real-world scenarios." },
+    { icon: Cpu, title: "MNC-Standard Codebase", desc: "Learn to write code the way top companies actually build software." },
+    { icon: Briefcase, title: "Resume & Portfolio", desc: "We build your GitHub, LinkedIn & portfolio to get noticed by recruiters." },
+    { icon: TrendingUp, title: "Job Support + Referrals", desc: "Mock interviews, career coaching & direct referrals to hiring partners." }
+  ];
+
+  const syllabus = [
     { 
-      phase: "Phase 01", 
-      title: "Frontend Foundations", 
-      skills: ["HTML5 & Semantic UI", "Modern CSS & Flexbox/Grid", "React.js Framework", "Responsive Architecture"],
-      icon: Layout
+      phase: "Phase 01", title: "HTML & CSS Mastery", weeks: "Week 1-3", icon: Layout,
+      topics: ["HTML5 Semantic Elements", "CSS Flexbox & Grid", "Responsive Design", "Animations & Transitions"]
     },
     { 
-      phase: "Phase 02", 
-      title: "JavaScript Engine", 
-      skills: ["ES6+ Syntax", "Asynchronous JS", "DOM Manipulation", "State Management"],
-      icon: Code
+      phase: "Phase 02", title: "JavaScript Deep Dive", weeks: "Week 4-6", icon: Code,
+      topics: ["ES6+ Modern Syntax", "Async/Await & Promises", "DOM Manipulation", "Error Handling & Debugging"]
     },
     { 
-      phase: "Phase 03", 
-      title: "Backend Core", 
-      skills: ["Node.js Runtime", "Express.js Framework", "RESTful API Design", "Authentication (JWT)"],
-      icon: Terminal
+      phase: "Phase 03", title: "React.js Framework", weeks: "Week 7-9", icon: Layers,
+      topics: ["Component Architecture", "State & Props", "React Router & Hooks", "Context API & Redux"]
     },
     { 
-      phase: "Phase 04", 
-      title: "Data & Scaling", 
-      skills: ["PostgreSQL Databases", "SQL Query Optimization", "Docker Basics", "System Deployment"],
-      icon: Database
+      phase: "Phase 04", title: "Node.js & Express", weeks: "Week 10-12", icon: Server,
+      topics: ["Node.js Runtime", "Express.js RESTful APIs", "Middleware & Routing", "Authentication (JWT/OAuth)"]
+    },
+    { 
+      phase: "Phase 05", title: "Database & SQL", weeks: "Week 13-14", icon: Database,
+      topics: ["PostgreSQL / MongoDB", "Schema Design & Relations", "CRUD Operations", "Query Optimization"]
+    },
+    { 
+      phase: "Phase 06", title: "Deployment & DevOps", weeks: "Week 15-16", icon: Cloud,
+      topics: ["Git & GitHub Workflows", "Docker Basics", "CI/CD Pipelines", "Cloud Deployment (AWS/Render)"]
     }
   ];
 
+  const projects = [
+    { title: "E-Commerce Platform", desc: "Full-stack store with payments, cart, auth & admin panel." },
+    { title: "Social Media Dashboard", desc: "Real-time feed, notifications, chat & user profiles." },
+    { title: "Project Management Tool", desc: "Kanban boards, team collaboration & task tracking." },
+    { title: "Portfolio Website", desc: "Your personal brand site — deployed & interview-ready." }
+  ];
+
+  const faqs = [
+    { q: "Who is this course for?", a: "This course is for complete beginners, students, and working professionals who want to become job-ready full stack developers. No prior coding experience is needed." },
+    { q: "What is the class schedule?", a: "Live classes run Monday to Friday, 8:00 PM – 9:30 PM IST. Fridays include a weekly project task. All sessions are recorded for later review." },
+    { q: "Will I get a certificate?", a: "Yes! You'll receive an industry-recognized certificate upon completion, along with a fully built portfolio showcasing your projects." },
+    { q: "What if I miss a class?", a: "Every session is recorded. You get lifetime access to all recordings, notes, and resources. You can also attend doubt-clearing sessions any time." },
+    { q: "Is there placement support?", a: "Absolutely. We provide resume building, mock interviews, LinkedIn optimization, and direct referrals to our hiring partner network." },
+    { q: "What tech stack will I learn?", a: "HTML, CSS, JavaScript, React.js, Node.js, Express.js, PostgreSQL/MongoDB, Git, Docker, and cloud deployment — the complete MERN/PERN stack." }
+  ];
+
   return (
-    <div className="min-h-screen bg-white">
+    <div className="nc-page">
       <Navbar />
 
-      {/* Hero Section - Maximum Clarity */}
-      <section className="pt-56 pb-24 relative bg-white overflow-hidden">
-        <div className="container mx-auto px-6 relative z-10">
-          <div className="max-w-5xl mx-auto">
-            <div className="flex flex-col lg:flex-row items-center gap-16">
-              <div className="flex-1">
-                <div className="inline-flex items-center gap-3 px-4 py-2 bg-primary/10 rounded-full mb-8">
-                  <div className="w-2 h-2 bg-primary rounded-full animate-pulse"></div>
-                  <span className="text-[10px] font-bold uppercase tracking-widest text-slate-900">Only 20 Seats per Batch</span>
+      {/* ===== HERO ===== */}
+      <section className="nc-hero">
+        <div className="nc-container">
+          <div className="nc-hero-grid">
+            <div className="nc-hero-text">
+              <div className="nc-badge-glow">
+                <span className="nc-dot pulse" /> Only 20 Seats per Batch
+              </div>
+              <h1 className="nc-hero-title">
+                Become a<br />Full Stack<br />
+                <span className="nc-yellow italic">Developer</span>
+              </h1>
+              <p className="nc-hero-sub">
+                A 100% practical engineering program designed to make you job-ready for top-tier MNC roles. No boring slides — just raw code.
+              </p>
+              <div className="nc-hero-meta">
+                <div>
+                  <span className="nc-meta-label">One-time Investment</span>
+                  <span className="nc-meta-value big">₹9,999</span>
                 </div>
-                
-                <h1 className="text-5xl md:text-8xl font-black tracking-tighter leading-[0.9] mb-10 text-slate-900">
-                  Become Full Stack <br />
-                  <span className="text-primary italic">Developer.</span>
-                </h1>
-                
-                <p className="text-xl text-slate-500 mb-12 leading-relaxed max-w-xl">
-                  A 100% practical engineering program designed to make you job-ready for top-tier MNC roles. No boring slides, just raw code.
-                </p>
-
-                <div className="flex flex-wrap items-center gap-8 mb-12">
-                   <div>
-                      <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">One-time Investment</p>
-                      <div className="text-5xl font-black text-slate-900">₹9,999</div>
-                   </div>
-                   <div className="h-12 w-px bg-slate-100 hidden sm:block"></div>
-                   <div>
-                      <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Total Duration</p>
-                      <div className="text-2xl font-bold text-slate-900">16 Weeks</div>
-                   </div>
+                <div className="nc-divider" />
+                <div>
+                  <span className="nc-meta-label">Total Duration</span>
+                  <span className="nc-meta-value">16 Weeks</span>
                 </div>
-
-                <div className="flex flex-wrap gap-6">
-                  <a href={whatsappLink} target="_blank" rel="noopener noreferrer" className="btn-premium py-6 px-12 text-lg">
-                    <span>Enroll Now</span>
-                    <ArrowRight size={20} />
-                  </a>
-                  <button onClick={() => document.getElementById('syllabus').scrollIntoView({ behavior: 'smooth' })} className="flex items-center gap-2 font-bold text-xs uppercase tracking-[0.2em] hover:text-primary transition-all">
-                    Explore Syllabus <ChevronRight size={18} />
-                  </button>
+                <div className="nc-divider" />
+                <div>
+                  <span className="nc-meta-label">Mode</span>
+                  <span className="nc-meta-value">100% Online</span>
                 </div>
               </div>
-
-              <div className="flex-1 relative">
-                <div className="bento-card p-0 rounded-[4rem] overflow-hidden shadow-2xl border-none">
-                   <img src={courseImg} alt="Node.js Course" className="w-full h-auto" />
-                </div>
-                <div className="absolute -top-10 -right-10 w-32 h-32 bg-primary rounded-full blur-[80px] -z-10 opacity-50"></div>
+              <div className="nc-hero-actions">
+                <a href={whatsappLink} target="_blank" rel="noopener noreferrer" className="nc-btn-primary">
+                  Enroll Now <ArrowRight size={18} />
+                </a>
+                <button onClick={() => document.getElementById('syllabus')?.scrollIntoView({ behavior: 'smooth' })} className="nc-btn-ghost">
+                  Explore Syllabus <ChevronRight size={18} />
+                </button>
               </div>
+            </div>
+            <div className="nc-hero-img">
+              <img src={courseImg} alt="Full Stack Node.js Course" />
+              <div className="nc-glow-orb" />
             </div>
           </div>
         </div>
       </section>
 
-      {/* Highlights - Simplified Cards */}
-      <section className="py-32 bg-slate-50">
-        <div className="container mx-auto px-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {[
-              { icon: Zap, title: "100% Practical", desc: "Build & ship real apps." },
-              { icon: Cpu, title: "MNC Engineers", desc: "Taught by Google & TCS Leads." },
-              { icon: Target, title: "Job Ready", desc: "Resume & Interview mastery." },
-              { icon: Users, title: "Batch of 20", desc: "Personal attention guaranteed." }
-            ].map((h, i) => (
-              <div key={i} className="bg-white p-10 rounded-[3rem] border border-slate-100 shadow-sm hover:shadow-xl transition-all group">
-                <div className="w-14 h-14 bg-slate-50 rounded-2xl flex items-center justify-center text-slate-900 mb-8 group-hover:bg-primary transition-colors">
+      {/* ===== BUILT FOR JOB-READY DEVELOPERS ===== */}
+      <section className="nc-section">
+        <div className="nc-container">
+          <div className="nc-section-header">
+            <div className="nc-badge-dark"><span className="nc-dot" /> Why This Course</div>
+            <h2 className="nc-section-title">Built for <span className="nc-yellow italic">Job-Ready</span> Developers</h2>
+            <p className="nc-section-sub">
+              This isn't another tutorial playlist. It's a structured, mentor-led engineering bootcamp 
+              that mirrors how real MNC teams build software.
+            </p>
+          </div>
+          <div className="nc-highlights-grid">
+            {highlights.map((h, i) => (
+              <div key={i} className="nc-highlight-card">
+                <div className="nc-icon-box">
                   <h.icon size={24} />
                 </div>
-                <h3 className="text-xl font-bold mb-3">{h.title}</h3>
-                <p className="text-slate-500 text-sm leading-relaxed">{h.desc}</p>
+                <h3>{h.title}</h3>
+                <p>{h.desc}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Schedule - Minimalist */}
-      <section className="py-32 bg-white">
-        <div className="container mx-auto px-6">
-          <div className="max-w-4xl mx-auto bento-card bg-slate-950 text-white p-12 md:p-20 rounded-[4rem] flex flex-col md:flex-row items-center gap-16">
-             <div className="flex-1">
-                <div className="badge-modern mb-8 border-white/10 text-white"><span></span> Class Timing</div>
-                <h2 className="text-4xl md:text-5xl font-bold mb-8">8:00 PM – <span className="text-primary">9:30 PM</span></h2>
-                <p className="text-slate-400 text-lg mb-0">Monday to Friday. Every Friday industry-standard tasks will be assigned.</p>
-             </div>
-             <div className="w-full md:w-px h-px md:h-40 bg-white/10"></div>
-             <div className="flex-1 flex flex-col gap-6">
-                <div className="flex items-center gap-4">
-                   <div className="w-10 h-10 bg-primary/20 rounded-xl flex items-center justify-center text-primary"><CheckCircle2 size={20} /></div>
-                   <span className="font-bold">Live Sessions</span>
-                </div>
-                <div className="flex items-center gap-4">
-                   <div className="w-10 h-10 bg-primary/20 rounded-xl flex items-center justify-center text-primary"><CheckCircle2 size={20} /></div>
-                   <span className="font-bold">Recorded Access</span>
-                </div>
-                <div className="flex items-center gap-4">
-                   <div className="w-10 h-10 bg-primary/20 rounded-xl flex items-center justify-center text-primary"><CheckCircle2 size={20} /></div>
-                   <span className="font-bold">Direct Mentor Chat</span>
-                </div>
-             </div>
+      {/* ===== YOUR DAILY LEARNING ROUTINE ===== */}
+      <section className="nc-section nc-section-alt">
+        <div className="nc-container">
+          <div className="nc-section-header">
+            <div className="nc-badge-dark"><span className="nc-dot" /> Daily Schedule</div>
+            <h2 className="nc-section-title">YOUR DAILY LEARNING <span className="nc-yellow italic">ROUTINE</span></h2>
+            <p className="nc-section-sub">
+              Every day follows a structured pattern — live teaching, hands-on coding, 
+              and doubt clearing. No passive watching.
+            </p>
           </div>
-        </div>
-      </section>
-
-      {/* Syllabus Roadmap - Step by Step */}
-      <section id="syllabus" className="py-32 bg-white">
-        <div className="container mx-auto px-6">
-          <div className="text-center mb-24">
-             <div className="badge-modern mx-auto mb-8"><span></span> Learning Path</div>
-             <h2 className="section-title">The Engineering <span className="text-primary italic">Roadmap.</span></h2>
-          </div>
-
-          <div className="max-w-4xl mx-auto space-y-12">
-            {coursePath.map((phase, i) => (
-              <div key={i} className="flex flex-col md:flex-row gap-10 group">
-                <div className="w-full md:w-48 shrink-0">
-                   <div className="bg-slate-50 p-6 rounded-[2rem] border border-slate-100 group-hover:border-primary group-hover:bg-primary/5 transition-all text-center">
-                      <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-4">{phase.phase}</p>
-                      <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center text-slate-900 mx-auto shadow-sm group-hover:bg-primary">
-                         <phase.icon size={24} />
-                      </div>
-                   </div>
+          <div className="nc-routine-grid">
+            {routine.map((r, i) => (
+              <div key={i} className="nc-routine-card">
+                <div className="nc-routine-time">{r.time}</div>
+                <div className="nc-routine-icon">
+                  <r.icon size={28} />
                 </div>
-                <div className="flex-1 bento-card p-10 group-hover:border-primary transition-all">
-                   <h3 className="text-2xl font-bold mb-6">{phase.title}</h3>
-                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      {phase.skills.map((skill, j) => (
-                        <div key={j} className="flex items-center gap-3">
-                           <div className="w-2 h-2 bg-primary rounded-full"></div>
-                           <span className="text-slate-600 font-medium">{skill}</span>
-                        </div>
-                      ))}
-                   </div>
-                </div>
+                <h3>{r.label}</h3>
+                <p>{r.desc}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Demo Section - Clean Focus */}
-      <section className="py-32 bg-slate-50 overflow-hidden relative">
-        <div className="container mx-auto px-6">
-          <div className="flex flex-col lg:flex-row items-center gap-20">
-            <div className="flex-1 order-2 lg:order-1">
-               <div className="aspect-video rounded-[3rem] overflow-hidden shadow-2xl border border-white bg-slate-900 flex flex-col items-center justify-center text-center p-8 group">
-                  <Play className="text-primary mb-6 animate-pulse" size={64} fill="currentColor" />
-                  <h3 className="text-white text-xl font-bold mb-2">Live Demo Session</h3>
-                  <p className="text-slate-400 text-sm">Experience our real-time MNC-style teaching methodology.</p>
-               </div>
-            </div>
-            <div className="flex-1 order-1 lg:order-2">
-               <div className="badge-modern mb-8"><span></span> Real Experience</div>
-               <h2 className="section-title mb-8">Watch a <span className="text-primary">Demo</span> Session.</h2>
-               <p className="text-lg text-slate-500 leading-relaxed mb-10">
-                 See how we bridge the gap between "Tutorial Hell" and "Production Engineering". Witness our unique MNC-style teaching method.
-               </p>
-               <a href={whatsappLink} target="_blank" rel="noopener noreferrer" className="btn-premium py-5 px-10">
-                 <span>Start Learning Now</span>
-                 <Zap size={18} fill="currentColor" />
-               </a>
-            </div>
+      {/* ===== WHAT MAKES THIS COURSE DIFFERENT ===== */}
+      <section className="nc-section">
+        <div className="nc-container">
+          <div className="nc-section-header">
+            <div className="nc-badge-dark"><span className="nc-dot" /> Our Edge</div>
+            <h2 className="nc-section-title">What Makes This Course <span className="nc-yellow italic">Different</span></h2>
+          </div>
+          <div className="nc-diff-grid">
+            {differentiators.map((d, i) => (
+              <div key={i} className="nc-diff-card">
+                <div className="nc-diff-icon">
+                  <d.icon size={28} />
+                </div>
+                <h3>{d.title}</h3>
+                <p>{d.desc}</p>
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* MNC Network */}
-      <section className="py-24 bg-white border-y border-slate-50">
-         <div className="container mx-auto px-6 text-center mb-12">
-            <p className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-400">Our Students are Hired By & Mentors are From</p>
-         </div>
-         <LogoScroll />
+      {/* ===== FULL STACK SYLLABUS ===== */}
+      <section id="syllabus" className="nc-section nc-section-alt">
+        <div className="nc-container">
+          <div className="nc-section-header">
+            <div className="nc-badge-dark"><span className="nc-dot" /> Curriculum</div>
+            <h2 className="nc-section-title">FULL STACK <span className="nc-yellow">NODE.JS</span> SYLLABUS</h2>
+            <p className="nc-section-sub">
+              Every module is built around real deliverables. You'll ship code every week.
+            </p>
+          </div>
+          <div className="nc-syllabus-grid">
+            {syllabus.map((s, i) => (
+              <div key={i} className="nc-syllabus-card">
+                <div className="nc-syllabus-phase">{s.phase}</div>
+                <div className="nc-syllabus-icon">
+                  <s.icon size={28} />
+                </div>
+                <h3>{s.title}</h3>
+                <span className="nc-syllabus-weeks">{s.weeks}</span>
+                <ul>
+                  {s.topics.map((t, j) => (
+                    <li key={j}><CheckCircle2 size={14} /> {t}</li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </div>
       </section>
 
-      {/* Final Enrollment CTA */}
-      <section className="py-32 bg-white">
-        <div className="container mx-auto px-6 text-center">
-           <div className="badge-modern mx-auto mb-8"><span></span> Next Batch Starting Soon</div>
-           <h2 className="text-4xl md:text-6xl font-black tracking-tight mb-12">
-             Ready to <span className="text-primary italic">Transform?</span>
-           </h2>
-           <div className="flex flex-col sm:flex-row justify-center gap-6">
-              <a href={whatsappLink} target="_blank" rel="noopener noreferrer" className="btn-premium py-6 px-16 text-xl">
-                 <span>Enroll on WhatsApp</span>
+      {/* ===== SEE WHAT YOU'LL BUILD ===== */}
+      <section className="nc-section">
+        <div className="nc-container">
+          <div className="nc-build-layout">
+            <div className="nc-build-text">
+              <div className="nc-badge-dark"><span className="nc-dot" /> Portfolio Projects</div>
+              <h2 className="nc-section-title">See What You'll <span className="nc-yellow italic">Build</span></h2>
+              <p className="nc-section-sub" style={{ textAlign: 'left' }}>
+                By the end of this program, you'll have 4+ production-ready projects in your portfolio — 
+                enough to impress any recruiter.
+              </p>
+              <div className="nc-build-list">
+                {projects.map((p, i) => (
+                  <div key={i} className="nc-build-item">
+                    <div className="nc-build-num">0{i + 1}</div>
+                    <div>
+                      <h4>{p.title}</h4>
+                      <p>{p.desc}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <a href={whatsappLink} target="_blank" rel="noopener noreferrer" className="nc-btn-primary" style={{ marginTop: '2rem' }}>
+                Start Building Now <ArrowRight size={18} />
               </a>
-              <Link to="/contact" className="py-6 px-16 border-2 border-slate-100 rounded-full font-bold uppercase tracking-widest hover:bg-slate-50 transition-all flex items-center justify-center">
-                 Speak to a Mentor
-              </Link>
-           </div>
-           <p className="mt-12 text-slate-400 font-medium">Verified by top MNC Engineers from Google & Accenture.</p>
+            </div>
+            <div className="nc-build-img">
+              <img src={codingImg} alt="Projects you'll build" />
+              <div className="nc-glow-orb" />
+            </div>
+          </div>
         </div>
+      </section>
+
+      {/* ===== CTA ===== */}
+      <section className="nc-cta">
+        <div className="nc-container" style={{ textAlign: 'center' }}>
+          <h2 className="nc-cta-title">
+            READY TO <span className="nc-yellow">LEVEL UP?</span><br />
+            DON'T MISS THIS BATCH.
+          </h2>
+          <p className="nc-cta-sub">
+            Only 20 seats. Once filled, you'll have to wait for the next batch.
+          </p>
+          <div className="nc-cta-actions">
+            <a href={whatsappLink} target="_blank" rel="noopener noreferrer" className="nc-btn-primary large">
+              Enroll Now — ₹9,999 <ArrowRight size={20} />
+            </a>
+            <Link to="/contact" className="nc-btn-outline">
+              Speak to a Mentor
+            </Link>
+          </div>
+          <p className="nc-cta-trust">Verified by top MNC Engineers from Google & Accenture.</p>
+        </div>
+      </section>
+
+      {/* ===== FAQ ===== */}
+      <section className="nc-section nc-section-alt">
+        <div className="nc-container">
+          <div className="nc-section-header">
+            <div className="nc-badge-dark"><span className="nc-dot" /> Got Questions?</div>
+            <h2 className="nc-section-title">Frequently Asked <span className="nc-yellow italic">Questions</span></h2>
+          </div>
+          <div className="nc-faq-list">
+            {faqs.map((faq, i) => (
+              <div key={i} className={`nc-faq-item ${openFaq === i ? 'open' : ''}`} onClick={() => setOpenFaq(openFaq === i ? null : i)}>
+                <div className="nc-faq-q">
+                  <span>{faq.q}</span>
+                  <ChevronDown size={20} className={`nc-faq-arrow ${openFaq === i ? 'rotated' : ''}`} />
+                </div>
+                {openFaq === i && <div className="nc-faq-a">{faq.a}</div>}
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ===== MNC NETWORK ===== */}
+      <section className="nc-logos-section">
+        <div className="nc-container" style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
+          <p className="nc-logos-label">OUR STUDENTS ARE HIRED BY & MENTORS ARE FROM</p>
+        </div>
+        <LogoScroll />
       </section>
 
       <Footer />

@@ -42,14 +42,34 @@ export const deleteStudent = (id) => api.delete(`/students/${id}`);
 // Dashboard
 export const getDashboardStats = () => api.get('/dashboard/stats');
 export const getMyEnrollments = () => api.get('/my-enrollments');
+export const markLessonComplete = (enrollmentId, data) => api.post(`/my-enrollments/${enrollmentId}/mark-lesson`, data);
 export const getMyTasks = () => api.get('/my-tasks');
+export const submitTask = (taskId, data) => api.post(`/my-tasks/${taskId}/submit`, data);
 export const getJobs = () => api.get('/jobs');
+export const applyJob = (jobId) => api.post(`/jobs/${jobId}/apply`);
 export const getStudentStats = () => api.get('/student-stats');
+export const createTaskByAdmin = (data) => api.post('/admin/tasks', data);
+export const getAllTaskSubmissions = () => api.get('/admin/tasks/submissions');
+export const reviewTaskSubmission = (taskId, data) => api.post(`/admin/tasks/${taskId}/review`, data);
+export const createJobByAdmin = (data) => api.post('/admin/jobs', data);
+export const deleteJobByAdmin = (jobId) => api.delete(`/admin/jobs/${jobId}`);
+export const getAllJobApplications = () => api.get('/admin/jobs/applications');
+export const updateJobApplicationStatus = (appId, data) => api.put(`/admin/jobs/applications/${appId}`, data);
+export const issueCertificateByAdmin = (data) => api.post('/admin/certificates', data);
+export const getAllCertificates = () => api.get('/admin/certificates');
+export const getMyCertificates = () => api.get('/my-certificates');
+export const verifyCertificate = (certId) => api.get(`/certificates/verify/${certId}`);
 
 // Courses
 export const getAllCourses = () => api.get('/courses');
+export const getCourse = (id) => api.get(`/courses/${id}`);
 export const createCourse = (data) => api.post('/courses', data);
 export const deleteCourse = (id) => api.delete(`/courses/${id}`);
+export const updateCourse = (id, data) => api.put(`/courses/${id}`, data);
+export const addModule = (courseId, data) => api.post(`/courses/${courseId}/modules`, data);
+export const deleteModule = (courseId, moduleId) => api.delete(`/courses/${courseId}/modules/${moduleId}`);
+export const addLesson = (courseId, moduleId, data) => api.post(`/courses/${courseId}/modules/${moduleId}/lessons`, data);
+export const deleteLesson = (courseId, moduleId, lessonId) => api.delete(`/courses/${courseId}/modules/${moduleId}/lessons/${lessonId}`);
 
 // Documents
 export const uploadDocuments = (studentId, formData) =>
@@ -65,5 +85,16 @@ export const getStudentPayments = (studentId) => api.get(`/payments/${studentId}
 
 // Auth/Admin
 export const registerMentorByAdmin = (data) => api.post('/auth/admin/register-mentor', data);
+export const updateProfile = (data) => api.put('/auth/profile', data);
+export const forgotPassword = (data) => api.post('/auth/forgot-password', data);
+export const verifyOTP = (data) => api.post('/auth/verify-otp', data);
+export const resetPassword = (data) => api.post('/auth/reset-password', data);
+
+// Community
+export const getDoubts = () => api.get('/community/doubts');
+export const createDoubt = (data) => api.post('/community/doubts', data);
+export const answerDoubt = (doubtId, data) => api.post(`/community/doubts/${doubtId}/answer`, data);
+export const getAnnouncements = () => api.get('/community/announcements');
+export const createAnnouncement = (data) => api.post('/community/announcements', data);
 
 export default api;

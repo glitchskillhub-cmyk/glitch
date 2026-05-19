@@ -32,7 +32,14 @@ exports.createOrder = async (req, res, next) => {
     const { studentId, course } = req.body;
     console.log('Creating order for student:', studentId, 'course:', course);
 
-    const amountInPaise = 999900; // ₹9,999 = 999,900 paise
+    // Look up course price dynamically from the DB
+    const Course = require('../models/Course');
+    const courseObj = await Course.findOne({ title: course });
+    const price = courseObj && courseObj.price ? Number(courseObj.price) : 9999;
+    
+    console.log(`- Course: ${course} | Price detected: ${price}`);
+
+    const amountInPaise = price * 100; // Charge in paise
     const options = {
       amount: amountInPaise,
       currency: 'INR',
@@ -43,10 +50,10 @@ exports.createOrder = async (req, res, next) => {
     const order = await getRazorpay().orders.create(options);
     console.log('Razorpay order created:', order.id);
 
-    // Create pending payment record
+    // Create pending payment record with dynamic price
     await Payment.create({
       studentId,
-      amount: 9999, // ₹9,999
+      amount: price,
       razorpayOrderId: order.id,
       status: 'Pending'
     });
@@ -100,20 +107,37 @@ exports.verifyPayment = async (req, res, next) => {
         const Enrollment = require('../models/Enrollment');
         const Course = require('../models/Course');
 
-        const user = await User.findOneAndUpdate(
-          { email: student.email.toLowerCase() },
-          { isEnrolled: true },
-          { new: true }
-        );
+        let user = await User.findOne({ email: student.email.toLowerCase() });
+
+        if (!user) {
+          // Automatically create the student User account if it doesn't exist yet
+          console.log(`🌱 Auto-creating User account for paid student: ${student.email}`);
+          user = await User.create({
+            name: student.name,
+            email: student.email.toLowerCase(),
+            password: 'student@123', // Standard default student password
+            phone: student.phone,
+            role: 'student',
+            isVerified: true,
+            isEnrolled: true
+          });
+        } else {
+          user.isEnrolled = true;
+          await user.save();
+        }
 
         if (user) {
           const courseObj = await Course.findOne({ title: student.course });
           if (courseObj) {
-            await Enrollment.create({
-              student: user._id,
-              course: courseObj._id,
-              status: 'ongoing'
-            });
+            // Check if enrollment already exists to avoid duplicates
+            const existingEnrollment = await Enrollment.findOne({ student: user._id, course: courseObj._id });
+            if (!existingEnrollment) {
+              await Enrollment.create({
+                student: user._id,
+                course: courseObj._id,
+                status: 'ongoing'
+              });
+            }
           }
         }
       }

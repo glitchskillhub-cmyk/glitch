@@ -43,7 +43,7 @@ const Programs = () => {
       <Navbar />
       
       {/* Hero Section */}
-      <section className="pt-56 pb-24 relative overflow-hidden bg-slate-50">
+      <section className="pt-36 md:pt-48 pb-14 md:pb-20 relative overflow-hidden bg-slate-50">
         <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_30%_30%,rgba(250,204,21,0.1)_0%,transparent_50%)]"></div>
         <div className="container mx-auto px-6 relative z-10 text-center">
           <div className="badge-modern mx-auto mb-8">
@@ -161,9 +161,9 @@ const Programs = () => {
       </section>
 
       {/* Why Glitch Programs? */}
-      <section className="py-32 bg-white">
+      <section className="py-16 md:py-24 bg-white">
         <div className="container mx-auto px-6">
-          <div className="max-w-4xl mx-auto text-center mb-20">
+          <div className="max-w-4xl mx-auto text-center mb-10 md:mb-16">
              <div className="badge-modern mx-auto mb-8"><span></span> Why Glitch</div>
              <h2 className="text-3xl md:text-5xl font-bold tracking-tight leading-tight">Built for <span className="text-primary">Performance.</span></h2>
           </div>

@@ -30,7 +30,7 @@ const Home = () => {
       <Navbar />
 
       {/* Hero Section */}
-      <section className="relative pt-40 pb-32 overflow-hidden">
+      <section className="relative pt-36 md:pt-40 pb-16 md:pb-24 overflow-hidden">
         <div className="absolute top-[-10%] right-[-5%] w-[40%] h-[40%] bg-primary/20 rounded-full blur-[120px] -z-10 animate-pulse"></div>
         
         <div className="container mx-auto px-6">
@@ -78,7 +78,7 @@ const Home = () => {
       </section>
 
       {/* Elite Mentor Panel + Logo Scroll */}
-      <section className="py-32 bg-white overflow-hidden relative">
+      <section className="py-16 md:py-24 bg-white overflow-hidden relative">
         <div className="container mx-auto px-6 relative z-10">
           <div className="text-center mb-16">
              <div className="badge-modern mx-auto mb-8"><span></span> Professional Mentors</div>
@@ -96,9 +96,9 @@ const Home = () => {
       </section>
 
       {/* Our Story (Who We Are) */}
-      <section className="py-32 overflow-hidden bg-slate-50">
+      <section className="py-16 md:py-24 overflow-hidden bg-slate-50">
         <div className="container mx-auto px-6">
-          <div className="flex flex-col lg:flex-row items-center gap-20">
+          <div className="flex flex-col lg:flex-row items-center gap-10 md:gap-16">
             <div className="flex-1 order-2 lg:order-1 relative">
               <div className="bento-card p-0 overflow-hidden aspect-video bg-slate-200 shadow-2xl">
                  <img src={mentorsImg} alt="Our Mentors" className="w-full h-full object-cover" />
@@ -127,10 +127,10 @@ const Home = () => {
       </section>
 
       {/* Why Choose Glitch */}
-      <section className="py-32">
+      <section className="py-16 md:py-24">
         <div className="container mx-auto px-6 text-center">
           <div className="badge-modern mx-auto mb-8"><span></span> Why Us</div>
-          <h2 className="section-title mb-20">Why Choose <span className="text-primary">Glitch?</span></h2>
+          <h2 className="section-title mb-10 md:mb-16">Why Choose <span className="text-primary">Glitch?</span></h2>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {[
@@ -152,9 +152,9 @@ const Home = () => {
       </section>
 
       {/* Practical Learning Section */}
-      <section className="py-32 bg-slate-50 overflow-hidden">
+      <section className="py-16 md:py-24 bg-slate-50 overflow-hidden">
         <div className="container mx-auto px-6">
-          <div className="flex flex-col lg:flex-row items-center gap-20">
+          <div className="flex flex-col lg:flex-row items-center gap-10 md:gap-16">
             <div className="flex-1">
               <div className="badge-modern mb-8"><span></span> Practical First</div>
               <h2 className="section-title mb-8">Build <span className="text-primary">Real</span> Products, <br />Not Just Tutorials.</h2>
@@ -188,9 +188,9 @@ const Home = () => {
       </section>
 
       {/* Mentorship Section */}
-      <section className="py-32">
+      <section className="py-16 md:py-24">
         <div className="container mx-auto px-6">
-          <div className="flex flex-col lg:flex-row items-center gap-20">
+          <div className="flex flex-col lg:flex-row items-center gap-10 md:gap-16">
             <div className="flex-1 order-2 lg:order-1 relative">
               <div className="bento-card p-0 overflow-hidden aspect-[4/3] shadow-2xl group">
                 <img src={mentorshipImg} alt="Mentorship" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
@@ -224,7 +224,7 @@ const Home = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-32 bg-white">
+      <section className="py-16 md:py-24 bg-white">
         <div className="container mx-auto px-6 text-center">
           <div className="relative inline-block">
              <h2 className="text-4xl md:text-6xl font-bold tracking-tight leading-tight mb-12">

@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { Briefcase, Target, Zap, ExternalLink, Search, Rocket, FileText, Loader2 } from 'lucide-react';
-import { getJobs } from '../../utils/api';
+import { Briefcase, Target, Zap, ExternalLink, Search, Rocket, FileText, Loader2, CheckCircle2 } from 'lucide-react';
+import { getJobs, applyJob } from '../../utils/api';
+import toast from 'react-hot-toast';
 
 const CareerHub = () => {
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [applyingTo, setApplyingTo] = useState(null);
+  const [appliedJobs, setAppliedJobs] = useState(new Set());
 
   useEffect(() => {
     const fetchJobs = async () => {
@@ -19,6 +22,21 @@ const CareerHub = () => {
     };
     fetchJobs();
   }, []);
+
+  const handleApply = async (jobId) => {
+    if (appliedJobs.has(jobId)) return;
+    try {
+      setApplyingTo(jobId);
+      await applyJob(jobId);
+      toast.success('Successfully applied to job!');
+      setAppliedJobs(new Set([...appliedJobs, jobId]));
+    } catch (error) {
+      console.error("Failed to apply", error);
+      toast.error(error.response?.data?.message || 'Failed to apply');
+    } finally {
+      setApplyingTo(null);
+    }
+  };
 
   if (loading) {
     return (
@@ -73,9 +91,19 @@ const CareerHub = () => {
                      <span className="flex items-center gap-1.5"><Zap size={14} /> {job.salary}</span>
                   </div>
                   <div className="flex gap-4">
-                     <button className="btn-premium flex-1 py-4 text-xs">
-                        <span>Apply Now</span>
-                     </button>
+                     {appliedJobs.has(job._id || i) ? (
+                        <button className="btn-premium flex-1 py-4 text-xs bg-green-500 hover:bg-green-600 text-white shadow-green-500/20" disabled>
+                           <span className="flex items-center gap-2 justify-center"><CheckCircle2 size={16} /> Applied</span>
+                        </button>
+                     ) : (
+                        <button 
+                          onClick={() => handleApply(job._id || i)} 
+                          disabled={applyingTo === (job._id || i)}
+                          className="btn-premium flex-1 py-4 text-xs"
+                        >
+                           <span>{applyingTo === (job._id || i) ? 'Applying...' : 'Apply Now'}</span>
+                        </button>
+                     )}
                      <button className="p-4 rounded-xl border border-slate-100 hover:bg-slate-50 transition-colors text-slate-400">
                         <ExternalLink size={18} />
                      </button>

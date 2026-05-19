@@ -140,13 +140,13 @@ const Payments = () => {
                                 {p.name.charAt(0)}
                              </div>
                              <div>
-                                <p className="text-sm font-bold text-white leading-none mb-1">{p.name}</p>
+                                <p className="text-sm font-bold text-zinc-900 leading-none mb-1">{p.name}</p>
                                 <p className="text-[10px] font-bold text-zinc-600 uppercase tracking-widest">{p.email}</p>
                              </div>
                           </div>
                        </td>
                        <td className="px-8 py-6">
-                          <p className="text-sm font-black text-white italic">₹9,999</p>
+                          <p className="text-sm font-black text-zinc-900 italic">₹9,999</p>
                        </td>
                        <td className="px-8 py-6">
                           <div className="flex items-center gap-2 text-zinc-500">

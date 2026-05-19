@@ -1,22 +1,31 @@
 import React, { useState, useEffect } from 'react';
-import { Layers, Download, ExternalLink, ShieldCheck, Clock, Zap, Loader2 } from 'lucide-react';
+import { Layers, Download, ExternalLink, ShieldCheck, Clock, Zap, Loader2, AlertCircle } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
-import { getStudentPayments, getMyEnrollments } from '../../utils/api';
+import { getStudentPayments, getMyEnrollments, createRazorpayOrder, verifyRazorpayPayment, getStudentStats } from '../../utils/api';
+import { toast } from 'react-hot-toast';
+
+const RAZORPAY_KEY = import.meta.env.VITE_RAZORPAY_KEY_ID || 'rzp_test_Skseh7l3ljLVO7';
 
 const Payments = () => {
   const { user } = useAuth();
   const [history, setHistory] = useState([]);
   const [activePlan, setActivePlan] = useState('');
   const [totalPaid, setTotalPaid] = useState(0);
+  const [coursePrice, setCoursePrice] = useState(0);
+  const [dueAmount, setDueAmount] = useState(0);
+  const [studentIdState, setStudentIdState] = useState(null);
+  const [courseTitleState, setCourseTitleState] = useState('');
   const [loading, setLoading] = useState(true);
+  const [payingDue, setPayingDue] = useState(false);
 
   useEffect(() => {
     const fetchPaymentsAndEnrollments = async () => {
       try {
         const studentId = user?._id || user?.id;
-        const [payRes, enrollRes] = await Promise.all([
+        const [payRes, enrollRes, statsRes] = await Promise.all([
           getStudentPayments(studentId),
-          getMyEnrollments()
+          getMyEnrollments(),
+          getStudentStats()
         ]);
         
         const paymentsData = payRes.data || [];
@@ -33,6 +42,14 @@ const Payments = () => {
           .filter(p => p.status === 'Paid')
           .reduce((sum, p) => sum + Number(p.amount), 0);
         setTotalPaid(paidSum);
+
+        // Fetch statsData from stats backend endpoint
+        if (statsRes.data) {
+          setCoursePrice(statsRes.data.coursePrice || 0);
+          setDueAmount(statsRes.data.dueAmount || 0);
+          setStudentIdState(statsRes.data.studentId);
+          setCourseTitleState(statsRes.data.courseTitle);
+        }
 
         // Fetch enrolled course names
         if (enrollRes.data && enrollRes.data.length > 0) {
@@ -51,6 +68,91 @@ const Payments = () => {
     if (user?._id || user?.id) fetchPaymentsAndEnrollments();
     else setLoading(false);
   }, [user]);
+
+  const loadRazorpayScript = () => {
+    return new Promise((resolve) => {
+      if (document.getElementById('razorpay-script')) return resolve(true);
+      const script = document.createElement('script');
+      script.id = 'razorpay-script';
+      script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+      script.onload = () => resolve(true);
+      script.onerror = () => resolve(false);
+      document.body.appendChild(script);
+    });
+  };
+
+  const handlePayDue = async () => {
+    if (!studentIdState || !courseTitleState) {
+      toast.error('Could not find enrollment details.');
+      return;
+    }
+    
+    setPayingDue(true);
+    const payToast = toast.loading('Opening payment gateway...');
+    try {
+      const loaded = await loadRazorpayScript();
+      if (!loaded) {
+        toast.dismiss(payToast);
+        toast.error('Payment gateway failed to load.');
+        setPayingDue(false);
+        return;
+      }
+      
+      const orderRes = await createRazorpayOrder({ 
+        studentId: studentIdState, 
+        course: courseTitleState, 
+        paymentType: 'due' 
+      });
+      toast.dismiss(payToast);
+      
+      const order = orderRes.data.order;
+      const options = {
+        key: RAZORPAY_KEY,
+        amount: order.amount,
+        currency: order.currency,
+        name: 'Glitch Skill Hub',
+        description: `Remaining Balance - ${courseTitleState}`,
+        order_id: order.id,
+        handler: async (response) => {
+          const verifyingToast = toast.loading('Verifying payment... Please wait.');
+          try {
+            await verifyRazorpayPayment({
+              razorpayOrderId: response.razorpay_order_id,
+              razorpayPaymentId: response.razorpay_payment_id,
+              razorpaySignature: response.razorpay_signature,
+              studentId: studentIdState
+            });
+            toast.dismiss(verifyingToast);
+            toast.success('Payment Verified! Balance cleared successfully 🎉', { duration: 5000 });
+            window.location.reload();
+          } catch (err) {
+            toast.dismiss(verifyingToast);
+            console.error('Verification Error:', err);
+            toast.error(err.response?.data?.message || 'Payment verification failed. Please contact support.');
+          } finally {
+            setPayingDue(false);
+          }
+        },
+        prefill: {
+          name: user.name,
+          email: user.email,
+          contact: user.phone
+        },
+        theme: { color: '#FFD700' },
+      };
+      
+      const rzp = new window.Razorpay(options);
+      rzp.on('payment.failed', function (response) {
+        toast.error(`Payment Failed: ${response.error.description}`);
+        setPayingDue(false);
+      });
+      rzp.open();
+    } catch (error) {
+      toast.dismiss(payToast);
+      toast.error(error.response?.data?.message || 'Failed to initialize payment.');
+      setPayingDue(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -87,19 +189,37 @@ const Payments = () => {
                        <Zap size={24} fill="currentColor" />
                     </div>
                  </div>
-                 <div className="flex items-center gap-8 mb-10">
+                 <div className="flex flex-wrap items-center gap-8 mb-10">
                     <div>
-                       <p className="text-slate-400 text-[10px] font-bold uppercase tracking-widest">Next Payment</p>
-                       <p className="text-xl font-bold">N/A (One-time)</p>
+                       <p className="text-slate-400 text-[10px] font-bold uppercase tracking-widest">Total Course Price</p>
+                       <p className="text-xl font-bold">₹{coursePrice.toLocaleString()}</p>
                     </div>
                     <div>
                        <p className="text-slate-400 text-[10px] font-bold uppercase tracking-widest">Total Paid</p>
                        <p className="text-xl font-bold">₹{totalPaid.toLocaleString()}</p>
                     </div>
+                    <div>
+                       <p className="text-slate-400 text-[10px] font-bold uppercase tracking-widest">Remaining Due</p>
+                       <p className={`text-xl font-bold ${dueAmount > 0 ? 'text-primary' : 'text-green-400'}`}>
+                         ₹{dueAmount.toLocaleString()}
+                       </p>
+                    </div>
                  </div>
-                 <button className="bg-primary text-slate-900 px-8 py-4 rounded-xl font-black text-xs uppercase tracking-widest hover:bg-white transition-colors">
-                    Download All Receipts
-                 </button>
+                 <div className="flex items-center gap-4">
+                   <button className="bg-white/10 text-white px-8 py-4 rounded-xl font-black text-xs uppercase tracking-widest hover:bg-white hover:text-slate-900 transition-colors">
+                      Download All Receipts
+                   </button>
+                   {dueAmount > 0 && (
+                     <button 
+                       onClick={handlePayDue}
+                       disabled={payingDue}
+                       className="bg-primary text-slate-900 px-8 py-4 rounded-xl font-black text-xs uppercase tracking-widest hover:bg-white transition-colors flex items-center gap-2"
+                     >
+                        {payingDue && <Loader2 className="animate-spin" size={12} />}
+                        Pay Due Amount
+                     </button>
+                   )}
+                 </div>
               </div>
            </div>
 

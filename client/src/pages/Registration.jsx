@@ -70,6 +70,7 @@ const Registration = () => {
   const [loading, setLoading] = useState(false);
   const [isFormValid, setIsFormValid] = useState(false);
   const [courses, setCourses] = useState([]);
+  const [paymentType, setPaymentType] = useState('full'); // 'full' or 'slot'
 
   // Fetch courses and handle url params on load
   useEffect(() => {
@@ -202,7 +203,7 @@ const Registration = () => {
         return;
       }
 
-      const orderRes = await createRazorpayOrder({ studentId, course: formData.course });
+      const orderRes = await createRazorpayOrder({ studentId, course: formData.course, paymentType });
       const order = orderRes.data.order;
 
       const options = {
@@ -256,6 +257,8 @@ const Registration = () => {
   // Find currently selected course to display its dynamic price
   const selectedCourseObj = courses.find(c => c.title === formData.course);
   const currentPrice = selectedCourseObj && selectedCourseObj.price ? Number(selectedCourseObj.price) : 9999;
+  const currentSlotPrice = selectedCourseObj && selectedCourseObj.slotPrice ? Number(selectedCourseObj.slotPrice) : 3000;
+  const displayPrice = paymentType === 'full' ? currentPrice : currentSlotPrice;
 
   return (
     <div className="min-h-screen bg-slate-50 selection:bg-primary selection:text-black">
@@ -369,27 +372,67 @@ const Registration = () => {
                         <InputField label="Graduation" name="branch" icon={GraduationCap} value={formData.branch} onChange={handleInputChange} error={errors.branch} />
                       </div>
 
+                      {/* Payment Option Selector */}
+                      <div className="space-y-4 pt-4 border-t border-slate-100">
+                        <label className="block text-xs font-black uppercase text-slate-500 tracking-widest mb-2">Select Payment Option</label>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                           <div 
+                             onClick={() => setPaymentType('full')}
+                             className={`p-6 rounded-2xl border-2 cursor-pointer transition-all ${
+                               paymentType === 'full' 
+                                 ? 'border-primary bg-primary/5 text-slate-900 shadow-md' 
+                                 : 'border-slate-200 hover:border-slate-300 bg-white text-slate-500'
+                             }`}
+                           >
+                             <div className="flex justify-between items-center mb-2">
+                               <span className="text-sm font-black uppercase tracking-wider">Full Payment</span>
+                               <input type="radio" checked={paymentType === 'full'} onChange={() => {}} className="accent-primary" />
+                             </div>
+                             <p className="text-2xl font-black text-slate-950">₹{currentPrice.toLocaleString()}</p>
+                             <p className="text-[10px] mt-1 text-slate-400 font-bold uppercase tracking-wider">Pay once and get full course access</p>
+                           </div>
+                           
+                           <div 
+                             onClick={() => setPaymentType('slot')}
+                             className={`p-6 rounded-2xl border-2 cursor-pointer transition-all ${
+                               paymentType === 'slot' 
+                                 ? 'border-primary bg-primary/5 text-slate-900 shadow-md' 
+                                 : 'border-slate-200 hover:border-slate-300 bg-white text-slate-500'
+                             }`}
+                           >
+                             <div className="flex justify-between items-center mb-2">
+                               <span className="text-sm font-black uppercase tracking-wider">Secure Your Slot</span>
+                               <input type="radio" checked={paymentType === 'slot'} onChange={() => {}} className="accent-primary" />
+                             </div>
+                             <p className="text-2xl font-black text-slate-950">₹{currentSlotPrice.toLocaleString()}</p>
+                             <p className="text-[10px] mt-1 text-slate-400 font-bold uppercase tracking-wider">Book your seat now & pay the rest later</p>
+                           </div>
+                        </div>
+                      </div>
+
                       {/* Dynamic Payment Card */}
-                      <div className="mt-12 p-10 bg-slate-950 rounded-[3rem] text-white relative overflow-hidden group border border-white/5 shadow-2xl">
-                        <div className="absolute top-0 right-0 p-6 opacity-20 group-hover:rotate-12 transition-transform duration-700">
-                           <Zap size={100} className="text-primary" />
+                      <div className="mt-12 p-8 md:p-12 bg-gradient-to-br from-slate-900 via-slate-950 to-black rounded-[3rem] text-white relative overflow-hidden group border border-zinc-800 shadow-2xl">
+                        <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:rotate-12 transition-transform duration-700 pointer-events-none">
+                           <Zap size={140} className="text-primary" />
                         </div>
                         <div className="relative z-10">
-                           <div className="flex flex-col md:flex-row justify-between items-end gap-10">
-                              <div>
-                                 <p className="text-[10px] font-black uppercase tracking-[0.4em] text-primary mb-3">Total Amount Due</p>
-                                 <h3 className="text-6xl font-black tracking-tighter text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]">₹{currentPrice.toLocaleString()}</h3>
-                                 <p className="text-slate-400 text-[10px] mt-6 font-bold uppercase tracking-[0.2em]">Inclusive of all taxes & hub access</p>
+                           <div className="flex flex-col md:flex-row justify-between items-center md:items-end gap-10">
+                              <div className="text-center md:text-left">
+                                 <p className="text-[10px] font-black uppercase tracking-[0.4em] text-zinc-400 mb-3">Total Amount Due</p>
+                                 <div className="inline-flex items-center gap-2 bg-primary/5 px-6 py-3 rounded-2xl border border-primary/10 backdrop-blur-sm">
+                                    <h3 className="text-4xl md:text-5xl font-black tracking-tight text-primary drop-shadow-[0_0_15px_rgba(250,204,21,0.3)]">₹{displayPrice.toLocaleString()}</h3>
+                                 </div>
+                                 <p className="text-zinc-500 text-[9px] mt-4 font-bold uppercase tracking-[0.25em]">Inclusive of all taxes & hub access</p>
                               </div>
                               <button
                                 type="submit"
                                 disabled={loading}
-                                className="btn-premium py-6 px-12 bg-white text-black hover:bg-primary"
+                                className="w-full md:w-auto px-10 py-5 bg-primary text-black font-black uppercase tracking-[0.2em] text-[10px] rounded-2xl flex items-center justify-center gap-3 hover:bg-white hover:scale-[1.02] active:scale-95 transition-all shadow-xl shadow-primary/25 whitespace-nowrap border border-primary hover:border-white"
                               >
                                 {loading ? (
-                                  <><Loader2 className="animate-spin" size={20} /> Processing</>
+                                  <><Loader2 className="animate-spin text-black" size={16} /> Processing</>
                                 ) : (
-                                  <><Send size={20} /> Join The Glitch Hub</>
+                                  <><Send size={16} /> Join The Glitch Hub</>
                                 )}
                               </button>
                            </div>

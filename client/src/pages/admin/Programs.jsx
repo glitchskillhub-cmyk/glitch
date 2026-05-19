@@ -24,7 +24,7 @@ const Programs = () => {
   const [editingCourseId, setEditingCourseId] = useState(null);
   
   const [newCourse, setNewCourse] = useState({
-    title: '', description: '', price: '9999', duration: '6 Months',
+    title: '', description: '', price: '9999', slotPrice: '3000', duration: '6 Months',
     instructor: 'Glitch Team', thumbnail: '', readMoreLink: '', startDate: ''
   });
 
@@ -58,6 +58,7 @@ const Programs = () => {
       title: course.title || '',
       description: course.description || '',
       price: course.price?.toString() || '9999',
+      slotPrice: course.slotPrice?.toString() || '3000',
       duration: course.duration || '6 Months',
       instructor: course.instructor || 'Glitch Team',
       thumbnail: course.thumbnail || '',
@@ -81,7 +82,7 @@ const Programs = () => {
       setIsEditMode(false);
       setEditingCourseId(null);
       setNewCourse({ 
-        title: '', description: '', price: '9999', duration: '6 Months', 
+        title: '', description: '', price: '9999', slotPrice: '3000', duration: '6 Months', 
         instructor: 'Glitch Team', thumbnail: '', readMoreLink: '', startDate: '' 
       });
       fetchData();
@@ -103,7 +104,7 @@ const Programs = () => {
           onClick={() => {
             setIsEditMode(false);
             setEditingCourseId(null);
-            setNewCourse({ title: '', description: '', price: '9999', duration: '6 Months', instructor: 'Glitch Team', thumbnail: '', readMoreLink: '', startDate: '' });
+            setNewCourse({ title: '', description: '', price: '9999', slotPrice: '3000', duration: '6 Months', instructor: 'Glitch Team', thumbnail: '', readMoreLink: '', startDate: '' });
             setIsAddModalOpen(true);
           }}
           className="flex items-center gap-2 px-8 py-4 bg-primary text-black rounded-2xl text-[10px] font-black uppercase tracking-widest hover:scale-[1.02] active:scale-95 transition-all shadow-xl shadow-primary/20"
@@ -123,7 +124,7 @@ const Programs = () => {
                onClick={() => {
                  setIsEditMode(false);
                  setEditingCourseId(null);
-                 setNewCourse({ title: '', description: '', price: '9999', duration: '6 Months', instructor: 'Glitch Team', thumbnail: '', readMoreLink: '', startDate: '' });
+                 setNewCourse({ title: '', description: '', price: '9999', slotPrice: '3000', duration: '6 Months', instructor: 'Glitch Team', thumbnail: '', readMoreLink: '', startDate: '' });
                  setIsAddModalOpen(true);
                }} 
                className="mt-4 text-primary text-[10px] font-black uppercase tracking-[0.2em] hover:underline"
@@ -184,7 +185,7 @@ const Programs = () => {
                    </div>
                    <div className="p-4 bg-zinc-50 border border-zinc-100 rounded-2xl">
                       <p className="text-[9px] font-black uppercase tracking-[0.2em] text-zinc-400 mb-1">Slot Booking</p>
-                      <p className="text-lg font-black text-primary italic">₹3,000</p>
+                      <p className="text-lg font-black text-primary italic">₹{course.slotPrice || '3,000'}</p>
                    </div>
                 </div>
 
@@ -290,6 +291,17 @@ const Programs = () => {
 
                  <div className="grid grid-cols-2 gap-6">
                     <div className="space-y-2">
+                       <label className="text-[10px] font-black uppercase tracking-widest text-zinc-400 ml-2">Slot Booking Price (₹)</label>
+                       <input 
+                         required
+                         type="number" 
+                         className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl px-6 py-4 text-sm focus:border-primary transition-all outline-none text-zinc-900 font-bold"
+                         placeholder="3000"
+                         value={newCourse.slotPrice}
+                         onChange={(e) => setNewCourse({...newCourse, slotPrice: e.target.value})}
+                       />
+                    </div>
+                    <div className="space-y-2">
                        <label className="text-[10px] font-black uppercase tracking-widest text-zinc-400 ml-2">Course Start Date</label>
                        <input 
                          type="text" 
@@ -299,16 +311,17 @@ const Programs = () => {
                          onChange={(e) => setNewCourse({...newCourse, startDate: e.target.value})}
                        />
                     </div>
-                    <div className="space-y-2">
-                       <label className="text-[10px] font-black uppercase tracking-widest text-zinc-400 ml-2">Read More Link</label>
-                       <input 
-                         type="url" 
-                         className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl px-6 py-4 text-sm focus:border-primary transition-all outline-none text-zinc-900 font-bold"
-                         placeholder="https://glitchskillhub.com/course"
-                         value={newCourse.readMoreLink}
-                         onChange={(e) => setNewCourse({...newCourse, readMoreLink: e.target.value})}
-                       />
-                    </div>
+                 </div>
+
+                 <div className="space-y-2">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-zinc-400 ml-2">Read More Link</label>
+                    <input 
+                      type="url" 
+                      className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl px-6 py-4 text-sm focus:border-primary transition-all outline-none text-zinc-900 font-bold"
+                      placeholder="https://glitchskillhub.com/course"
+                      value={newCourse.readMoreLink}
+                      onChange={(e) => setNewCourse({...newCourse, readMoreLink: e.target.value})}
+                    />
                  </div>
 
                  <div className="pt-6">

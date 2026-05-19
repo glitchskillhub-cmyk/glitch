@@ -29,17 +29,32 @@ exports.createOrder = async (req, res, next) => {
       });
     }
 
-    const { studentId, course } = req.body;
-    console.log('Creating order for student:', studentId, 'course:', course);
+    const { studentId, course, paymentType } = req.body;
+    console.log('Creating order for student:', studentId, 'course:', course, 'type:', paymentType);
 
     // Look up course price dynamically from the DB
     const Course = require('../models/Course');
     const courseObj = await Course.findOne({ title: course });
-    const price = courseObj && courseObj.price ? Number(courseObj.price) : 9999;
     
-    console.log(`- Course: ${course} | Price detected: ${price}`);
+    let price = courseObj && courseObj.price ? Number(courseObj.price) : 9999;
+    const slotPrice = courseObj && courseObj.slotPrice ? Number(courseObj.slotPrice) : 3000;
+    
+    if (paymentType === 'slot') {
+      price = slotPrice;
+    } else if (paymentType === 'due') {
+      const Student = require('../models/Student');
+      const student = await Student.findById(studentId);
+      if (student) {
+        const payments = await Payment.find({ studentId: student._id, status: 'Paid' });
+        const totalPaid = payments.reduce((sum, p) => sum + (p.amount || 0), 0);
+        price = price - totalPaid;
+        if (price < 0) price = 0;
+      }
+    }
+    
+    console.log(`- Course: ${course} | Type: ${paymentType} | Price detected: ${price}`);
 
-    const amountInPaise = price * 100; // Charge in paise
+    const amountInPaise = Math.round(price * 100); // Charge in paise (using Math.round to avoid float errors)
     const options = {
       amount: amountInPaise,
       currency: 'INR',

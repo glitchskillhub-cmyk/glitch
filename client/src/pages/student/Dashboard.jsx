@@ -1,13 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { Zap, Target, Award, MessageSquare, ChevronRight, Clock, BookOpen, Briefcase, Loader2 } from 'lucide-react';
+import { Zap, Target, Award, MessageSquare, ChevronRight, Clock, BookOpen, Briefcase, Loader2, AlertTriangle } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
-import { getStudentStats, getMyEnrollments } from '../../utils/api';
+import { getStudentStats, getMyEnrollments, createRazorpayOrder, verifyRazorpayPayment } from '../../utils/api';
+import { toast } from 'react-hot-toast';
+
+const RAZORPAY_KEY = import.meta.env.VITE_RAZORPAY_KEY_ID || 'rzp_test_Skseh7l3ljLVO7';
 
 const Dashboard = () => {
   const { user } = useAuth();
   const [statsData, setStatsData] = useState(null);
   const [activeEnrollments, setActiveEnrollments] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [payingDue, setPayingDue] = useState(false);
 
   useEffect(() => {
     const fetchDashboardData = async () => {
@@ -27,6 +31,91 @@ const Dashboard = () => {
     fetchDashboardData();
   }, []);
 
+  const loadRazorpayScript = () => {
+    return new Promise((resolve) => {
+      if (document.getElementById('razorpay-script')) return resolve(true);
+      const script = document.createElement('script');
+      script.id = 'razorpay-script';
+      script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+      script.onload = () => resolve(true);
+      script.onerror = () => resolve(false);
+      document.body.appendChild(script);
+    });
+  };
+
+  const handlePayDue = async () => {
+    if (!statsData?.studentId || !statsData?.courseTitle) {
+      toast.error('Could not find enrollment details.');
+      return;
+    }
+    
+    setPayingDue(true);
+    const payToast = toast.loading('Opening payment gateway...');
+    try {
+      const loaded = await loadRazorpayScript();
+      if (!loaded) {
+        toast.dismiss(payToast);
+        toast.error('Payment gateway failed to load.');
+        setPayingDue(false);
+        return;
+      }
+      
+      const orderRes = await createRazorpayOrder({ 
+        studentId: statsData.studentId, 
+        course: statsData.courseTitle, 
+        paymentType: 'due' 
+      });
+      toast.dismiss(payToast);
+      
+      const order = orderRes.data.order;
+      const options = {
+        key: RAZORPAY_KEY,
+        amount: order.amount,
+        currency: order.currency,
+        name: 'Glitch Skill Hub',
+        description: `Remaining Balance - ${statsData.courseTitle}`,
+        order_id: order.id,
+        handler: async (response) => {
+          const verifyingToast = toast.loading('Verifying payment... Please wait.');
+          try {
+            await verifyRazorpayPayment({
+              razorpayOrderId: response.razorpay_order_id,
+              razorpayPaymentId: response.razorpay_payment_id,
+              razorpaySignature: response.razorpay_signature,
+              studentId: statsData.studentId
+            });
+            toast.dismiss(verifyingToast);
+            toast.success('Payment Verified! Balance cleared successfully 🎉', { duration: 5000 });
+            window.location.reload();
+          } catch (err) {
+            toast.dismiss(verifyingToast);
+            console.error('Verification Error:', err);
+            toast.error(err.response?.data?.message || 'Payment verification failed. Please contact support.');
+          } finally {
+            setPayingDue(false);
+          }
+        },
+        prefill: {
+          name: user.name,
+          email: user.email,
+          contact: user.phone
+        },
+        theme: { color: '#FFD700' },
+      };
+      
+      const rzp = new window.Razorpay(options);
+      rzp.on('payment.failed', function (response) {
+        toast.error(`Payment Failed: ${response.error.description}`);
+        setPayingDue(false);
+      });
+      rzp.open();
+    } catch (error) {
+      toast.dismiss(payToast);
+      toast.error(error.response?.data?.message || 'Failed to initialize payment.');
+      setPayingDue(false);
+    }
+  };
+
   const stats = [
     { label: "Course Progress", value: statsData?.progress || "0%", icon: Zap, color: "text-blue-500", bg: "bg-blue-50" },
     { label: "Tasks Completed", value: statsData?.tasks || "0/5", icon: Target, color: "text-green-500", bg: "bg-green-50" },
@@ -44,6 +133,33 @@ const Dashboard = () => {
 
   return (
     <div className="space-y-10 animate-in fade-in duration-700">
+      {/* Due Alert Banner */}
+      {statsData?.hasDue && (
+        <div className="bg-amber-50 border border-amber-200 rounded-[2rem] p-6 md:p-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 shadow-sm">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 bg-amber-500 rounded-xl flex items-center justify-center text-white shrink-0 shadow-lg shadow-amber-500/20">
+              <AlertTriangle size={22} className="animate-pulse" />
+            </div>
+            <div>
+              <p className="text-[10px] font-black uppercase text-amber-600 tracking-widest mb-0.5 animate-pulse">Important Alert</p>
+              <h3 className="text-base font-black text-amber-900 leading-tight">Please complete full payment while course starting soon</h3>
+              <p className="text-xs text-amber-700/80 font-medium mt-1">
+                Your remaining due amount is <span className="font-black text-amber-900">₹{statsData?.dueAmount?.toLocaleString()}</span>. 
+                Please pay the remaining balance to guarantee continuous learning access.
+              </p>
+            </div>
+          </div>
+          <button 
+            onClick={handlePayDue}
+            disabled={payingDue}
+            className="px-6 py-3 bg-amber-600 hover:bg-amber-700 text-white rounded-xl text-[10px] font-black uppercase tracking-widest shrink-0 transition-all hover:scale-[1.02] active:scale-95 shadow-md shadow-amber-600/10 flex items-center gap-2"
+          >
+            {payingDue ? <Loader2 className="animate-spin" size={12} /> : null}
+            Pay Due Amount
+          </button>
+        </div>
+      )}
+
       {/* Welcome Section */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
         <div>
@@ -120,6 +236,26 @@ const Dashboard = () => {
                 {user?.isEnrolled && activeEnrollments.length > 0 && (
                   <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-slate-400">
                     <Clock size={12} /> Last accessed: Just now
+                  </div>
+                )}
+
+                {/* Due Details under Active Program Card */}
+                {statsData && statsData.coursePrice > 0 && (
+                  <div className="mt-8 pt-6 border-t border-slate-100 grid grid-cols-3 gap-4">
+                    <div>
+                      <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Course Price</p>
+                      <p className="text-sm font-black text-slate-900">₹{statsData.coursePrice.toLocaleString()}</p>
+                    </div>
+                    <div>
+                      <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Paid Amount</p>
+                      <p className="text-sm font-black text-slate-900">₹{statsData.totalPaid.toLocaleString()}</p>
+                    </div>
+                    <div>
+                      <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Remaining Due</p>
+                      <p className={`text-sm font-black ${statsData.dueAmount > 0 ? 'text-amber-600 animate-pulse' : 'text-green-600'}`}>
+                        ₹{statsData.dueAmount.toLocaleString()}
+                      </p>
+                    </div>
                   </div>
                 )}
               </div>

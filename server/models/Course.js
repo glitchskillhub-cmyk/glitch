@@ -27,6 +27,10 @@ const courseSchema = new mongoose.Schema({
     type: Number,
     default: 0
   },
+  slotPrice: {
+    type: Number,
+    default: 3000
+  },
   readMoreLink: {
     type: String,
     default: ''

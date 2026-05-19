@@ -500,11 +500,42 @@ exports.getStudentDashboardStats = async (req, res, next) => {
     const Certificate = require('../models/Certificate');
     const certificatesCount = await Certificate.countDocuments({ student: userId });
 
+    // Calculate due amount
+    const Student = require('../models/Student');
+    const student = await Student.findOne({ email: user.email.toLowerCase() });
+    
+    let dueAmount = 0;
+    let totalPaid = 0;
+    let coursePrice = 0;
+    let courseTitle = '';
+    
+    if (student) {
+      const Course = require('../models/Course');
+      const courseObj = await Course.findOne({ title: student.course });
+      if (courseObj) {
+        coursePrice = courseObj.price || 0;
+        courseTitle = courseObj.title;
+      }
+      
+      const Payment = require('../models/Payment');
+      const payments = await Payment.find({ studentId: student._id, status: 'Paid' });
+      totalPaid = payments.reduce((sum, p) => sum + (p.amount || 0), 0);
+      
+      dueAmount = coursePrice - totalPaid;
+      if (dueAmount < 0) dueAmount = 0;
+    }
+
     res.json({
       progress,
       tasks: `${completedTasksCount}/${tasksCount || 5}`,
       learningHours,
-      certificates: certificatesCount.toString()
+      certificates: certificatesCount.toString(),
+      studentId: student ? student._id : null,
+      dueAmount,
+      totalPaid,
+      coursePrice,
+      courseTitle,
+      hasDue: dueAmount > 0
     });
   } catch (error) { next(error); }
 };

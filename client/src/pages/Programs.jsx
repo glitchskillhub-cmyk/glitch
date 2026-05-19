@@ -1,29 +1,31 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { 
   ArrowRight, Clock, UserCheck, Terminal, Rocket, 
-  Database, ShieldCheck, Zap, Star, ChevronRight
+  Database, ShieldCheck, Zap, Star, ChevronRight, Loader2
 } from 'lucide-react';
+import { getAllCourses } from '../utils/api';
 
 const Programs = () => {
+  const [courses, setCourses] = useState([]);
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
     window.scrollTo(0, 0);
+    const fetchCourses = async () => {
+      try {
+        const res = await getAllCourses();
+        setCourses(res.data || []);
+      } catch (err) {
+        console.error("Failed to load courses", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchCourses();
   }, []);
-
-  const activePrograms = [
-    {
-      title: "Become Full Stack Developer (Node.js)",
-      desc: "Comprehensive engineering for students and professionals. Build production-grade MERN applications with MNC standards.",
-      icon: Terminal,
-      duration: "16 Weeks",
-      level: "Student/Pro",
-      price: "₹9,999",
-      seats: "Only 20 Seats per Batch",
-      path: "/node-js-course"
-    }
-  ];
 
   const comingSoonPrograms = [
     {
@@ -68,65 +70,90 @@ const Programs = () => {
           </div>
 
           <div className="grid grid-cols-1 gap-12">
-            {activePrograms.map((course, i) => (
-              <div key={i} className="bento-card bg-white flex flex-col lg:flex-row gap-12 group border-slate-200">
-                <div className="w-full lg:w-2/5 bg-slate-900 rounded-2xl flex items-center justify-center p-16 text-primary relative overflow-hidden">
-                   <div className="absolute top-6 left-6 bg-primary text-black text-[10px] font-bold uppercase px-3 py-1.5 rounded-full">ADMISSIONS OPEN</div>
-                   <course.icon size={100} className="group-hover:scale-110 transition-transform duration-500" />
-                   <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-primary/10 rounded-full blur-3xl"></div>
-                </div>
-                
-                <div className="flex-1 flex flex-col justify-center">
-                  <div className="flex flex-wrap items-center gap-3 mb-6">
-                    <span className="bg-primary/10 text-primary text-[10px] font-bold uppercase px-4 py-2 rounded-full border border-primary/20">
-                      {course.seats}
-                    </span>
-                  </div>
-
-                  <h3 className="text-3xl md:text-4xl font-bold tracking-tight mb-6">{course.title}</h3>
-                  <p className="text-lg text-slate-500 mb-10 leading-relaxed max-w-2xl">
-                    {course.desc}
-                  </p>
-                  
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-8 mb-12">
-                     <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-slate-50 rounded-xl flex items-center justify-center text-primary">
-                          <Clock size={20} />
-                        </div>
-                        <div className="text-left">
-                           <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Duration</p>
-                           <p className="font-bold text-sm">{course.duration}</p>
-                        </div>
-                     </div>
-                     <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-slate-50 rounded-xl flex items-center justify-center text-primary">
-                          <UserCheck size={20} />
-                        </div>
-                        <div className="text-left">
-                           <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Eligibility</p>
-                           <p className="font-bold text-sm">{course.level}</p>
-                        </div>
-                     </div>
-                     <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center text-primary">
-                          <Zap size={20} />
-                        </div>
-                        <div className="text-left">
-                           <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Price</p>
-                           <p className="font-bold text-sm">{course.price}</p>
-                        </div>
-                     </div>
-                  </div>
-                  
-                  <div className="flex flex-wrap gap-6">
-                    <Link to={course.path} className="btn-premium py-5 px-10 group">
-                      <span>Explore Details</span>
-                      <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
-                    </Link>
-                  </div>
-                </div>
+            {loading ? (
+              <div className="flex justify-center items-center py-20 w-full">
+                <Loader2 className="animate-spin text-primary" size={48} />
               </div>
-            ))}
+            ) : courses.length === 0 ? (
+              <div className="text-center py-16 text-slate-500 font-bold border-2 border-dashed border-slate-200 rounded-[2rem]">
+                No active courses available right now. Please check back soon!
+              </div>
+            ) : (
+              courses.map((course, i) => {
+                const isNode = course.title?.toLowerCase().includes('node');
+                const IconComponent = isNode ? Terminal : Rocket;
+                const path = course.readMoreLink || (isNode ? '/node-js-course' : `/register?course=${encodeURIComponent(course.title)}`);
+                const seatsMsg = "Only 20 Seats per Batch";
+                
+                return (
+                  <div key={i} className="bento-card bg-white flex flex-col lg:flex-row gap-12 group border-slate-200">
+                    <div className="w-full lg:w-2/5 bg-slate-900 rounded-2xl flex items-center justify-center p-16 text-primary relative overflow-hidden">
+                       <div className="absolute top-6 left-6 bg-primary text-black text-[10px] font-bold uppercase px-3 py-1.5 rounded-full">ADMISSIONS OPEN</div>
+                       <IconComponent size={100} className="group-hover:scale-110 transition-transform duration-500" />
+                       <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-primary/10 rounded-full blur-3xl"></div>
+                    </div>
+                    
+                    <div className="flex-1 flex flex-col justify-center">
+                      <div className="flex flex-wrap items-center gap-3 mb-6">
+                        <span className="bg-primary/10 text-primary text-[10px] font-bold uppercase px-4 py-2 rounded-full border border-primary/20">
+                          {seatsMsg}
+                        </span>
+                      </div>
+
+                      <h3 className="text-3xl md:text-4xl font-bold tracking-tight mb-6">{course.title}</h3>
+                      <p className="text-lg text-slate-500 mb-10 leading-relaxed max-w-2xl">
+                        {course.description}
+                      </p>
+                      
+                      <div className="grid grid-cols-2 md:grid-cols-3 gap-8 mb-12">
+                         <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 bg-slate-50 rounded-xl flex items-center justify-center text-primary">
+                              <Clock size={20} />
+                            </div>
+                            <div className="text-left">
+                               <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Duration</p>
+                               <p className="font-bold text-sm">{course.duration || '16 Weeks'}</p>
+                            </div>
+                         </div>
+                         <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 bg-slate-50 rounded-xl flex items-center justify-center text-primary">
+                              <UserCheck size={20} />
+                            </div>
+                            <div className="text-left">
+                               <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Eligibility</p>
+                               <p className="font-bold text-sm">Student/Pro</p>
+                            </div>
+                         </div>
+                         <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center text-primary">
+                              <Zap size={20} />
+                            </div>
+                            <div className="text-left">
+                               <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Price</p>
+                               <p className="font-bold text-sm">₹{Number(course.price || 9999).toLocaleString()}</p>
+                            </div>
+                         </div>
+                      </div>
+                      
+                      <div className="flex flex-wrap gap-6">
+                        <Link to={path} className="btn-premium py-5 px-10 group">
+                          <span>Explore Details</span>
+                          <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+                        </Link>
+                        
+                        <Link 
+                          to={`/register?course=${encodeURIComponent(course.title)}`}
+                          className="px-10 py-5 bg-primary text-black rounded-[2rem] text-xs font-black uppercase tracking-widest hover:bg-slate-950 hover:text-white transition-all flex items-center gap-2 group shadow-lg shadow-primary/10 border border-primary"
+                        >
+                          <span>Enroll Now</span>
+                          <Zap size={16} className="group-hover:scale-110 transition-transform text-slate-950 group-hover:text-primary" />
+                        </Link>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })
+            )}
           </div>
         </div>
       </section>

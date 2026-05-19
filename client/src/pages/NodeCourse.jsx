@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import SEO from '../components/SEO';
 import { 
   CheckCircle2, Clock, Calendar, Zap, Rocket, Users, 
   Terminal, Code, Database, Layout, ShieldCheck, 
@@ -90,6 +91,7 @@ const NodeCourse = () => {
 
   return (
     <div className="nc-page">
+      <SEO title="Full Stack Node.js Course" description="A 100% practical engineering program designed to make you job-ready for top-tier MNC roles. No boring slides — just raw code." path="/node-js-course" />
       <Navbar />
 
       {/* ===== HERO ===== */}

@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import SEO from '../components/SEO';
 import { 
   Sparkles, Code, Users, Monitor, Rocket, Layers, GraduationCap, 
   ArrowRight, CheckCircle2, ChevronRight, Zap, Target, ShieldCheck,
@@ -27,6 +28,7 @@ import LogoScroll from '../components/LogoScroll';
 const Home = () => {
   return (
     <div className="min-h-screen bg-white selection:bg-primary selection:text-black">
+      <SEO title="Home" description="Glitch Skill Hub provides real-time knowledge for students and working professionals. Upskill with classes taught by top MNC software engineers." path="/" />
       <Navbar />
 
       {/* Hero Section */}

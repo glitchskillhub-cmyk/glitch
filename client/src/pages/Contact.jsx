@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import SEO from '../components/SEO';
 import { Mail, Phone, MapPin, Send, MessageSquare, Clock, Plus, HelpCircle, ChevronRight } from 'lucide-react';
 
 const Contact = () => {

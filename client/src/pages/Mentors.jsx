@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import LogoScroll from '../components/LogoScroll';
+import SEO from '../components/SEO';
 import { 
   UserCheck, Cpu, Star, ShieldCheck, Award, 
   Briefcase, GraduationCap

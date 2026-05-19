@@ -1,6 +1,7 @@
 import React from 'react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import SEO from '../components/SEO';
 import { 
   ShieldCheck, Target, Lightbulb, Users, Eye, Rocket, 
   Award, Globe, Heart, Zap, CheckCircle2 
@@ -12,6 +13,7 @@ import codingImg from '../assets/images/coding.png';
 const About = () => {
   return (
     <div className="min-h-screen bg-white">
+      <SEO title="About Us" description="We are a collective of elite software engineers from top-tier MNCs and tech startups, committed to teaching the next generation of students and professionals what colleges won't." path="/about" />
       <Navbar />
       
       {/* Header */}

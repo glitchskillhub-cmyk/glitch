@@ -262,6 +262,7 @@ const Registration = () => {
 
   return (
     <div className="min-h-screen bg-slate-50 selection:bg-primary selection:text-black">
+      <SEO title="Registration" description="Enroll in Glitch Skill Hub's premium career programs and start building your real-world portfolio today." path="/register" />
       <Navbar />
 
       <section className="pt-36 md:pt-48 pb-14 md:pb-20 relative overflow-hidden">

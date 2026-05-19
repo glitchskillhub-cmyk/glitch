@@ -18,7 +18,8 @@ import {
   Search,
   Menu,
   X,
-  ChevronRight
+  ChevronRight,
+  Layers
 } from 'lucide-react';
 
 const SidebarItem = ({ to, icon: Icon, label, collapsed }) => (
@@ -51,6 +52,7 @@ const AdminLayout = ({ children }) => {
     { section: 'Main', items: [
       { to: '/admin/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
       { to: '/admin/students', icon: Users, label: 'Students' },
+      { to: '/admin/batches', icon: Layers, label: 'Batches' },
       { to: '/admin/mentors', icon: GraduationCap, label: 'Mentors' },
     ]},
     { section: 'Content', items: [

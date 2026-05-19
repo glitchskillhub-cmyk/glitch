@@ -1,5 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { getAllStudents, deleteStudent, createStudent, updateStudent } from '../../utils/api';
+import { 
+  getAllStudents, 
+  deleteStudent, 
+  createStudent, 
+  updateStudent,
+  getAllBatches,
+  createBatch
+} from '../../utils/api';
 import { 
   Search, 
   Plus, 
@@ -18,12 +25,15 @@ import {
   Building,
   Save,
   CreditCard,
-  MapPin
+  MapPin,
+  Layers,
+  Check
 } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 
 const Students = () => {
   const [students, setStudents] = useState([]);
+  const [batches, setBatches] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterType, setFilterType] = useState('all');
@@ -37,13 +47,23 @@ const Students = () => {
   const [editStudent, setEditStudent] = useState(null);
   const [editForm, setEditForm] = useState({});
 
+  // Batching States
+  const [selectedStudentIds, setSelectedStudentIds] = useState([]);
+  const [isBatchModalOpen, setIsBatchModalOpen] = useState(false);
+  const [batchName, setBatchName] = useState('');
+  const [selectedBatchId, setSelectedBatchId] = useState('');
+
   const fetchData = async () => {
     setLoading(true);
     try {
-      const res = await getAllStudents();
-      setStudents(res.data);
+      const [studentsRes, batchesRes] = await Promise.all([
+        getAllStudents(),
+        getAllBatches()
+      ]);
+      setStudents(studentsRes.data);
+      setBatches(batchesRes.data);
     } catch (error) {
-      toast.error('Failed to load students.');
+      toast.error('Failed to load students & batches context.');
     } finally {
       setLoading(false);
     }
@@ -98,6 +118,46 @@ const Students = () => {
     }
   };
 
+  const handleBatchSubmit = async (e) => {
+    e.preventDefault();
+    const finalBatchName = selectedBatchId ? batches.find(b => b._id === selectedBatchId)?.name : batchName.trim();
+    if (!finalBatchName) {
+      return toast.error('Please specify a batch name or select an existing batch.');
+    }
+    if (selectedStudentIds.length === 0) {
+      return toast.error('Please select at least one student.');
+    }
+
+    try {
+      await createBatch({
+        name: finalBatchName,
+        studentIds: selectedStudentIds
+      });
+      toast.success(`Successfully assigned students to batch "${finalBatchName}"!`);
+      setSelectedStudentIds([]);
+      setBatchName('');
+      setSelectedBatchId('');
+      setIsBatchModalOpen(false);
+      fetchData();
+    } catch {
+      toast.error('Failed to assign students to batch.');
+    }
+  };
+
+  const toggleStudentSelection = (id) => {
+    setSelectedStudentIds(prev => 
+      prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]
+    );
+  };
+
+  const toggleAllStudents = () => {
+    if (selectedStudentIds.length === filtered.length) {
+      setSelectedStudentIds([]);
+    } else {
+      setSelectedStudentIds(filtered.map(s => s._id));
+    }
+  };
+
   const getDisplayStatus = (s) => {
     if (s.paymentStatus === 'Paid' || s.status === 'Active') return 'Active';
     if (s.status === 'Approved') return 'Approved';
@@ -138,6 +198,18 @@ const Students = () => {
            <p className="text-zinc-500 text-sm mt-1 font-bold">Manage and monitor all hub participants</p>
         </div>
         <div className="flex flex-wrap items-center gap-4">
+           {selectedStudentIds.length > 0 && (
+             <button 
+               onClick={() => {
+                 setBatchName('');
+                 setSelectedBatchId('');
+                 setIsBatchModalOpen(true);
+               }}
+               className="flex items-center gap-2 px-6 py-3.5 bg-yellow-400 text-black rounded-2xl text-[10px] font-black uppercase tracking-widest hover:scale-[1.02] active:scale-95 transition-all shadow-lg shadow-yellow-400/20 border border-yellow-500/20"
+             >
+                <Layers size={16} /> Batch Action ({selectedStudentIds.length})
+             </button>
+           )}
            <button 
              onClick={downloadCSV}
              className="flex items-center gap-2 px-6 py-3.5 bg-white border border-zinc-200 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-zinc-50 transition-all text-zinc-600"
@@ -190,6 +262,14 @@ const Students = () => {
             <table className="w-full text-left">
                <thead>
                   <tr className="border-b border-zinc-100 bg-zinc-50">
+                     <th className="pl-8 py-6 w-12 text-left">
+                        <input 
+                          type="checkbox"
+                          className="rounded border-zinc-300 text-primary focus:ring-primary w-4 h-4 cursor-pointer"
+                          checked={filtered.length > 0 && selectedStudentIds.length === filtered.length}
+                          onChange={toggleAllStudents}
+                        />
+                     </th>
                      <th className="px-8 py-6 text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400">Student Info</th>
                      <th className="px-8 py-6 text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400">Contact</th>
                      <th className="px-8 py-6 text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400">Course</th>
@@ -201,15 +281,23 @@ const Students = () => {
                   {loading ? (
                     [1,2,3,4,5].map(i => (
                       <tr key={i} className="animate-pulse">
-                        <td colSpan="5" className="px-8 py-10 bg-white/[0.01]"></td>
+                        <td colSpan="6" className="px-8 py-10 bg-white/[0.01]"></td>
                       </tr>
                     ))
                   ) : filtered.length === 0 ? (
                     <tr>
-                      <td colSpan="5" className="px-8 py-20 text-center italic text-zinc-500">No student records matches your search.</td>
+                      <td colSpan="6" className="px-8 py-20 text-center italic text-zinc-500">No student records matches your search.</td>
                     </tr>
                   ) : filtered.map((s) => (
                     <tr key={s._id} className="group hover:bg-white/[0.02] transition-all">
+                       <td className="pl-8 py-6 w-12">
+                          <input 
+                            type="checkbox"
+                            className="rounded border-zinc-300 text-primary focus:ring-primary w-4 h-4 cursor-pointer"
+                            checked={selectedStudentIds.includes(s._id)}
+                            onChange={() => toggleStudentSelection(s._id)}
+                          />
+                       </td>
                        <td className="px-8 py-6">
                           <div className="flex items-center gap-4">
                              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary/20 to-yellow-500/10 border border-primary/20 flex items-center justify-center font-black text-primary italic">
@@ -217,7 +305,14 @@ const Students = () => {
                              </div>
                              <div>
                                 <p className="font-bold text-sm text-zinc-900 group-hover:text-primary transition-colors">{s.name}</p>
-                                <p className="text-[10px] font-black uppercase tracking-widest text-zinc-500 mt-1">{s.collegeName} • {s.rollNumber}</p>
+                                <p className="text-[10px] font-black uppercase tracking-widest text-zinc-500 mt-1 flex flex-wrap items-center gap-2">
+                                  <span>{s.collegeName} • {s.rollNumber}</span>
+                                  {s.batch && (
+                                    <span className="bg-yellow-100 border border-yellow-300 text-yellow-800 px-2 py-0.5 rounded-md text-[8px] font-black tracking-widest leading-none">
+                                      {s.batch}
+                                    </span>
+                                  )}
+                                </p>
                              </div>
                           </div>
                        </td>
@@ -545,13 +640,89 @@ const Students = () => {
                   </div>
                   <div className="pt-4">
                      <button type="submit" className="w-full bg-zinc-900 text-white py-5 rounded-[2rem] text-xs font-black uppercase tracking-[0.3em] hover:bg-primary hover:text-black transition-all shadow-xl flex items-center justify-center gap-3">
-                        <Save size={16} /> Save Changes
+                        <Save size={16} /> Save Student Changes
                      </button>
                   </div>
                </form>
             </div>
          </div>
        )}
+
+        {/* Batch Creation/Assignment Modal */}
+        {isBatchModalOpen && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-6">
+             <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setIsBatchModalOpen(false)}></div>
+             <div className="relative w-full max-w-xl bg-white border border-zinc-200 rounded-[3rem] p-10 shadow-2xl animate-in zoom-in-95 duration-300">
+                <div className="flex items-center justify-between mb-8">
+                   <div className="flex items-center gap-4">
+                      <div className="w-12 h-12 bg-primary rounded-2xl flex items-center justify-center text-black">
+                         <Layers size={24} />
+                      </div>
+                      <div>
+                         <h3 className="text-2xl font-black uppercase tracking-tighter italic leading-none text-zinc-900">Manage Batch</h3>
+                         <p className="text-zinc-500 text-xs font-bold mt-1 uppercase tracking-widest">Assign {selectedStudentIds.length} students to a batch</p>
+                      </div>
+                   </div>
+                   <button onClick={() => setIsBatchModalOpen(false)} className="p-3 bg-zinc-100 text-zinc-400 hover:text-zinc-900 rounded-2xl transition-all">
+                      <X size={20} />
+                   </button>
+                </div>
+
+                <form onSubmit={handleBatchSubmit} className="space-y-6">
+                   <div className="space-y-2">
+                      <label className="text-[10px] font-black uppercase tracking-widest text-zinc-400 ml-2">Assign to Existing Batch</label>
+                      <select 
+                        value={selectedBatchId}
+                        onChange={(e) => {
+                          setSelectedBatchId(e.target.value);
+                          if (e.target.value) setBatchName('');
+                        }}
+                        className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl px-6 py-4 text-sm focus:border-primary transition-all outline-none text-zinc-900 font-bold cursor-pointer"
+                      >
+                        <option value="">-- Create a new batch instead --</option>
+                        {batches.map(b => (
+                          <option key={b._id} value={b._id}>{b.name} ({b.students?.length || 0} members)</option>
+                        ))}
+                      </select>
+                   </div>
+
+                   {!selectedBatchId && (
+                     <div className="space-y-2 animate-in slide-in-from-top-2 duration-200">
+                        <label className="text-[10px] font-black uppercase tracking-widest text-zinc-400 ml-2 font-bold text-primary">New Batch Name</label>
+                        <input 
+                          type="text" 
+                          required={!selectedBatchId}
+                          className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl px-6 py-4 text-sm focus:border-primary transition-all outline-none text-zinc-900 font-bold"
+                          placeholder="e.g. Batch-May-2026"
+                          value={batchName}
+                          onChange={(e) => setBatchName(e.target.value)}
+                        />
+                     </div>
+                   )}
+
+                   {/* Selected Students Preview */}
+                   <div className="space-y-2">
+                      <label className="text-[10px] font-black uppercase tracking-widest text-zinc-400 ml-2">Selected Students ({selectedStudentIds.length})</label>
+                      <div className="max-h-36 overflow-y-auto bg-zinc-50 border border-zinc-150 rounded-2xl p-4 space-y-2 scrollbar-hide">
+                        {students.filter(s => selectedStudentIds.includes(s._id)).map(s => (
+                          <div key={s._id} className="flex items-center justify-between text-xs text-zinc-700 bg-white border border-zinc-100 p-2.5 rounded-xl">
+                            <span className="font-bold">{s.name}</span>
+                            <span className="text-[9px] uppercase tracking-wider text-zinc-400">{s.course}</span>
+                          </div>
+                        ))}
+                      </div>
+                   </div>
+
+                   <button 
+                     type="submit"
+                     className="w-full bg-primary text-black py-5 rounded-[2rem] text-xs font-black uppercase tracking-[0.3em] hover:scale-[1.02] active:scale-95 transition-all shadow-xl shadow-primary/20"
+                   >
+                      Apply Batch Assignment
+                   </button>
+                </form>
+             </div>
+          </div>
+        )}
     </div>
   );
 };

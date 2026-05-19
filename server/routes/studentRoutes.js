@@ -61,6 +61,12 @@ router.post('/admin/tasks', protect, studentController.createTaskByAdmin);
 router.get('/admin/tasks/submissions', protect, studentController.getAllTaskSubmissions);
 router.post('/admin/tasks/:taskId/review', protect, studentController.reviewTaskSubmission);
 
+// Admin Batch Routes
+router.post('/admin/batches', protect, studentController.createBatch);
+router.get('/admin/batches', protect, studentController.getAllBatches);
+router.delete('/admin/batches/:id', protect, studentController.deleteBatch);
+router.delete('/admin/batches/:batchId/students/:studentId', protect, studentController.removeStudentFromBatch);
+
 // Admin Career Hub Routes
 router.post('/admin/jobs', protect, studentController.createJobByAdmin);
 router.delete('/admin/jobs/:jobId', protect, studentController.deleteJobByAdmin);

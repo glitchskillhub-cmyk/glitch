@@ -51,6 +51,13 @@ export const getStudentStats = () => api.get('/student-stats');
 export const createTaskByAdmin = (data) => api.post('/admin/tasks', data);
 export const getAllTaskSubmissions = () => api.get('/admin/tasks/submissions');
 export const reviewTaskSubmission = (taskId, data) => api.post(`/admin/tasks/${taskId}/review`, data);
+
+// Batches
+export const createBatch = (data) => api.post('/admin/batches', data);
+export const getAllBatches = () => api.get('/admin/batches');
+export const deleteBatch = (id) => api.delete(`/admin/batches/${id}`);
+export const removeStudentFromBatch = (batchId, studentId) => api.delete(`/admin/batches/${batchId}/students/${studentId}`);
+
 export const createJobByAdmin = (data) => api.post('/admin/jobs', data);
 export const deleteJobByAdmin = (jobId) => api.delete(`/admin/jobs/${jobId}`);
 export const getAllJobApplications = () => api.get('/admin/jobs/applications');

@@ -46,6 +46,10 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     default: false
   },
+  batch: {
+    type: String,
+    default: ''
+  },
   resetPasswordOTP: {
     type: String,
     default: null

@@ -35,6 +35,7 @@ import MentorDashboard from './pages/MentorDashboard';
 import AdminLayout from './components/AdminLayout';
 import AdminDashboardV2 from './pages/admin/Dashboard';
 import AdminStudents from './pages/admin/Students';
+import AdminBatches from './pages/admin/Batches';
 import AdminMentors from './pages/admin/Mentors';
 import AdminPrograms from './pages/admin/Programs';
 import AdminPayments from './pages/admin/Payments';
@@ -117,6 +118,7 @@ function App() {
           <Route index element={<Navigate to="/admin/dashboard" />} />
           <Route path="dashboard" element={<AdminDashboardV2 />} />
           <Route path="students" element={<AdminStudents />} />
+          <Route path="batches" element={<AdminBatches />} />
           <Route path="mentors" element={<AdminMentors />} />
           <Route path="programs" element={<AdminPrograms />} />
           <Route path="curriculum" element={<AdminCurriculum />} />

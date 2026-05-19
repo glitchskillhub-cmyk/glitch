@@ -12,19 +12,22 @@ import {
   AlertCircle,
   FileText,
   Clock,
-  Loader2
+  Loader2,
+  Layers
 } from 'lucide-react';
 import { 
   getAllTaskSubmissions, 
   createTaskByAdmin, 
   reviewTaskSubmission,
-  getAllStudents
+  getAllStudents,
+  getAllBatches
 } from '../../utils/api';
 import { toast } from 'react-hot-toast';
 
 const Tasks = () => {
   const [tasks, setTasks] = useState([]);
   const [students, setStudents] = useState([]);
+  const [batches, setBatches] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isAssignModalOpen, setIsAssignModalOpen] = useState(false);
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
@@ -36,7 +39,9 @@ const Tasks = () => {
 
   // Assign Task Form
   const [assignForm, setAssignForm] = useState({
+    targetType: 'student', // 'student' or 'batch'
     studentId: '',
+    batchId: '',
     title: '',
     description: '',
     points: 100,
@@ -47,15 +52,20 @@ const Tasks = () => {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const [tasksRes, studentsRes] = await Promise.all([
+      const [tasksRes, studentsRes, batchesRes] = await Promise.all([
         getAllTaskSubmissions(),
-        getAllStudents()
+        getAllStudents(),
+        getAllBatches()
       ]);
       setTasks(tasksRes.data);
       setStudents(studentsRes.data);
-      if (studentsRes.data.length > 0) {
-        setAssignForm(prev => ({ ...prev, studentId: studentsRes.data[0]._id }));
-      }
+      setBatches(batchesRes.data);
+      
+      setAssignForm(prev => ({ 
+        ...prev, 
+        studentId: studentsRes.data[0]?._id || '',
+        batchId: batchesRes.data[0]?._id || ''
+      }));
     } catch {
       toast.error('Failed to load dashboard task context.');
     } finally {
@@ -69,15 +79,37 @@ const Tasks = () => {
 
   const handleAssignTask = async (e) => {
     e.preventDefault();
-    if (!assignForm.studentId || !assignForm.title.trim()) {
+    if (!assignForm.title.trim()) {
       return toast.error('Please fill in required fields.');
     }
+    if (assignForm.targetType === 'student' && !assignForm.studentId) {
+      return toast.error('Please select a student.');
+    }
+    if (assignForm.targetType === 'batch' && !assignForm.batchId) {
+      return toast.error('Please select a batch.');
+    }
+
     try {
-      await createTaskByAdmin(assignForm);
-      toast.success('Task assigned successfully!');
+      const payload = {
+        title: assignForm.title,
+        description: assignForm.description,
+        points: assignForm.points,
+        type: assignForm.type,
+        deadline: assignForm.deadline || undefined
+      };
+      if (assignForm.targetType === 'batch') {
+        payload.batchId = assignForm.batchId;
+      } else {
+        payload.studentId = assignForm.studentId;
+      }
+
+      await createTaskByAdmin(payload);
+      toast.success(assignForm.targetType === 'batch' ? 'Tasks assigned to batch successfully!' : 'Task assigned successfully!');
       setIsAssignModalOpen(false);
       setAssignForm({
+        targetType: 'student',
         studentId: students[0]?._id || '',
+        batchId: batches[0]?._id || '',
         title: '',
         description: '',
         points: 100,
@@ -263,19 +295,55 @@ const Tasks = () => {
               </div>
 
               <form onSubmit={handleAssignTask} className="space-y-5">
-                 <div className="space-y-2">
-                    <label className="text-[10px] font-black uppercase tracking-widest text-zinc-400 ml-2">Select Student</label>
-                    <select 
-                      required
-                      value={assignForm.studentId}
-                      onChange={(e) => setAssignForm({ ...assignForm, studentId: e.target.value })}
-                      className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl px-6 py-4 text-sm focus:border-primary transition-all outline-none text-zinc-900 font-bold"
+                 {/* Target selection tabs */}
+                 <div className="grid grid-cols-2 gap-2 bg-zinc-100 p-1.5 rounded-2xl">
+                    <button
+                      type="button"
+                      onClick={() => setAssignForm({ ...assignForm, targetType: 'student' })}
+                      className={`py-2 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all ${assignForm.targetType === 'student' ? 'bg-primary text-black' : 'text-zinc-500 hover:text-zinc-900'}`}
                     >
-                      {students.map(s => (
-                        <option key={s._id} value={s._id}>{s.name} ({s.email})</option>
-                      ))}
-                    </select>
+                      Single Student
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setAssignForm({ ...assignForm, targetType: 'batch' })}
+                      className={`py-2 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all ${assignForm.targetType === 'batch' ? 'bg-primary text-black' : 'text-zinc-500 hover:text-zinc-900'}`}
+                    >
+                      Batch Assignment
+                    </button>
                  </div>
+
+                 {assignForm.targetType === 'student' ? (
+                    <div className="space-y-2">
+                       <label className="text-[10px] font-black uppercase tracking-widest text-zinc-400 ml-2">Select Student</label>
+                       <select 
+                         required={assignForm.targetType === 'student'}
+                         value={assignForm.studentId}
+                         onChange={(e) => setAssignForm({ ...assignForm, studentId: e.target.value })}
+                         className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl px-6 py-4 text-sm focus:border-primary transition-all outline-none text-zinc-900 font-bold"
+                       >
+                         <option value="">-- Choose Student --</option>
+                         {students.map(s => (
+                           <option key={s._id} value={s._id}>{s.name} ({s.email})</option>
+                         ))}
+                       </select>
+                    </div>
+                 ) : (
+                    <div className="space-y-2">
+                       <label className="text-[10px] font-black uppercase tracking-widest text-zinc-400 ml-2">Select Batch</label>
+                       <select 
+                         required={assignForm.targetType === 'batch'}
+                         value={assignForm.batchId}
+                         onChange={(e) => setAssignForm({ ...assignForm, batchId: e.target.value })}
+                         className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl px-6 py-4 text-sm focus:border-primary transition-all outline-none text-zinc-900 font-bold"
+                       >
+                         <option value="">-- Choose Batch --</option>
+                         {batches.map(b => (
+                           <option key={b._id} value={b._id}>{b.name} ({b.students?.length || 0} members)</option>
+                         ))}
+                       </select>
+                    </div>
+                 )}
 
                  <div className="space-y-2">
                     <label className="text-[10px] font-black uppercase tracking-widest text-zinc-400 ml-2">Task Title</label>

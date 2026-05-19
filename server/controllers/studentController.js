@@ -269,10 +269,9 @@ exports.updateStudentStatus = async (req, res, next) => {
   } catch (error) { next(error); }
 };
 
-// Update Student (Full Edit)
 exports.updateStudent = async (req, res, next) => {
   try {
-    const { name, phone, email, branch, rollNumber, collegeName, location, course, status } = req.body;
+    const { name, phone, email, branch, rollNumber, collegeName, location, course, status, batch } = req.body;
     const updateData = {};
     if (name) updateData.name = name;
     if (phone) updateData.phone = phone;
@@ -283,6 +282,7 @@ exports.updateStudent = async (req, res, next) => {
     if (location !== undefined) updateData.location = location;
     if (course) updateData.course = course;
     if (status) updateData.status = status;
+    if (batch !== undefined) updateData.batch = batch;
 
     const student = await Student.findByIdAndUpdate(req.params.id, updateData, { new: true });
     if (!student) { res.status(404); throw new Error('Student not found'); }
@@ -306,13 +306,15 @@ exports.updateStudent = async (req, res, next) => {
             phone: student.phone,
             role: 'student',
             isVerified: true,
-            isEnrolled: true
+            isEnrolled: true,
+            batch: student.batch || ''
           });
         } else {
           // Update details on the user too
           user.name = student.name;
           user.phone = student.phone;
           user.isEnrolled = true;
+          user.batch = student.batch || '';
           await user.save();
         }
 
@@ -507,20 +509,61 @@ exports.getStudentDashboardStats = async (req, res, next) => {
   } catch (error) { next(error); }
 };
 
-// Admin: Create a Task for a student
+// Admin: Create a Task for a student or batch of students
 exports.createTaskByAdmin = async (req, res, next) => {
   try {
-    const { studentId, title, description, points, type, deadline } = req.body;
-    const task = await Task.create({
-      student: studentId,
-      title,
-      description,
-      points: points || 100,
-      type: type || 'Coding',
-      deadline: deadline || null,
-      status: 'Pending'
-    });
-    res.status(201).json({ success: true, task });
+    const { studentId, batchId, title, description, points, type, deadline } = req.body;
+    const User = require('../models/User');
+    const Batch = require('../models/Batch');
+
+    if (batchId) {
+      const batch = await Batch.findById(batchId).populate('students');
+      if (!batch) {
+        return res.status(404).json({ message: 'Batch not found' });
+      }
+
+      const createdTasks = [];
+      for (const student of batch.students) {
+        let user = await User.findOne({ email: student.email.toLowerCase() });
+        if (!user) {
+          console.log(`🌱 Auto-creating User account for batch task assignment: ${student.email}`);
+          user = await User.create({
+            name: student.name,
+            email: student.email.toLowerCase(),
+            password: 'student@123',
+            phone: student.phone,
+            role: 'student',
+            isVerified: true,
+            isEnrolled: true,
+            batch: batch.name
+          });
+        }
+
+        const task = await Task.create({
+          student: user._id,
+          title,
+          description,
+          points: points || 100,
+          type: type || 'Coding',
+          deadline: deadline || null,
+          status: 'Pending'
+        });
+        createdTasks.push(task);
+      }
+
+      return res.status(201).json({ success: true, count: createdTasks.length });
+    } else {
+      const task = await Task.create({
+        student: studentId,
+        title,
+        description,
+        points: points || 100,
+        type: type || 'Coding',
+        deadline: deadline || null,
+        status: 'Pending'
+      });
+      return res.status(201).json({ success: true, task });
+    }
   } catch (error) { next(error); }
 };
 
@@ -671,6 +714,134 @@ exports.verifyCertificate = async (req, res, next) => {
     if (!certificate) return res.status(404).json({ message: 'Certificate invalid or not found' });
     res.json({ success: true, certificate });
   } catch (error) { next(error); }
+};
+
+// --- BATCH MANAGEMENT CONTROLLERS ---
+const Batch = require('../models/Batch');
+
+exports.createBatch = async (req, res, next) => {
+  try {
+    const { name, studentIds } = req.body;
+    if (!name) {
+      return res.status(400).json({ message: 'Batch name is required' });
+    }
+    
+    // Find or create the batch
+    let batch = await Batch.findOne({ name: name.trim() });
+    if (batch) {
+      batch.students = studentIds || [];
+      await batch.save();
+    } else {
+      batch = await Batch.create({
+        name: name.trim(),
+        students: studentIds || []
+      });
+    }
+
+    // Set batch string to empty for any students previously in this batch (if name changed / reassigned)
+    const allStudents = await Student.find({ batch: batch.name });
+    const User = require('../models/User');
+    for (const student of allStudents) {
+      if (!studentIds.includes(student._id.toString())) {
+        student.batch = '';
+        await student.save();
+        
+        const user = await User.findOne({ email: student.email.toLowerCase() });
+        if (user) {
+          user.batch = '';
+          await user.save();
+        }
+      }
+    }
+
+    // Now update all current batch students
+    if (studentIds && studentIds.length > 0) {
+      const targetStudents = await Student.find({ _id: { $in: studentIds } });
+      for (const student of targetStudents) {
+        student.batch = batch.name;
+        await student.save();
+        
+        const user = await User.findOne({ email: student.email.toLowerCase() });
+        if (user) {
+          user.batch = batch.name;
+          await user.save();
+        }
+      }
+    }
+
+    const populatedBatch = await Batch.findById(batch._id).populate('students');
+    res.status(201).json({ success: true, batch: populatedBatch });
+  } catch (error) {
+    next(error);
+  }
+};
+
+exports.getAllBatches = async (req, res, next) => {
+  try {
+    const batches = await Batch.find().populate('students').sort({ createdAt: -1 });
+    res.json(batches);
+  } catch (error) {
+    next(error);
+  }
+};
+
+exports.deleteBatch = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const batch = await Batch.findById(id);
+    if (!batch) {
+      return res.status(404).json({ message: 'Batch not found' });
+    }
+
+    // Clear batch field for all students in this batch
+    const students = await Student.find({ batch: batch.name });
+    const User = require('../models/User');
+    for (const student of students) {
+      student.batch = '';
+      await student.save();
+      
+      const user = await User.findOne({ email: student.email.toLowerCase() });
+      if (user) {
+        user.batch = '';
+        await user.save();
+      }
+    }
+
+    await Batch.findByIdAndDelete(id);
+    res.json({ success: true, message: 'Batch deleted successfully' });
+  } catch (error) {
+    next(error);
+  }
+};
+
+exports.removeStudentFromBatch = async (req, res, next) => {
+  try {
+    const { batchId, studentId } = req.params;
+    const batch = await Batch.findById(batchId);
+    if (!batch) {
+      return res.status(404).json({ message: 'Batch not found' });
+    }
+
+    batch.students = batch.students.filter(id => id.toString() !== studentId);
+    await batch.save();
+
+    const student = await Student.findById(studentId);
+    if (student && student.batch === batch.name) {
+      student.batch = '';
+      await student.save();
+
+      const User = require('../models/User');
+      const user = await User.findOne({ email: student.email.toLowerCase() });
+      if (user) {
+        user.batch = '';
+        await user.save();
+      }
+    }
+
+    res.json({ success: true, message: 'Student removed from batch' });
+  } catch (error) {
+    next(error);
+  }
 };
 
 

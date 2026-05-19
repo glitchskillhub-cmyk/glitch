@@ -68,7 +68,13 @@ const CareerHub = () => {
            </div>
 
            <div className="space-y-4">
-              {jobs.map((job, i) => (
+              {jobs.length === 0 ? (
+                <div className="text-center py-16 bg-white border border-slate-100 rounded-3xl p-8 shadow-sm">
+                   <Briefcase className="mx-auto text-slate-350 mb-4" size={48} />
+                   <p className="text-slate-400 font-bold italic text-sm uppercase tracking-widest">No active career opportunities at the moment</p>
+                   <p className="text-slate-400 text-xs mt-1">Please check back later or contact the placement coordinator.</p>
+                </div>
+              ) : jobs.map((job, i) => (
                 <div key={i} className="bento-card bg-white p-8 group hover:border-primary transition-all border-slate-200">
                   <div className="flex justify-between items-start mb-6">
                      <div className="flex gap-4">
@@ -81,7 +87,7 @@ const CareerHub = () => {
                         </div>
                      </div>
                      <div className="flex gap-2">
-                        {job.tags.map((tag, j) => (
+                        {(job.tags || job.requirements || [job.type || 'Full-time']).slice(0, 3).map((tag, j) => (
                           <span key={j} className="text-[10px] font-black bg-slate-100 text-slate-500 px-3 py-1 rounded-full uppercase tracking-widest">{tag}</span>
                         ))}
                      </div>

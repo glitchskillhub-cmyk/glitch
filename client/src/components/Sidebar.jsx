@@ -16,6 +16,7 @@ import {
   Briefcase
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import logo from '../assets/images/glitch-logo.webp';
 
 const Sidebar = () => {
   const { user, logout } = useAuth();
@@ -46,12 +47,10 @@ const Sidebar = () => {
       {/* Logo Section */}
       <div className="p-8">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center text-black shadow-lg shadow-primary/20">
-            <Zap size={24} fill="currentColor" />
-          </div>
-          <div>
-            <h1 className="text-xl font-black text-white tracking-tighter">GLITCH<span className="text-primary italic">HUB</span></h1>
-            <p className="text-[8px] font-bold text-slate-500 uppercase tracking-[0.2em]">Student Portal</p>
+          <img src={logo} alt="Glitch Logo" className="h-9 w-auto object-contain" />
+          <div className="border-l border-slate-800 pl-3 py-1">
+            <span className="text-[9px] font-black text-slate-500 uppercase tracking-[0.2em] block leading-none">Student</span>
+            <span className="text-[9px] font-black text-primary uppercase tracking-[0.2em] block leading-none mt-1">Portal</span>
           </div>
         </div>
       </div>

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { NavLink, useNavigate, useLocation } from 'react-router-dom';
+import logo from '../assets/images/glitch-logo.webp';
 import { 
   LayoutDashboard, 
   Users, 
@@ -85,10 +86,13 @@ const AdminLayout = ({ children }) => {
         <div className="p-6 flex items-center justify-between">
           {!collapsed && (
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center font-black text-black text-xl italic">G</div>
-              <span className="font-display font-black text-lg tracking-tighter uppercase italic text-zinc-900">
-                Glitch <span className="text-primary not-italic">Hub</span>
-              </span>
+              <div className="bg-slate-950 px-4 py-2.5 rounded-2xl flex items-center justify-center">
+                <img src={logo} alt="Glitch Logo" className="h-6 w-auto object-contain" />
+              </div>
+              <div className="border-l border-zinc-200 pl-3 py-1">
+                <span className="text-[9px] font-black text-zinc-400 uppercase tracking-[0.2em] block leading-none">Admin</span>
+                <span className="text-[9px] font-black text-primary uppercase tracking-[0.2em] block leading-none mt-1">Portal</span>
+              </div>
             </div>
           )}
           <button 

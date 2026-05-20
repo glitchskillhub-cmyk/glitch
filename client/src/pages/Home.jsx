@@ -3,8 +3,8 @@ import { Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import SEO from '../components/SEO';
-import { 
-  Sparkles, Code, Users, Monitor, Rocket, Layers, GraduationCap, 
+import {
+  Sparkles, Code, Users, Monitor, Rocket, Layers, GraduationCap,
   ArrowRight, CheckCircle2, ChevronRight, Zap, Target, ShieldCheck,
   Star, Trophy, Heart, UserCheck
 } from 'lucide-react';
@@ -34,7 +34,7 @@ const Home = () => {
       {/* Hero Section */}
       <section className="relative pt-36 md:pt-40 pb-16 md:pb-24 overflow-hidden">
         <div className="absolute top-[-10%] right-[-5%] w-[40%] h-[40%] bg-primary/20 rounded-full blur-[120px] -z-10 animate-pulse"></div>
-        
+
         <div className="container mx-auto px-6">
           <div className="flex flex-col lg:flex-row items-center gap-16">
             <div className="flex-1 text-left">
@@ -46,7 +46,7 @@ const Home = () => {
                 Engineering.
               </h1>
               <p className="text-lg md:text-xl text-slate-600 mb-10 max-w-xl leading-relaxed">
-                Glitch Skill Hub provides real-time knowledge for students and working professionals. 
+                Glitch Skill Hub provides real-time knowledge for students and working professionals.
                 Upskill with classes taught by top MNC software engineers.
               </p>
               <div className="flex flex-wrap gap-6">
@@ -83,13 +83,13 @@ const Home = () => {
       <section className="py-16 md:py-24 bg-white overflow-hidden relative">
         <div className="container mx-auto px-6 relative z-10">
           <div className="text-center mb-16">
-             <div className="badge-modern mx-auto mb-8"><span></span> Professional Mentors</div>
-             <h2 className="text-3xl md:text-5xl font-bold tracking-tight leading-tight mb-8">
-               Taught By <span className="text-primary">MNC</span> Engineers.
-             </h2>
-             <p className="text-xl text-slate-500 max-w-2xl mx-auto">
-               Direct learning from professionals working at Google, Accenture, TCS, and Cognizant.
-             </p>
+            <div className="badge-modern mx-auto mb-8"><span></span> Professional Mentors</div>
+            <h2 className="text-3xl md:text-5xl font-bold tracking-tight leading-tight mb-8">
+              Taught By <span className="text-primary">MNC</span> Engineers.
+            </h2>
+            <p className="text-xl text-slate-500 max-w-2xl mx-auto">
+              Direct learning from professionals working at Google, Accenture, TCS, and Cognizant.
+            </p>
           </div>
         </div>
 
@@ -103,13 +103,10 @@ const Home = () => {
           <div className="flex flex-col lg:flex-row items-center gap-10 md:gap-16">
             <div className="flex-1 order-2 lg:order-1 relative">
               <div className="bento-card p-0 overflow-hidden aspect-video bg-slate-200 shadow-2xl">
-                 <img src={mentorsImg} alt="Our Mentors" className="w-full h-full object-cover" />
-                 <div className="absolute inset-0 bg-primary/10 group-hover:bg-transparent transition-all"></div>
+                <img src={mentorsImg} alt="Our Mentors" className="w-full h-full object-cover" />
+                <div className="absolute inset-0 bg-primary/10 group-hover:bg-transparent transition-all"></div>
               </div>
-              <div className="absolute -bottom-6 -right-6 bento-card bg-primary p-6 text-black hidden md:block">
-                 <p className="text-3xl font-bold">2026</p>
-                 <p className="text-[10px] font-bold tracking-tight">New Batch</p>
-              </div>
+
             </div>
             <div className="flex-1 order-1 lg:order-2">
               <div className="badge-modern mb-8"><span></span> Our Story</div>
@@ -133,7 +130,7 @@ const Home = () => {
         <div className="container mx-auto px-6 text-center">
           <div className="badge-modern mx-auto mb-8"><span></span> Why Us</div>
           <h2 className="section-title mb-10 md:mb-16">Why Choose <span className="text-primary">Glitch?</span></h2>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {[
               { icon: Zap, title: "Zero Theory", desc: "We skip the fluff. 100% of our focus is on building and shipping code." },
@@ -229,22 +226,22 @@ const Home = () => {
       <section className="py-16 md:py-24 bg-white">
         <div className="container mx-auto px-6 text-center">
           <div className="relative inline-block">
-             <h2 className="text-4xl md:text-6xl font-bold tracking-tight leading-tight mb-12">
-               Stop Dreaming. <br /> Start <span className="text-primary">Building.</span>
-             </h2>
-             <div className="absolute top-0 -right-20 hidden md:block opacity-20 rotate-12">
-                <Rocket size={100} />
-             </div>
+            <h2 className="text-4xl md:text-6xl font-bold tracking-tight leading-tight mb-12">
+              Stop Dreaming. <br /> Start <span className="text-primary">Building.</span>
+            </h2>
+            <div className="absolute top-0 -right-20 hidden md:block opacity-20 rotate-12">
+              <Rocket size={100} />
+            </div>
           </div>
           <p className="text-xl text-slate-500 mb-16 max-w-3xl mx-auto">
             Join the most intensive software engineering program in HiTech City, Hyderabad. 100% Online across India.
           </p>
           <div className="flex flex-col sm:flex-row justify-center gap-6">
             <Link to="/register" className="btn-premium py-6 px-12 text-xl">
-               <span>Reserve Your Seat</span>
+              <span>Reserve Your Seat</span>
             </Link>
             <Link to="/contact" className="py-6 px-12 border-2 border-slate-100 rounded-full font-bold uppercase tracking-widest hover:bg-slate-50 transition-all">
-               Get in Touch
+              Get in Touch
             </Link>
           </div>
         </div>

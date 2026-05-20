@@ -14,12 +14,13 @@ import {
   Zap,
   MessageSquare,
   Briefcase,
-  Megaphone
+  Megaphone,
+  X
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import logo from '../assets/images/glitch-logo.webp';
 
-const Sidebar = () => {
+const Sidebar = ({ isMobileOpen, setIsMobileOpen }) => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
 
@@ -44,7 +45,25 @@ const Sidebar = () => {
   };
 
   return (
-    <aside className="fixed left-0 top-0 h-screen w-72 bg-sidebar border-r border-slate-800 flex flex-col z-50 transition-all duration-300">
+    <>
+      {/* Mobile Overlay */}
+      {isMobileOpen && (
+        <div 
+          className="md:hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-40 transition-opacity duration-300"
+          onClick={() => setIsMobileOpen(false)}
+        />
+      )}
+
+      <aside className={`fixed left-0 top-0 h-screen w-72 bg-sidebar border-r border-slate-800 flex flex-col z-50 transition-transform duration-300 ${isMobileOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}`}>
+        
+        {/* Mobile Close Button */}
+        <button 
+          className="md:hidden absolute top-6 right-6 text-slate-400 hover:text-white bg-slate-800/50 p-2 rounded-full"
+          onClick={() => setIsMobileOpen(false)}
+        >
+          <X size={20} />
+        </button>
+
       {/* Logo Section */}
       <div className="p-8">
         <div className="flex items-center gap-3">
@@ -65,7 +84,13 @@ const Sidebar = () => {
             className={({ isActive }) => 
               `sidebar-link group ${isActive && !item.locked ? 'active' : ''} ${item.locked ? 'locked' : ''}`
             }
-            onClick={(e) => item.locked && e.preventDefault()}
+            onClick={(e) => {
+              if (item.locked) {
+                e.preventDefault();
+              } else if (window.innerWidth < 768) {
+                setIsMobileOpen(false);
+              }
+            }}
           >
             <item.icon size={18} className="transition-transform group-hover:scale-110" />
             <span className="flex-1">{item.name}</span>
@@ -97,6 +122,7 @@ const Sidebar = () => {
         </button>
       </div>
     </aside>
+    </>
   );
 };
 

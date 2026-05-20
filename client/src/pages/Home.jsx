@@ -49,8 +49,8 @@ const Home = () => {
                 Glitch Skill Hub provides real-time knowledge for students and working professionals.
                 Upskill with classes taught by top MNC software engineers.
               </p>
-              <div className="flex flex-wrap gap-6">
-                <Link to="/register" className="btn-premium group py-5 px-10">
+              <div className="flex flex-col sm:flex-row flex-wrap gap-6">
+                <Link to="/register" className="btn-premium group py-4 px-6 sm:py-5 sm:px-10">
                   <span>Start Your Upskill Journey</span>
                   <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
                 </Link>
@@ -58,14 +58,7 @@ const Home = () => {
                   Meet Our Mentors <ChevronRight size={18} />
                 </Link>
               </div>
-              <div className="mt-16 flex items-center gap-8">
-                <div className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Our Mentors are from</div>
-                <div className="flex gap-6 font-display font-bold text-base text-slate-900">
-                  <span>GOOGLE</span>
-                  <span>MICROSOFT</span>
-                  <span>AMAZON</span>
-                </div>
-              </div>
+
             </div>
 
             <div className="flex-1 relative hidden lg:block">

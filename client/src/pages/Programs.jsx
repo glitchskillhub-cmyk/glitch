@@ -43,6 +43,7 @@ const Programs = () => {
 
   return (
     <div className="min-h-screen bg-white selection:bg-primary selection:text-black">
+      <SEO title="Career Programs" description="Glitch Skill Hub provides hands-on, project-based curriculum designed by practicing software engineers to get you job-ready in weeks." path="/programs" />
       <Navbar />
       
       {/* Hero Section */}

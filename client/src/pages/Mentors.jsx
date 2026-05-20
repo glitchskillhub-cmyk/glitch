@@ -53,6 +53,7 @@ const Mentors = () => {
 
   return (
     <div className="min-h-screen bg-white">
+      <SEO title="Elite Faculty & Mentors" description="Learn directly from practicing senior engineers from top MNCs and high-growth startups at Glitch Skill Hub." path="/mentors" />
       <Navbar />
       
       {/* Header */}

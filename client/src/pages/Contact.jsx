@@ -33,6 +33,7 @@ const Contact = () => {
 
   return (
     <div className="min-h-screen bg-white">
+      <SEO title="Contact Us" description="Have questions about our programs, trainers, or admissions? Our team is here to help you navigate your practical tech career path." path="/contact" />
       <Navbar />
 
       {/* Header */}

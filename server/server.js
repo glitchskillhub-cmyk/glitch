@@ -37,7 +37,9 @@ app.use(cors({
     "http://localhost:5176",
     "https://glitch-skill-hub.vercel.app", 
     "https://glitch-dashboard-client.onrender.com",
-    "https://glitch-ashen-iota.vercel.app"
+    "https://glitch-ashen-iota.vercel.app",
+    "https://www.glitchedu.online",
+    "https://glitchedu.online"
   ],
   credentials: true
 }));

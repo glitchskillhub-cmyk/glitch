@@ -77,24 +77,32 @@ const Navbar = () => {
         {/* Action Buttons */}
         <div className="hidden md:flex items-center gap-4">
           {!user ? (
-            <Link to="/login" className="text-xs font-bold uppercase tracking-widest hover:text-primary transition-colors">
-              Login
-            </Link>
+            <>
+              <Link to="/login" className="py-2 px-6 text-xs font-bold uppercase tracking-widest border-2 border-slate-900 rounded-xl hover:bg-slate-900 hover:text-white transition-all">
+                Login
+              </Link>
+              <Link to="/signup" className="btn-premium py-2 px-6 text-xs group">
+                <span>Sign Up</span>
+                <ChevronRight size={14} className="group-hover:translate-x-1 transition-transform" />
+              </Link>
+            </>
           ) : (
-            <button 
-              onClick={handleProfileClick}
-              className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-slate-400 hover:text-black transition-colors cursor-pointer"
-            >
-              <User size={16} /> Profile
-            </button>
+            <>
+              <button 
+                onClick={handleProfileClick}
+                className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-slate-400 hover:text-black transition-colors cursor-pointer"
+              >
+                <User size={16} /> Profile
+              </button>
+              <button 
+                onClick={handleHubClick}
+                className="btn-premium py-2 px-6 text-xs group cursor-pointer"
+              >
+                <span>My Hub</span>
+                <ChevronRight size={14} className="group-hover:translate-x-1 transition-transform" />
+              </button>
+            </>
           )}
-          <button 
-            onClick={handleHubClick}
-            className="btn-premium py-2 px-6 text-xs group cursor-pointer"
-          >
-            <span>{user ? 'My Hub' : 'Join Hub'}</span>
-            <ChevronRight size={14} className="group-hover:translate-x-1 transition-transform" />
-          </button>
         </div>
 
         {/* Mobile Toggle */}
@@ -119,12 +127,31 @@ const Navbar = () => {
               {link.name}
             </Link>
           ))}
-          <button 
-            onClick={() => { setIsMobileMenuOpen(false); navigate(getDashboardPath()); }}
-            className="btn-premium py-5 mt-4"
-          >
-            <span>{user ? 'My Dashboard' : 'Join The Hub'}</span>
-          </button>
+          {!user ? (
+            <>
+              <Link 
+                to="/login"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="w-full py-5 mt-2 border-2 border-slate-900 rounded-2xl text-center font-bold uppercase tracking-widest text-sm hover:bg-slate-900 hover:text-white transition-all"
+              >
+                Login
+              </Link>
+              <Link 
+                to="/signup"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="btn-premium py-5"
+              >
+                <span>Sign Up</span>
+              </Link>
+            </>
+          ) : (
+            <button 
+              onClick={() => { setIsMobileMenuOpen(false); navigate(getDashboardPath()); }}
+              className="btn-premium py-5 mt-4"
+            >
+              <span>My Dashboard</span>
+            </button>
+          )}
         </div>
       </div>
     </nav>

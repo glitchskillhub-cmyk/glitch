@@ -159,12 +159,12 @@ const AdminLayout = ({ children }) => {
              <div className="h-10 w-px bg-zinc-200 mx-2"></div>
              <div className="flex items-center gap-4 group cursor-pointer">
                 <div className="text-right hidden sm:block">
-                   <p className="text-xs font-black uppercase tracking-widest text-zinc-900">Tarun</p>
+                   <p className="text-xs font-black uppercase tracking-widest text-zinc-900">Glitch</p>
                    <p className="text-[10px] font-bold text-primary uppercase">Root Admin</p>
                 </div>
                 <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-primary to-yellow-600 p-[1px]">
                    <div className="w-full h-full bg-white rounded-2xl flex items-center justify-center font-black text-primary text-sm italic border border-zinc-100">
-                      T
+                      G
                    </div>
                 </div>
              </div>

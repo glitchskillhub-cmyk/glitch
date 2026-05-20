@@ -66,9 +66,12 @@ const RoleProtectedRoute = ({ children, allowedRoles }) => {
   return children ? children : <Outlet />;
 };
 
+import ScrollToTop from './components/ScrollToTop';
+
 function App() {
   return (
     <Router>
+      <ScrollToTop />
       <Toaster position="top-right" reverseOrder={false} />
       <Routes>
         {/* Public Routes */}

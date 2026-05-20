@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { Mail, Lock, LogIn, Sparkles, ArrowRight, Loader2, User, KeyRound, ShieldCheck, ArrowLeft } from 'lucide-react';
 import Navbar from '../components/Navbar';
+import SEO from '../components/SEO';
 import Footer from '../components/Footer';
 import { toast } from 'react-hot-toast';
 import { forgotPassword, resetPassword } from '../utils/api';
@@ -88,6 +89,7 @@ const Login = () => {
 
   return (
     <div className="min-h-screen bg-white">
+      <SEO title="Login" description="Login to your Glitch Skill Hub account to continue your practical engineering journey." path="/login" />
       <Navbar />
       
       <section className="pt-36 md:pt-48 pb-14 md:pb-20 relative overflow-hidden">

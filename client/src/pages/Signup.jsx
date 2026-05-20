@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { Mail, Lock, User, UserPlus, Sparkles, Loader2, Phone, ShieldCheck } from 'lucide-react';
 import Navbar from '../components/Navbar';
+import SEO from '../components/SEO';
 import Footer from '../components/Footer';
 import { toast } from 'react-hot-toast';
 
@@ -38,6 +39,7 @@ const Signup = () => {
 
   return (
     <div className="min-h-screen bg-white">
+      <SEO title="Create Account" description="Join Glitch Skill Hub and start your practical engineering career." path="/signup" />
       <Navbar />
       
       <section className="pt-36 md:pt-48 pb-14 md:pb-20 relative overflow-hidden">

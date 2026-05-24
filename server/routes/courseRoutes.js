@@ -7,7 +7,7 @@ const { protect, authorize } = require('../middleware/authMiddleware');
 // @route   GET /api/courses
 router.get('/', async (req, res) => {
   try {
-    const courses = await Course.find({ isActive: true }).populate('mentor', 'name');
+    const courses = await Course.find({ isActive: true }).select('-modules').populate('mentor', 'name');
     res.json(courses);
   } catch (error) {
     res.status(500).json({ message: error.message });

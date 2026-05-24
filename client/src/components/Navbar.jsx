@@ -88,19 +88,19 @@ const Navbar = () => {
             </>
           ) : (
             <>
-              <button 
-                onClick={handleProfileClick}
+              <Link 
+                to={getProfilePath()}
                 className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-slate-400 hover:text-black transition-colors cursor-pointer"
               >
                 <User size={16} /> Profile
-              </button>
-              <button 
-                onClick={handleHubClick}
+              </Link>
+              <Link 
+                to={getDashboardPath()}
                 className="btn-premium py-2 px-6 text-xs group cursor-pointer"
               >
                 <span>My Hub</span>
                 <ChevronRight size={14} className="group-hover:translate-x-1 transition-transform" />
-              </button>
+              </Link>
             </>
           )}
         </div>
@@ -145,12 +145,13 @@ const Navbar = () => {
               </Link>
             </>
           ) : (
-            <button 
-              onClick={() => { setIsMobileMenuOpen(false); navigate(getDashboardPath()); }}
+            <Link 
+              to={getDashboardPath()}
+              onClick={() => setIsMobileMenuOpen(false)}
               className="btn-premium py-5 mt-4"
             >
               <span>My Dashboard</span>
-            </button>
+            </Link>
           )}
         </div>
       </div>

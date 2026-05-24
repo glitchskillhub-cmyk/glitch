@@ -92,18 +92,61 @@ const Login = () => {
       <SEO title="Login" description="Login to your Glitch Skill Hub account to continue your practical engineering journey." path="/login" />
       <Navbar />
       
-      <section className="pt-36 md:pt-48 pb-14 md:pb-20 relative overflow-hidden">
+      <section className="pt-32 md:pt-40 pb-14 md:pb-20 relative overflow-hidden">
         <div className="absolute top-0 right-0 w-1/2 h-full bg-primary/5 blur-[150px]"></div>
         
-        <div className="container mx-auto px-6">
-          <div className="max-w-md mx-auto">
-             <div className="text-center mb-12">
-                <div className="badge-modern mx-auto mb-8"><span></span> Access Hub</div>
-                <h1 className="text-4xl font-bold tracking-tight mb-4">Login to <br /> <span className="text-primary italic">Glitch.</span></h1>
-                <p className="text-slate-500 font-medium">Continue your practical engineering journey.</p>
+        <div className="container mx-auto px-6 lg:px-12 xl:px-20">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 xl:gap-32 items-center">
+             
+             {/* Left Side: Image & Text */}
+             <div className="hidden lg:flex flex-col space-y-10 lg:pr-10 xl:pr-16">
+                <div>
+                   <div className="badge-modern mb-6"><span></span> Access Hub</div>
+                   <h1 className="text-5xl lg:text-6xl xl:text-7xl font-bold tracking-tight mb-6">
+                     Login to <br /> <span className="text-primary italic">Glitch.</span>
+                   </h1>
+                   <p className="text-xl text-slate-500 font-medium max-w-md leading-relaxed">
+                     Continue your practical engineering journey. Master the skills that top tech companies demand.
+                   </p>
+                </div>
+                
+                <div className="relative rounded-[2.5rem] overflow-hidden shadow-2xl shadow-slate-200/50 group h-80 w-full max-w-md border border-slate-100">
+                   <img 
+                     src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&q=80" 
+                     alt="Students collaborating" 
+                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000"
+                   />
+                   <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/20 to-transparent"></div>
+                   <div className="absolute bottom-8 left-8 right-8">
+                      <div className="flex items-center gap-4 mb-3">
+                         <div className="flex -space-x-3">
+                            <img src="https://i.pravatar.cc/100?img=1" alt="student" className="w-10 h-10 rounded-full border-2 border-slate-900 object-cover" />
+                            <img src="https://i.pravatar.cc/100?img=2" alt="student" className="w-10 h-10 rounded-full border-2 border-slate-900 object-cover" />
+                            <div className="w-10 h-10 rounded-full bg-primary border-2 border-slate-900 flex items-center justify-center text-[10px] font-black text-slate-900">+2k</div>
+                         </div>
+                         <div>
+                            <p className="text-white text-xs font-black uppercase tracking-widest">Active Learners</p>
+                            <div className="flex text-primary mt-1">
+                               <Sparkles size={12} fill="currentColor" />
+                               <Sparkles size={12} fill="currentColor" />
+                               <Sparkles size={12} fill="currentColor" />
+                            </div>
+                         </div>
+                      </div>
+                   </div>
+                </div>
              </div>
 
-             <div className="bento-card p-10 bg-white shadow-2xl relative overflow-hidden">
+             {/* Right Side: Login Form */}
+             <div className="max-w-md mx-auto w-full">
+                {/* Mobile Header (Hidden on Large Screens) */}
+                <div className="text-center mb-12 lg:hidden">
+                   <div className="badge-modern mx-auto mb-6"><span></span> Access Hub</div>
+                   <h1 className="text-4xl font-bold tracking-tight mb-4">Login to <br /> <span className="text-primary italic">Glitch.</span></h1>
+                   <p className="text-slate-500 font-medium">Continue your practical engineering journey.</p>
+                </div>
+
+                <div className="bento-card p-10 bg-white shadow-2xl relative overflow-hidden">
                 {mode === 'login' && (
                   <>
                     <form onSubmit={handleSubmit} className="space-y-6">
@@ -287,7 +330,8 @@ const Login = () => {
                     </div>
                   </div>
                 )}
-             </div>
+              </div>
+           </div>
           </div>
         </div>
       </section>

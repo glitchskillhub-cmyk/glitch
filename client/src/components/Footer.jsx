@@ -18,21 +18,26 @@ const Footer = () => {
       
       <div className="container mx-auto px-6 relative z-10">
         {/* Top Section: CTA / Banner */}
-        <div className="pt-24 pb-20 border-b border-slate-100 flex flex-col lg:flex-row items-center justify-between gap-12">
-          <div className="max-w-2xl text-center lg:text-left">
-            <h2 className="text-4xl md:text-6xl font-bold font-display mb-6 leading-tight tracking-tight text-slate-900">
-              Ready to <span className="text-primary italic">glitch</span> the system?
-            </h2>
-            <p className="text-slate-500 text-lg md:text-xl font-medium max-w-xl mx-auto lg:mx-0">
-              Join the elite league of software engineers taught by industry legends.
-            </p>
-          </div>
-          <div className="flex flex-col sm:flex-row gap-5 w-full lg:w-auto">
-            <Link to="/contact" className="btn-primary group py-5 px-10 text-lg bg-slate-900 text-white rounded-2xl flex items-center justify-center gap-2 hover:bg-primary hover:text-slate-900 transition-all duration-300 shadow-xl shadow-slate-200">
-              <span className="font-bold">Start Your Journey</span>
-              <ArrowUpRight size={22} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
-            </Link>
-          </div>
+        <div className="pt-10 pb-16">
+           <div className="bg-slate-950 rounded-[3rem] p-12 md:p-20 relative overflow-hidden flex flex-col lg:flex-row items-center justify-between gap-12 shadow-2xl">
+              {/* Decorative elements */}
+              <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-[radial-gradient(circle_at_100%_0%,rgba(250,204,21,0.2)_0%,transparent_60%)] pointer-events-none"></div>
+              
+              <div className="max-w-3xl text-center lg:text-left relative z-10">
+                <h2 className="text-5xl md:text-6xl lg:text-7xl font-black mb-6 leading-[1.05] tracking-tighter text-white">
+                  Ready to <span className="text-primary italic">glitch</span> <br className="hidden md:block" /> the system?
+                </h2>
+                <p className="text-slate-400 text-xl font-medium max-w-xl mx-auto lg:mx-0 leading-relaxed">
+                  Join the elite league of software engineers taught by industry legends. Build real-world projects and accelerate your career.
+                </p>
+              </div>
+              <div className="flex relative z-10 w-full lg:w-auto justify-center shrink-0">
+                <Link to="/contact" className="group py-6 px-10 text-lg bg-primary text-slate-950 rounded-[2.5rem] flex items-center justify-center gap-3 hover:scale-105 active:scale-95 transition-all duration-300 shadow-[0_0_40px_rgba(250,204,21,0.3)]">
+                  <span className="font-black uppercase tracking-widest text-sm">Start Your Journey</span>
+                  <ArrowUpRight size={20} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+                </Link>
+              </div>
+           </div>
         </div>
 
         {/* Main Content Grid */}

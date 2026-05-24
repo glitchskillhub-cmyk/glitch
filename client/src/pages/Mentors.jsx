@@ -57,17 +57,17 @@ const Mentors = () => {
       <Navbar />
       
       {/* Header */}
-      <section className="pt-36 md:pt-48 pb-14 md:pb-20 relative overflow-hidden bg-slate-950 text-white">
-        <div className="absolute top-0 right-0 w-full h-full bg-[radial-gradient(circle_at_70%_30%,rgba(250,204,21,0.1)_0%,transparent_50%)]"></div>
+      <section className="pt-36 md:pt-48 pb-14 md:pb-20 relative overflow-hidden bg-white">
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-3xl h-full bg-primary/5 blur-[150px]"></div>
         <div className="container mx-auto px-6 relative z-10 text-center">
-          <div className="badge-modern mx-auto mb-8 border-white/10 text-white">
+          <div className="badge-modern mx-auto mb-8">
             <span></span> Elite Faculty
           </div>
-          <h1 className="text-4xl md:text-7xl font-bold tracking-tight leading-tight mb-8">
+          <h1 className="text-5xl md:text-7xl font-bold tracking-tight mb-6 text-slate-900">
             Learn from the <br />
             <span className="text-primary italic">Best in Industry.</span>
           </h1>
-          <p className="text-xl text-slate-400 max-w-3xl mx-auto leading-relaxed">
+          <p className="text-xl text-slate-500 font-medium max-w-2xl mx-auto leading-relaxed">
             Our mentors are not just teachers; they are practicing senior engineers from top MNCs and high-growth startups.
           </p>
         </div>

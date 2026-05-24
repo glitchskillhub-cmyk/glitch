@@ -39,15 +39,7 @@ const Navbar = () => {
     return user.role === 'mentor' ? '/mentor/dashboard' : '/student/settings';
   };
 
-  const handleProfileClick = (e) => {
-    e.preventDefault();
-    navigate(getProfilePath());
-  };
 
-  const handleHubClick = (e) => {
-    e.preventDefault();
-    navigate(getDashboardPath());
-  };
 
   return (
     <nav className={`fixed top-6 left-1/2 -translate-x-1/2 w-[90%] max-w-7xl z-50 transition-all duration-500 ${isScrolled ? 'top-4' : 'top-8'}`}>
@@ -88,19 +80,23 @@ const Navbar = () => {
             </>
           ) : (
             <>
-              <Link 
-                to={getProfilePath()}
-                className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-slate-400 hover:text-black transition-colors cursor-pointer"
+              <div 
+                onClick={() => navigate(getProfilePath())}
+                className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-slate-400 hover:text-black transition-colors cursor-pointer select-none"
+                role="button"
+                tabIndex={0}
               >
                 <User size={16} /> Profile
-              </Link>
-              <Link 
-                to={getDashboardPath()}
-                className="btn-premium py-2 px-6 text-xs group cursor-pointer"
+              </div>
+              <div 
+                onClick={() => navigate(getDashboardPath())}
+                className="inline-flex items-center justify-center gap-2 rounded-xl bg-slate-900 px-6 py-2 text-xs font-semibold tracking-wide text-white hover:bg-primary hover:text-slate-900 transition-all duration-200 cursor-pointer select-none group"
+                role="button"
+                tabIndex={0}
               >
                 <span>My Hub</span>
                 <ChevronRight size={14} className="group-hover:translate-x-1 transition-transform" />
-              </Link>
+              </div>
             </>
           )}
         </div>

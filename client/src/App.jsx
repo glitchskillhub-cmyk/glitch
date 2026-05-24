@@ -59,9 +59,12 @@ const AdminProtectedRoute = ({ children }) => {
 const RoleProtectedRoute = ({ children, allowedRoles }) => {
   const { user, loading } = useAuth();
 
-  if (loading) return null; // Or a spinner
+  if (loading) return null;
   if (!user) return <Navigate to="/login" />;
-  if (!allowedRoles.includes(user.role)) return <Navigate to="/" />;
+  
+  // Normalize role: treat 'customer' as 'student'
+  const normalizedRole = user.role === 'customer' ? 'student' : user.role;
+  if (!allowedRoles.includes(normalizedRole)) return <Navigate to="/" />;
 
   return children ? children : <Outlet />;
 };

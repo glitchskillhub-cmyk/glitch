@@ -3,7 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import { createStudent, createRazorpayOrder, verifyRazorpayPayment, getAllCourses } from '../utils/api';
 import { useAuth } from '../context/AuthContext';
-import { Loader2, User, CreditCard, ShieldCheck, MapPin, Building, GraduationCap, Phone, Mail, BookOpen, Send, Sparkles, ChevronRight, Zap, Briefcase, Clock } from 'lucide-react';
+import { Loader2, User, CreditCard, ShieldCheck, MapPin, Building, GraduationCap, Phone, Mail, BookOpen, Send, Sparkles, ChevronRight, Zap, Briefcase, Clock, Lock } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import SEO from '../components/SEO';
@@ -313,6 +313,7 @@ const Registration = () => {
                       </div>
                    </div>
 
+                   {user ? (
                    <form onSubmit={handleSubmit} className="space-y-8">
                       <div className="grid grid-cols-1 gap-8">
                         <InputField label="Full Name" name="name" icon={User} value={formData.name} onChange={handleInputChange} error={errors.name} />
@@ -441,6 +442,31 @@ const Registration = () => {
                         </div>
                       </div>
                    </form>
+                   ) : (
+                     <div className="py-16 text-center flex flex-col items-center justify-center border-t border-slate-100 mt-8">
+                       <div className="w-20 h-20 bg-slate-50 border border-slate-100 rounded-full flex items-center justify-center text-slate-400 mb-6 shadow-sm">
+                         <Lock size={32} />
+                       </div>
+                       <h3 className="text-2xl font-bold tracking-tight mb-3">Authentication Required</h3>
+                       <p className="text-slate-500 mb-8 max-w-sm mx-auto leading-relaxed">
+                         To ensure a secure checkout and to assign this course to you, please log in or create an account first.
+                       </p>
+                       <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto justify-center">
+                         <Link 
+                           to={`/login`} 
+                           className="btn-premium py-4 px-10 text-sm"
+                         >
+                           Log In
+                         </Link>
+                         <Link 
+                           to="/signup" 
+                           className="py-4 px-10 rounded-full border-2 border-slate-100 font-bold uppercase tracking-widest text-xs text-slate-600 hover:border-primary hover:text-slate-900 transition-colors"
+                         >
+                           Create Account
+                         </Link>
+                       </div>
+                     </div>
+                   )}
                 </div>
              </div>
           </div>

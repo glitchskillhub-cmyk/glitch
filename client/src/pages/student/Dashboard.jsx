@@ -163,7 +163,7 @@ const Dashboard = () => {
       {/* Welcome Section */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
         <div>
-          <h1 className="text-4xl font-black tracking-tight text-slate-900 uppercase">
+          <h1 className="text-3xl font-bold tracking-tight text-slate-900">
             Welcome back, <span className="text-primary italic">{user?.name?.split(' ')[0]}</span>
           </h1>
           <p className="text-slate-500 font-medium mt-2">You're making great progress! Keep pushing forward.</p>
@@ -181,8 +181,8 @@ const Dashboard = () => {
               <stat.icon size={28} />
             </div>
             <div>
-              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{stat.label}</p>
-              <h3 className="text-2xl font-black text-slate-900">{stat.value}</h3>
+              <p className="text-xs font-medium text-slate-500 tracking-wide uppercase mb-1">{stat.label}</p>
+              <h3 className="text-2xl font-bold text-slate-900">{stat.value}</h3>
             </div>
           </div>
         ))}
@@ -202,17 +202,17 @@ const Dashboard = () => {
                     <BookOpen size={24} />
                   </div>
                   <div>
-                    <h2 className="text-2xl font-black uppercase tracking-tight">
+                    <h2 className="text-xl font-bold tracking-tight">
                       {user?.isEnrolled && activeEnrollments.length > 0 ? "Active Program" : "Get Started"}
                     </h2>
-                    <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">
+                    <p className="text-sm font-medium text-slate-500 mt-1">
                       {user?.isEnrolled && activeEnrollments.length > 0 ? "MERN Stack Engineering" : "Unlock Your Career"}
                     </p>
                   </div>
                 </div>
                 {user?.isEnrolled && activeEnrollments.length > 0 && (
                   <div className="text-right">
-                    <p className="text-[10px] font-black text-primary uppercase tracking-widest mb-1">
+                    <p className="text-xs font-semibold text-primary tracking-wider mb-2">
                       {activeEnrollments[0].progress || 0}% Done
                     </p>
                     <div className="w-32 h-2 bg-slate-100 rounded-full overflow-hidden">
@@ -243,16 +243,16 @@ const Dashboard = () => {
                 {statsData && statsData.coursePrice > 0 && (
                   <div className="mt-8 pt-6 border-t border-slate-100 grid grid-cols-3 gap-4">
                     <div>
-                      <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Course Price</p>
-                      <p className="text-sm font-black text-slate-900">₹{statsData.coursePrice.toLocaleString()}</p>
+                      <p className="text-xs font-medium text-slate-500 uppercase tracking-wider mb-1">Course Price</p>
+                      <p className="text-base font-bold text-slate-900">₹{statsData.coursePrice.toLocaleString()}</p>
                     </div>
                     <div>
-                      <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Paid Amount</p>
-                      <p className="text-sm font-black text-slate-900">₹{statsData.totalPaid.toLocaleString()}</p>
+                      <p className="text-xs font-medium text-slate-500 uppercase tracking-wider mb-1">Paid Amount</p>
+                      <p className="text-base font-bold text-slate-900">₹{statsData.totalPaid.toLocaleString()}</p>
                     </div>
                     <div>
-                      <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Remaining Due</p>
-                      <p className={`text-sm font-black ${statsData.dueAmount > 0 ? 'text-amber-600 animate-pulse' : 'text-green-600'}`}>
+                      <p className="text-xs font-medium text-slate-500 uppercase tracking-wider mb-1">Remaining Due</p>
+                      <p className={`text-base font-bold ${statsData.dueAmount > 0 ? 'text-amber-600 animate-pulse' : 'text-green-600'}`}>
                         ₹{statsData.dueAmount.toLocaleString()}
                       </p>
                     </div>
@@ -284,19 +284,37 @@ const Dashboard = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div className="bento-card bg-slate-900 text-white p-8 group cursor-pointer hover:border-primary/50 transition-all">
               <Target className="text-primary mb-6 group-hover:scale-110 transition-transform" size={32} />
-              <h3 className="text-xl font-black uppercase mb-2">View Tasks</h3>
-              <p className="text-slate-400 text-xs mb-8">You have 3 pending assignments for this week.</p>
-              <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-primary">
-                Open Dashboard →
-              </div>
+              <h3 className="text-xl font-bold mb-2">View Tasks</h3>
+              <p className="text-slate-400 text-sm mb-8">
+                {statsData?.pendingTasksCount > 0
+                  ? `You have ${statsData.pendingTasksCount} pending assignment${statsData.pendingTasksCount > 1 ? 's' : ''} for this week.`
+                  : "You are all caught up! No pending assignments."}
+              </p>
+              {statsData?.pendingTasksCount > 0 && (
+                <div 
+                  onClick={() => window.location.href = '/student/tasks'}
+                  className="flex items-center gap-2 text-xs font-semibold tracking-wider text-primary hover:underline"
+                >
+                  Open Dashboard →
+                </div>
+              )}
             </div>
             <div className="bento-card bg-white p-8 group cursor-pointer hover:border-primary/50 transition-all">
               <Briefcase className="text-primary mb-6 group-hover:scale-110 transition-transform" size={32} />
-              <h3 className="text-xl font-black uppercase mb-2">Job Board</h3>
-              <p className="text-slate-500 text-xs mb-8">5 new job openings match your current skill profile.</p>
-              <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-slate-900">
-                Browse Jobs →
-              </div>
+              <h3 className="text-xl font-bold mb-2">Job Board</h3>
+              <p className="text-slate-500 text-sm mb-8">
+                {statsData?.jobsCount > 0
+                  ? `${statsData.jobsCount} new job opening${statsData.jobsCount > 1 ? 's' : ''} match your current skill profile.`
+                  : "No new job openings at the moment. Check back later!"}
+              </p>
+              {statsData?.jobsCount > 0 && (
+                <div 
+                  onClick={() => window.location.href = '/student/career'}
+                  className="flex items-center gap-2 text-xs font-semibold tracking-wider text-slate-900 hover:underline"
+                >
+                  Browse Jobs →
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -305,34 +323,38 @@ const Dashboard = () => {
         <div className="space-y-8">
           {/* Notifications / Feed */}
           <div className="bento-card bg-white p-8">
-            <h3 className="text-lg font-black uppercase mb-6 tracking-tight flex items-center justify-between">
+            <h3 className="text-lg font-bold mb-6 tracking-tight flex items-center justify-between">
               Notifications
-              <span className="w-5 h-5 bg-primary text-[10px] flex items-center justify-center rounded-full">3</span>
+              <span className="w-5 h-5 bg-primary text-[10px] flex items-center justify-center rounded-full font-bold">
+                {statsData?.announcements?.length || 0}
+              </span>
             </h3>
             <div className="space-y-6">
-              {[
-                { title: "New Assignment", time: "10m ago", desc: "Module 4 Task has been released." },
-                { title: "Live Session", time: "2h ago", desc: "Mentor session recording is now available." },
-                { title: "Badge Earned", time: "1d ago", desc: "You've earned the 'Code Ninja' badge!" }
-              ].map((note, i) => (
-                <div key={i} className="relative pl-6 border-l-2 border-slate-100 hover:border-primary transition-colors pb-1">
-                  <div className="absolute -left-[5px] top-0 w-2 h-2 rounded-full bg-slate-200"></div>
-                  <p className="text-[10px] font-black uppercase tracking-widest text-primary mb-1">{note.title}</p>
-                  <p className="text-xs font-bold text-slate-800 mb-1">{note.desc}</p>
-                  <p className="text-[10px] text-slate-400">{note.time}</p>
-                </div>
-              ))}
+              {statsData?.announcements && statsData.announcements.length > 0 ? (
+                statsData.announcements.map((note, i) => (
+                  <div key={i} className="relative pl-6 border-l-2 border-slate-100 hover:border-primary transition-colors pb-1">
+                    <div className="absolute -left-[5px] top-0 w-2 h-2 rounded-full bg-slate-200"></div>
+                    <p className="text-xs font-semibold tracking-wide text-primary mb-1">{note.type || 'Announcement'}</p>
+                    <p className="text-sm font-bold text-slate-800 mb-1">{note.title}</p>
+                    <p className="text-xs text-slate-400">{new Date(note.createdAt).toLocaleDateString()}</p>
+                  </div>
+                ))
+              ) : (
+                <p className="text-xs text-slate-500 font-medium">No new notifications.</p>
+              )}
             </div>
           </div>
 
           {/* Mentor Support Card */}
           <div className="bento-card bg-primary p-8 text-slate-900 premium-glow">
             <MessageSquare size={32} className="mb-6" />
-            <h3 className="text-xl font-black uppercase mb-2 tracking-tight">Direct Support</h3>
-            <p className="text-slate-800/80 text-xs mb-8 font-medium leading-relaxed">Stuck on a bug? Your mentor is active now. Start a discussion and get it resolved.</p>
-            <button className="bg-slate-900 text-white w-full py-4 rounded-xl text-[10px] font-black uppercase tracking-widest hover:scale-[1.02] transition-transform">
-              Chat with Mentor
-            </button>
+            <h3 className="text-xl font-bold mb-2 tracking-tight">Direct Support</h3>
+            <p className="text-slate-800/80 text-sm mb-8 font-medium leading-relaxed">Stuck on a bug? Your mentor is active now. Start a discussion and get it resolved.</p>
+            <a href="https://wa.me/918008899824" target="_blank" rel="noopener noreferrer" className="block w-full text-center">
+              <button className="bg-slate-900 text-white w-full py-4 rounded-xl text-xs font-bold tracking-wide hover:scale-[1.02] transition-transform">
+                Chat with Team
+              </button>
+            </a>
           </div>
         </div>
       </div>

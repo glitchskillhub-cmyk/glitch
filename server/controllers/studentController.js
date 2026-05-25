@@ -479,7 +479,7 @@ exports.markLessonComplete = async (req, res, next) => {
   } catch (error) { next(error); }
 };
 
-// Dashboard: Get Student Stats
+  // Dashboard: Get Student Stats
 exports.getStudentDashboardStats = async (req, res, next) => {
   try {
     const userId = req.user.id;
@@ -489,6 +489,7 @@ exports.getStudentDashboardStats = async (req, res, next) => {
     // Count tasks
     const tasksCount = await Task.countDocuments({ student: userId });
     const completedTasksCount = await Task.countDocuments({ student: userId, status: 'Submitted' });
+    const pendingTasksCount = await Task.countDocuments({ student: userId, status: 'Pending' });
     
     // Fetch active enrollment
     const activeEnrollment = await Enrollment.findOne({ student: userId });
@@ -499,6 +500,21 @@ exports.getStudentDashboardStats = async (req, res, next) => {
     
     const Certificate = require('../models/Certificate');
     const certificatesCount = await Certificate.countDocuments({ student: userId });
+
+    // Job Count
+    const Job = require('../models/Job');
+    const jobsCount = await Job.countDocuments();
+
+    // Announcements
+    const Announcement = require('../models/Announcement');
+    const query = { $or: [{ type: 'Global' }] };
+    if (activeEnrollment && activeEnrollment.course) {
+      query.$or.push({ course: activeEnrollment.course });
+    }
+    const announcements = await Announcement.find(query)
+      .sort({ createdAt: -1 })
+      .limit(5)
+      .lean();
 
     // Calculate due amount
     const Student = require('../models/Student');
@@ -535,7 +551,10 @@ exports.getStudentDashboardStats = async (req, res, next) => {
       totalPaid,
       coursePrice,
       courseTitle,
-      hasDue: dueAmount > 0
+      hasDue: dueAmount > 0,
+      pendingTasksCount,
+      jobsCount,
+      announcements
     });
   } catch (error) { next(error); }
 };

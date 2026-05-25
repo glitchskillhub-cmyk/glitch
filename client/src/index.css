@@ -79,7 +79,7 @@
 
   /* Unique Badges */
   .badge-modern {
-    @apply inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-4 py-2 text-[10px] font-bold uppercase tracking-widest text-slate-600;
+    @apply inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-4 py-2 text-xs font-semibold tracking-wide text-slate-700;
   }
 
   .badge-modern span {
@@ -141,7 +141,7 @@
 
   /* Sidebar Specifics */
   .sidebar-link {
-    @apply flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 font-bold text-xs uppercase tracking-widest text-slate-400;
+    @apply flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 font-semibold text-sm tracking-wide text-slate-400;
   }
 
   .sidebar-link:hover {

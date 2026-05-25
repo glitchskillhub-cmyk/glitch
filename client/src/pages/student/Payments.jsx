@@ -154,6 +154,139 @@ const Payments = () => {
     }
   };
 
+  const handleDownloadReceipt = (pay) => {
+    if (pay.status !== 'Paid') {
+      toast.error('Receipt is only available for successful payments.');
+      return;
+    }
+    const receiptWindow = window.open('', '_blank');
+    if (!receiptWindow) {
+      toast.error('Please allow popups to download receipts');
+      return;
+    }
+    
+    const htmlContent = `
+      <html>
+        <head>
+          <title>Receipt - ${pay.id}</title>
+          <style>
+            body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 40px; color: #0f172a; max-width: 800px; margin: 0 auto; }
+            .header { text-align: center; margin-bottom: 40px; border-bottom: 2px solid #f1f5f9; padding-bottom: 20px; }
+            .logo { font-size: 28px; font-weight: 900; margin-bottom: 5px; color: #0f172a; }
+            .logo span { color: #facc15; }
+            .title { font-size: 18px; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+            .details { margin-bottom: 40px; background: #f8fafc; padding: 20px; border-radius: 8px; }
+            .row { display: flex; justify-content: space-between; margin-bottom: 15px; border-bottom: 1px solid #e2e8f0; padding-bottom: 10px; }
+            .row:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+            .label { font-weight: 600; color: #64748b; }
+            .value { font-weight: 700; color: #0f172a; }
+            .total { font-size: 24px; font-weight: bold; margin-top: 20px; background: #0f172a; color: white; padding: 20px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; }
+            .total .label { color: #cbd5e1; }
+            .total .value { color: #facc15; }
+            .footer { margin-top: 50px; text-align: center; font-size: 14px; color: #94a3b8; border-top: 2px solid #f1f5f9; padding-top: 20px; }
+            .status { background: #dcfce7; color: #166534; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; text-transform: uppercase; }
+          </style>
+        </head>
+        <body>
+          <div class="header">
+            <div class="logo">Glitch <span>Skill Hub</span></div>
+            <div class="title">Payment Receipt</div>
+          </div>
+          <div class="details">
+            <div class="row"><span class="label">Receipt ID:</span> <span class="value">${pay.id}</span></div>
+            <div class="row"><span class="label">Date:</span> <span class="value">${pay.date}</span></div>
+            <div class="row"><span class="label">Student:</span> <span class="value">${user?.name} (${user?.email})</span></div>
+            <div class="row"><span class="label">Course / Plan:</span> <span class="value">${courseTitleState || activePlan || 'Glitch Program'}</span></div>
+            <div class="row"><span class="label">Payment Method:</span> <span class="value">${pay.method}</span></div>
+            <div class="row"><span class="label">Status:</span> <span class="status">${pay.status}</span></div>
+          </div>
+          <div class="total">
+            <span class="label">Amount Paid:</span> <span class="value">${pay.amount}</span>
+          </div>
+          <div class="footer">
+            <p>Thank you for your payment!</p>
+            <p>This is a computer-generated receipt and does not require a physical signature.</p>
+          </div>
+          <script>
+            window.onload = function() { window.print(); }
+          </script>
+        </body>
+      </html>
+    `;
+    receiptWindow.document.write(htmlContent);
+    receiptWindow.document.close();
+  };
+
+  const handleDownloadAllReceipts = () => {
+    const paidReceipts = history.filter(p => p.status === 'Paid');
+    if (paidReceipts.length === 0) {
+      toast.error('No successful payments found to download.');
+      return;
+    }
+    
+    const receiptWindow = window.open('', '_blank');
+    if (!receiptWindow) {
+      toast.error('Please allow popups to download receipts');
+      return;
+    }
+    
+    const receiptsHtml = paidReceipts.map(pay => `
+      <div class="receipt-card">
+        <div class="details">
+          <div class="row"><span class="label">Receipt ID:</span> <span class="value">${pay.id}</span></div>
+          <div class="row"><span class="label">Date:</span> <span class="value">${pay.date}</span></div>
+          <div class="row"><span class="label">Amount:</span> <span class="value" style="color:#0f172a;">${pay.amount}</span></div>
+          <div class="row"><span class="label">Method:</span> <span class="value">${pay.method}</span></div>
+        </div>
+      </div>
+    `).join('');
+
+    const htmlContent = `
+      <html>
+        <head>
+          <title>All Receipts - ${user?.name}</title>
+          <style>
+            body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 40px; color: #0f172a; max-width: 800px; margin: 0 auto; }
+            .header { text-align: center; margin-bottom: 40px; border-bottom: 2px solid #f1f5f9; padding-bottom: 20px; }
+            .logo { font-size: 28px; font-weight: 900; margin-bottom: 5px; color: #0f172a; }
+            .logo span { color: #facc15; }
+            .title { font-size: 18px; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+            .student-info { background: #f8fafc; padding: 20px; border-radius: 8px; margin-bottom: 30px; font-weight: 600;}
+            .receipt-card { border: 1px solid #e2e8f0; border-radius: 8px; margin-bottom: 20px; padding: 20px; page-break-inside: avoid; }
+            .row { display: flex; justify-content: space-between; margin-bottom: 10px; border-bottom: 1px dashed #e2e8f0; padding-bottom: 8px; }
+            .row:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+            .label { font-weight: 600; color: #64748b; }
+            .value { font-weight: 700; color: #0f172a; }
+            .footer { margin-top: 50px; text-align: center; font-size: 14px; color: #94a3b8; border-top: 2px solid #f1f5f9; padding-top: 20px; }
+          </style>
+        </head>
+        <body>
+          <div class="header">
+            <div class="logo">Glitch <span>Skill Hub</span></div>
+            <div class="title">Complete Payment History</div>
+          </div>
+          <div class="student-info">
+            <p style="margin:0 0 10px 0;">Student: ${user?.name}</p>
+            <p style="margin:0 0 10px 0;">Email: ${user?.email}</p>
+            <p style="margin:0;">Total Paid: ₹${totalPaid.toLocaleString()}</p>
+          </div>
+          
+          <h3>Transaction Details</h3>
+          ${receiptsHtml}
+          
+          <div class="footer">
+            <p>Thank you for choosing Glitch Skill Hub!</p>
+          </div>
+          <script>
+            window.onload = function() { window.print(); }
+          </script>
+        </body>
+      </html>
+    `;
+    receiptWindow.document.write(htmlContent);
+    receiptWindow.document.close();
+  };
+
   if (loading) {
     return (
       <div className="h-[60vh] flex items-center justify-center">
@@ -166,7 +299,7 @@ const Payments = () => {
     <div className="space-y-10 animate-in fade-in duration-700">
       <div className="flex justify-between items-end">
         <div>
-          <h1 className="text-4xl font-black tracking-tight text-slate-900 uppercase">Payments & Billing</h1>
+          <h1 className="text-3xl font-bold tracking-tight text-slate-900">Payments & Billing</h1>
           <p className="text-slate-500 font-medium mt-2">Manage your subscriptions and receipts.</p>
         </div>
         <div className="badge-modern">
@@ -182,8 +315,8 @@ const Payments = () => {
               <div className="relative z-10">
                  <div className="flex justify-between items-start mb-10">
                     <div>
-                       <p className="text-[10px] font-black text-primary uppercase tracking-widest mb-2">Active Plan</p>
-                       <h2 className="text-3xl font-black uppercase tracking-tight text-white">{activePlan}</h2>
+                       <p className="text-sm font-semibold text-primary tracking-wide mb-2">Active Plan</p>
+                       <h2 className="text-2xl font-bold tracking-tight text-white">{activePlan}</h2>
                     </div>
                     <div className="w-12 h-12 bg-primary rounded-xl flex items-center justify-center text-slate-900 shadow-lg shadow-primary/20">
                        <Zap size={24} fill="currentColor" />
@@ -191,29 +324,29 @@ const Payments = () => {
                  </div>
                  <div className="flex flex-wrap items-center gap-8 mb-10">
                     <div>
-                       <p className="text-slate-400 text-[10px] font-bold uppercase tracking-widest">Total Course Price</p>
+                       <p className="text-slate-400 text-sm font-medium tracking-wide">Total Course Price</p>
                        <p className="text-xl font-bold">₹{coursePrice.toLocaleString()}</p>
                     </div>
                     <div>
-                       <p className="text-slate-400 text-[10px] font-bold uppercase tracking-widest">Total Paid</p>
+                       <p className="text-slate-400 text-sm font-medium tracking-wide">Total Paid</p>
                        <p className="text-xl font-bold">₹{totalPaid.toLocaleString()}</p>
                     </div>
                     <div>
-                       <p className="text-slate-400 text-[10px] font-bold uppercase tracking-widest">Remaining Due</p>
+                       <p className="text-slate-400 text-sm font-medium tracking-wide">Remaining Due</p>
                        <p className={`text-xl font-bold ${dueAmount > 0 ? 'text-primary' : 'text-green-400'}`}>
                          ₹{dueAmount.toLocaleString()}
                        </p>
                     </div>
                  </div>
                  <div className="flex items-center gap-4">
-                   <button className="bg-white/10 text-white px-8 py-4 rounded-xl font-black text-xs uppercase tracking-widest hover:bg-white hover:text-slate-900 transition-colors">
+                   <button onClick={handleDownloadAllReceipts} className="bg-white/10 text-white px-6 py-3 rounded-xl font-semibold text-sm tracking-wide hover:bg-white hover:text-slate-900 transition-colors">
                       Download All Receipts
                    </button>
                    {dueAmount > 0 && (
                      <button 
                        onClick={handlePayDue}
                        disabled={payingDue}
-                       className="bg-primary text-slate-900 px-8 py-4 rounded-xl font-black text-xs uppercase tracking-widest hover:bg-white transition-colors flex items-center gap-2"
+                       className="bg-primary text-slate-900 px-6 py-3 rounded-xl font-semibold text-sm tracking-wide hover:bg-white transition-colors flex items-center gap-2"
                      >
                         {payingDue && <Loader2 className="animate-spin" size={12} />}
                         Pay Due Amount
@@ -225,16 +358,16 @@ const Payments = () => {
 
            {/* History Table */}
            <div className="bento-card bg-white p-8 border-slate-200">
-              <h3 className="text-lg font-black uppercase mb-6 tracking-tight">Transaction History</h3>
+              <h3 className="text-lg font-bold mb-6 tracking-tight">Transaction History</h3>
               <div className="overflow-x-auto">
                  <table className="w-full text-left">
                     <thead>
                        <tr className="border-b border-slate-100">
-                          <th className="pb-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">ID</th>
-                          <th className="pb-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Date</th>
-                          <th className="pb-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Amount</th>
-                          <th className="pb-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Status</th>
-                          <th className="pb-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">Receipt</th>
+                          <th className="pb-4 text-sm font-semibold text-slate-500 tracking-wide">ID</th>
+                          <th className="pb-4 text-sm font-semibold text-slate-500 tracking-wide">Date</th>
+                          <th className="pb-4 text-sm font-semibold text-slate-500 tracking-wide">Amount</th>
+                          <th className="pb-4 text-sm font-semibold text-slate-500 tracking-wide">Status</th>
+                          <th className="pb-4 text-sm font-semibold text-slate-500 tracking-wide text-right">Receipt</th>
                        </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-50">
@@ -244,7 +377,7 @@ const Payments = () => {
                             <td className="py-4 text-xs font-medium text-slate-500">{pay.date}</td>
                             <td className="py-4 text-xs font-black text-slate-900">{pay.amount}</td>
                             <td className="py-4">
-                               <span className={`text-[10px] font-black px-2 py-1 rounded-full uppercase tracking-widest border ${
+                               <span className={`text-xs font-semibold px-2 py-1 rounded-full border ${
                                  pay.status === 'Paid' 
                                    ? 'text-green-500 bg-green-50 border-green-100' 
                                    : pay.status === 'Pending'
@@ -253,7 +386,7 @@ const Payments = () => {
                                }`}>{pay.status}</span>
                             </td>
                             <td className="py-4 text-right">
-                               <button className="p-2 text-slate-400 hover:text-primary transition-colors">
+                               <button onClick={() => handleDownloadReceipt(pay)} className="p-2 text-slate-400 hover:text-primary transition-colors">
                                   <Download size={16} />
                                </button>
                             </td>
@@ -268,14 +401,14 @@ const Payments = () => {
         <div className="space-y-8">
            <div className="bento-card bg-white p-8 border-slate-200">
               <ShieldCheck className="text-green-500 mb-6" size={32} />
-              <h3 className="text-xl font-black uppercase mb-4 tracking-tight">Secure Payments</h3>
-              <p className="text-slate-500 text-xs mb-8 leading-relaxed">
+              <h3 className="text-xl font-bold mb-4 tracking-tight">Secure Payments</h3>
+              <p className="text-slate-500 text-sm mb-8 leading-relaxed">
                 All our transactions are encrypted and processed through Razorpay for maximum security.
               </p>
               <div className="flex items-center gap-4 grayscale opacity-50">
-                 <div className="h-6 w-auto bg-slate-200 rounded px-3 flex items-center text-[8px] font-bold">VISA</div>
-                 <div className="h-6 w-auto bg-slate-200 rounded px-3 flex items-center text-[8px] font-bold">UPI</div>
-                 <div className="h-6 w-auto bg-slate-200 rounded px-3 flex items-center text-[8px] font-bold">PAYTM</div>
+                 <div className="h-6 w-auto bg-slate-200 rounded px-3 flex items-center text-xs font-semibold">VISA</div>
+                 <div className="h-6 w-auto bg-slate-200 rounded px-3 flex items-center text-xs font-semibold">UPI</div>
+                 <div className="h-6 w-auto bg-slate-200 rounded px-3 flex items-center text-xs font-semibold">PAYTM</div>
               </div>
            </div>
         </div>

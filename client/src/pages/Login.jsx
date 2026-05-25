@@ -12,6 +12,7 @@ const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [slowLoading, setSlowLoading] = useState(false);
   
   // Forgot Password / Reset states
   const [mode, setMode] = useState('login'); // 'login', 'forgot', 'reset'
@@ -26,15 +27,25 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+    setSlowLoading(false);
+    
+    // Set a timer to show slow loading message if it takes more than 3 seconds (Render cold start)
+    const slowTimer = setTimeout(() => {
+      setSlowLoading(true);
+    }, 3000);
+
     try {
       const user = await login(email, password);
+      clearTimeout(slowTimer);
       toast.success(`Welcome back, ${user.name}!`);
       if (user.role === 'mentor') navigate('/mentor/dashboard');
       else navigate('/student/dashboard');
     } catch (error) {
+      clearTimeout(slowTimer);
       toast.error(error.response?.data?.message || 'Login failed');
     } finally {
       setLoading(false);
+      setSlowLoading(false);
     }
   };
 
@@ -187,12 +198,18 @@ const Login = () => {
                        <button 
                          type="submit" 
                          disabled={loading}
-                         className="btn-premium w-full py-5 text-lg"
+                         className="btn-premium w-full py-5 text-lg flex flex-col items-center justify-center gap-1"
                        >
                          {loading ? (
-                           <Loader2 className="animate-spin" />
+                           <>
+                             <div className="flex items-center gap-2">
+                               <Loader2 className="animate-spin" />
+                               <span>{slowLoading ? 'Waking up server...' : 'Logging in...'}</span>
+                             </div>
+                             {slowLoading && <span className="text-xs font-normal opacity-80 mt-1 capitalize">First load takes up to 45s on free hosting</span>}
+                           </>
                          ) : (
-                           <><span>Sign In</span> <LogIn size={20} /></>
+                           <div className="flex items-center gap-2"><span>Sign In</span> <LogIn size={20} /></div>
                          )}
                        </button>
                     </form>

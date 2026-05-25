@@ -15,6 +15,11 @@ export const AuthProvider = ({ children }) => {
       setUser(JSON.parse(savedUser));
     }
     setLoading(false);
+    
+    // Ping the backend to wake it up if it's sleeping (useful for free hosting like Render)
+    api.get('/courses').catch(() => {
+      // Silently ignore errors from the ping
+    });
   }, []);
 
   const login = async (email, password) => {

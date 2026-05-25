@@ -142,6 +142,7 @@ const Footer = () => {
           <div className="flex flex-wrap justify-center gap-8 md:gap-12">
             <Link to="/privacy" className="text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-slate-900 transition-colors">Privacy Policy</Link>
             <Link to="/terms" className="text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-slate-900 transition-colors">Terms of Service</Link>
+            <Link to="/refund" className="text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-slate-900 transition-colors">Refund Policy</Link>
             <Link to="/cookies" className="text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-slate-900 transition-colors">Cookie Settings</Link>
           </div>
         </div>

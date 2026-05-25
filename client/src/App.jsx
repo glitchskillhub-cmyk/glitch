@@ -11,6 +11,9 @@ import Contact from './pages/Contact';
 import Registration from './pages/Registration';
 import Success from './pages/Success';
 import NodeCourse from './pages/NodeCourse';
+import Terms from './pages/Terms';
+import PrivacyPolicy from './pages/PrivacyPolicy';
+import ReturnPolicy from './pages/ReturnPolicy';
 import NotFound from './pages/NotFound';
 
 // Auth Pages
@@ -87,6 +90,9 @@ function App() {
         <Route path="/register" element={<Registration />} />
         <Route path="/success" element={<Success />} />
         <Route path="/node-js-course" element={<NodeCourse />} />
+        <Route path="/terms" element={<Terms />} />
+        <Route path="/privacy" element={<PrivacyPolicy />} />
+        <Route path="/refund" element={<ReturnPolicy />} />
         
         {/* Authentication */}
         <Route path="/login" element={<Login />} />

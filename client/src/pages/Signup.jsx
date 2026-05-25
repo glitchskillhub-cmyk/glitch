@@ -16,20 +16,31 @@ const Signup = () => {
     phone: ''
   });
   const [loading, setLoading] = useState(false);
+  const [slowLoading, setSlowLoading] = useState(false);
   const { register } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+    setSlowLoading(false);
+    
+    // Set a timer to show slow loading message if it takes more than 3 seconds (Render cold start)
+    const slowTimer = setTimeout(() => {
+      setSlowLoading(true);
+    }, 3000);
+
     try {
       await register(formData);
+      clearTimeout(slowTimer);
       toast.success(`Welcome to the Glitch Hub, ${formData.name}!`);
       navigate('/student/dashboard');
     } catch (error) {
+      clearTimeout(slowTimer);
       toast.error(error.response?.data?.message || 'Registration failed');
     } finally {
       setLoading(false);
+      setSlowLoading(false);
     }
   };
 
@@ -155,12 +166,18 @@ const Signup = () => {
                    <button 
                      type="submit" 
                      disabled={loading}
-                     className="btn-premium w-full py-5 text-lg"
+                     className="btn-premium w-full py-5 text-lg flex flex-col items-center justify-center gap-1"
                    >
                      {loading ? (
-                       <Loader2 className="animate-spin" />
+                       <>
+                         <div className="flex items-center gap-2">
+                           <Loader2 className="animate-spin" />
+                           <span>{slowLoading ? 'Waking up server...' : 'Creating Account...'}</span>
+                         </div>
+                         {slowLoading && <span className="text-xs font-normal opacity-80 mt-1 capitalize">First load takes up to 45s on free hosting</span>}
+                       </>
                      ) : (
-                       <><span>Create Account</span> <UserPlus size={20} /></>
+                       <div className="flex items-center gap-2"><span>Create Account</span> <UserPlus size={20} /></div>
                      )}
                    </button>
                 </form>

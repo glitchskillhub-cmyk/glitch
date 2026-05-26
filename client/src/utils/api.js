@@ -103,5 +103,6 @@ export const createDoubt = (data) => api.post('/community/doubts', data);
 export const answerDoubt = (doubtId, data) => api.post(`/community/doubts/${doubtId}/answer`, data);
 export const getAnnouncements = () => api.get('/community/announcements');
 export const createAnnouncement = (data) => api.post('/community/announcements', data);
+export const deleteAnnouncement = (id) => api.delete(`/community/announcements/${id}`);
 
 export default api;

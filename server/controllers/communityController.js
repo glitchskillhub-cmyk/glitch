@@ -76,3 +76,17 @@ exports.createAnnouncement = async (req, res, next) => {
     next(error);
   }
 };
+
+exports.deleteAnnouncement = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const announcement = await Announcement.findByIdAndDelete(id);
+    if (!announcement) {
+      res.status(404);
+      throw new Error('Announcement not found');
+    }
+    res.json({ message: 'Announcement deleted successfully' });
+  } catch (error) {
+    next(error);
+  }
+};

@@ -3,11 +3,13 @@ import {
   Megaphone, 
   Plus, 
   X, 
-  Loader2
+  Loader2,
+  Trash2
 } from 'lucide-react';
 import { 
   getAnnouncements, 
-  createAnnouncement
+  createAnnouncement,
+  deleteAnnouncement
 } from '../../utils/api';
 import { toast } from 'react-hot-toast';
 import { formatDistanceToNow } from 'date-fns';
@@ -55,6 +57,17 @@ const Community = () => {
       fetchData();
     } catch {
       toast.error('Failed to dispatch announcement.');
+    }
+  };
+
+  const handleDeleteAnnouncement = async (id) => {
+    if (!window.confirm('Are you sure you want to delete this announcement?')) return;
+    try {
+      await deleteAnnouncement(id);
+      toast.success('Announcement deleted successfully!');
+      fetchData();
+    } catch {
+      toast.error('Failed to delete announcement.');
     }
   };
 
@@ -106,6 +119,13 @@ const Community = () => {
                  </h3>
                  <p className="text-zinc-600 text-xs font-medium leading-relaxed">{ann.content}</p>
               </div>
+              <button 
+                onClick={() => handleDeleteAnnouncement(ann._id)}
+                className="p-3 text-zinc-400 hover:text-red-500 hover:bg-red-50 rounded-2xl transition-all"
+                title="Delete Announcement"
+              >
+                 <Trash2 size={20} />
+              </button>
            </div>
          ))}
       </div>

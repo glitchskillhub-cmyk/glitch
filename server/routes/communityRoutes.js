@@ -15,4 +15,6 @@ router.route('/announcements')
   .get(protect, communityController.getAnnouncements)
   .post(protect, communityController.createAnnouncement);
 
+router.delete('/announcements/:id', protect, communityController.deleteAnnouncement);
+
 module.exports = router;

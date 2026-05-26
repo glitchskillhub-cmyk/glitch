@@ -72,7 +72,7 @@ const CareerHub = () => {
                 <div className="text-center py-16 bg-white border border-slate-100 rounded-3xl p-8 shadow-sm">
                    <Briefcase className="mx-auto text-slate-350 mb-4" size={48} />
                    <p className="text-slate-400 font-bold italic text-sm uppercase tracking-widest">No active career opportunities at the moment</p>
-                   <p className="text-slate-400 text-xs mt-1">Please check back later or contact the placement coordinator.</p>
+                   <p className="text-slate-400 text-xs mt-1">Please check back later or contact our support team.</p>
                 </div>
               ) : jobs.map((job, i) => (
                 <div key={i} className="bento-card bg-white p-8 group hover:border-primary transition-all border-slate-200">
@@ -122,9 +122,9 @@ const CareerHub = () => {
         <div className="space-y-8">
            <div className="bento-card bg-primary p-8 text-slate-900">
               <Rocket className="mb-6" size={32} />
-              <h3 className="text-xl font-black uppercase mb-4 tracking-tight">Placement Cell</h3>
+              <h3 className="text-xl font-black uppercase mb-4 tracking-tight">Mentor Connect</h3>
               <p className="text-slate-800/80 text-xs mb-8 font-medium leading-relaxed">
-                Connect with our dedicated placement team for mock interviews and referral support.
+                Connect with our dedicated mentor team for mock interviews and skill-building support.
               </p>
               <button className="bg-slate-900 text-white w-full py-4 rounded-xl text-[10px] font-black uppercase tracking-widest">
                  Book a Session

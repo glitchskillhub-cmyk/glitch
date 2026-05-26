@@ -32,7 +32,7 @@ const Terms = () => {
 
             <section>
               <h2 className="text-2xl font-bold text-slate-900 mb-4">2. Program Structure</h2>
-              <p className="mb-2">The bootcamp includes live practical sessions, real-world project development, assignments & coding tasks, mock interviews, resume & LinkedIn guidance, internship / completion certification, and placement preparation support.</p>
+              <p className="mb-2">The bootcamp includes live practical sessions, real-world project development, assignments & coding tasks, mock interviews, resume & LinkedIn guidance, and internship / completion certification.</p>
               <div className="bg-yellow-50 border-l-4 border-primary p-4 rounded-r-lg my-4 font-semibold text-slate-900 shadow-sm">
                 Note: We focus heavily on practical application. We will teach you the real-time skills only.
               </div>
@@ -45,7 +45,7 @@ const Terms = () => {
                 <li>Maintain regular attendance and submit assignments on time.</li>
                 <li>Participate actively in sessions and follow mentor instructions professionally.</li>
               </ul>
-              <p className="mt-2">Repeated inactivity or non-participation may affect certification eligibility and placement support.</p>
+              <p className="mt-2">Repeated inactivity or non-participation may affect certification eligibility.</p>
             </section>
 
             <section>
@@ -72,12 +72,12 @@ const Terms = () => {
             </section>
 
             <section>
-              <h2 className="text-2xl font-bold text-slate-900 mb-4">7. Placement Guidance Disclaimer</h2>
-              <p className="mb-2">Glitch Skill Hub provides career guidance, mock interviews, resume optimization, and placement preparation support.</p>
+              <h2 className="text-2xl font-bold text-slate-900 mb-4">7. Skills Training Disclaimer</h2>
+              <p className="mb-2">Glitch Skill Hub provides real-time practical skills training, mock interviews, resume optimization, and portfolio building support.</p>
               <div className="bg-yellow-50 border-l-4 border-primary p-4 rounded-r-lg my-4 font-semibold text-slate-900 shadow-sm">
-                However, please note: We do NOT guarantee placement. We will only give placement assistance, and we will inform you if internet job posts are available.
+                Please note: We are a skills training platform only. We teach real-time, practical engineering skills. We do NOT provide any job placement, hiring assistance, or guaranteed employment.
               </div>
-              <p>Hiring decisions depend entirely on learner performance, skills, interviews, and market conditions.</p>
+              <p>Career outcomes depend entirely on learner effort, skills acquired, and market conditions.</p>
             </section>
 
             <section>

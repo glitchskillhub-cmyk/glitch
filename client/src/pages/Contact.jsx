@@ -19,7 +19,7 @@ const Contact = () => {
   const faqs = [
     {
       q: "Are the classes really taught by MNC engineers?",
-      a: "Yes, 100%. All our trainers are currently working as Software Engineers, Leads, or Architects in top tech companies like Google, Microsoft, and Amazon."
+      a: "Yes, 100%. All our trainers are currently working as Software Engineers, Leads, or Architects in top tech companies like TCS, Cognizent, Google, etc."
     },
     {
       q: "Is it suitable for complete beginners?",
@@ -120,7 +120,7 @@ const Contact = () => {
                     <option value="" disabled selected hidden></option>
                     <option>Admission Inquiry</option>
                     <option>Course Details</option>
-                    <option>Placement Support</option>
+                    <option>Learning Support</option>
                     <option>Corporate Training</option>
                   </select>
                   <label className="floating-label">Subject</label>
@@ -182,7 +182,7 @@ const Contact = () => {
               <div className="w-24 h-24 bg-primary rounded-3xl flex items-center justify-center text-black mx-auto mb-8 floating shadow-2xl">
                 <MapPin size={48} />
               </div>
-              <h2 className="text-4xl md:text-6xl font-black uppercase tracking-tighter mb-6">Our Base In <span className="text-primary italic">HiTech City.</span></h2>
+              <h2 className="text-4xl md:text-6xl font-black uppercase tracking-tighter mb-6 text-white">Our Base In <span className="text-primary italic">HiTech City.</span></h2>
               <p className="text-slate-400 text-xl max-w-xl mx-auto mb-10">We operate from the heart of Hyderabad's tech hub, but our classes are 100% online across India.</p>
               <a href="#" className="flex items-center gap-2 font-display font-black text-sm uppercase tracking-widest text-primary hover:text-white transition-colors justify-center">
                 Get Directions <ChevronRight size={18} />

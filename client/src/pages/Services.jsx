@@ -201,7 +201,7 @@ const Services = () => {
                        Industry <span className="text-primary italic">Verified</span> Certificate.
                     </h2>
                     <p className="text-xl text-slate-400 mb-10">
-                       Recognized by our network of 100+ hiring partners from top MNCs and Startups.
+                       Recognized by our network of 100+ industry professionals from top MNCs and Startups.
                     </p>
                  </div>
                  <div className="flex-1 w-full flex justify-center">

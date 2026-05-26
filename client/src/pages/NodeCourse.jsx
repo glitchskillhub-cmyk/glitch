@@ -28,7 +28,7 @@ const NodeCourse = () => {
   const highlights = [
     { icon: Terminal, title: "Real-World Projects", desc: "Build 5+ production-grade apps from scratch — not toy demos." },
     { icon: Users, title: "MNC-Trained Engineers", desc: "Learn from engineers at Google, TCS, Accenture & more." },
-    { icon: Target, title: "Resume & Job Prep", desc: "Mock interviews, portfolio building & direct referrals." },
+    { icon: Target, title: "Resume & Portfolio", desc: "Mock interviews, portfolio building & LinkedIn optimization." },
     { icon: ShieldCheck, title: "Live Doubt Solving", desc: "Unlimited doubt sessions with 1-on-1 mentor support." }
   ];
 
@@ -42,8 +42,8 @@ const NodeCourse = () => {
   const differentiators = [
     { icon: Zap, title: "100% Practical Training", desc: "Zero slides. Every session is live coding on real-world scenarios." },
     { icon: Cpu, title: "MNC-Standard Codebase", desc: "Learn to write code the way top companies actually build software." },
-    { icon: Briefcase, title: "Resume & Portfolio", desc: "We build your GitHub, LinkedIn & portfolio to get noticed by recruiters." },
-    { icon: TrendingUp, title: "Job Support + Referrals", desc: "Mock interviews, career coaching & direct referrals to hiring partners." }
+    { icon: Briefcase, title: "Resume & Portfolio", desc: "We build your GitHub, LinkedIn & portfolio to showcase your real-time skills." },
+    { icon: TrendingUp, title: "Interview Readiness", desc: "Mock interviews, coding challenges & technical communication coaching." }
   ];
 
   const syllabus = [
@@ -81,17 +81,17 @@ const NodeCourse = () => {
   ];
 
   const faqs = [
-    { q: "Who is this course for?", a: "This course is for complete beginners, students, and working professionals who want to become job-ready full stack developers. No prior coding experience is needed." },
+    { q: "Who is this course for?", a: "This course is for complete beginners, students, and working professionals who want to become skilled full stack developers. No prior coding experience is needed." },
     { q: "What is the class schedule?", a: "Live classes run Monday to Friday, 8:00 PM – 9:30 PM IST. Fridays include a weekly project task. All sessions are recorded for later review." },
     { q: "Will I get a certificate?", a: "Yes! You'll receive an industry-recognized certificate upon completion, along with a fully built portfolio showcasing your projects." },
     { q: "What if I miss a class?", a: "Every session is recorded. You get lifetime access to all recordings, notes, and resources. You can also attend doubt-clearing sessions any time." },
-    { q: "Is there placement support?", a: "Absolutely. We provide resume building, mock interviews, LinkedIn optimization, and direct referrals to our hiring partner network." },
+    { q: "Will I get practical project experience?", a: "Absolutely. You will build 5+ production-grade projects, get resume building support, mock interview practice, and LinkedIn optimization to showcase your skills." },
     { q: "What tech stack will I learn?", a: "HTML, CSS, JavaScript, React.js, Node.js, Express.js, PostgreSQL/MongoDB, Git, Docker, and cloud deployment — the complete MERN/PERN stack." }
   ];
 
   return (
     <div className="nc-page">
-      <SEO title="Full Stack Node.js Course" description="A 100% practical engineering program designed to make you job-ready for top-tier MNC roles. No boring slides — just raw code." path="/node-js-course" />
+      <SEO title="Full Stack Node.js Course" description="A 100% practical engineering program designed to teach you real-time skills used in top-tier MNCs. No boring slides — just raw code." path="/node-js-course" />
       <Navbar />
 
       {/* ===== HERO ===== */}
@@ -107,7 +107,7 @@ const NodeCourse = () => {
                 <span className="nc-yellow italic">Developer</span>
               </h1>
               <p className="nc-hero-sub">
-                A 100% practical engineering program designed to make you job-ready for top-tier MNC roles. No boring slides — just raw code.
+                A 100% practical engineering program designed to teach you real-time skills used in top-tier MNCs. No boring slides — just raw code.
               </p>
               <div className="nc-hero-meta">
                 <div>
@@ -142,12 +142,12 @@ const NodeCourse = () => {
         </div>
       </section>
 
-      {/* ===== BUILT FOR JOB-READY DEVELOPERS ===== */}
+      {/* ===== BUILT FOR SKILLED DEVELOPERS ===== */}
       <section className="nc-section">
         <div className="nc-container">
           <div className="nc-section-header">
             <div className="nc-badge-dark"><span className="nc-dot" /> Why This Course</div>
-            <h2 className="nc-section-title">Built for <span className="nc-yellow italic">Job-Ready</span> Developers</h2>
+            <h2 className="nc-section-title">Built for <span className="nc-yellow italic">Skilled</span> Developers</h2>
             <p className="nc-section-sub">
               This isn't another tutorial playlist. It's a structured, mentor-led engineering bootcamp 
               that mirrors how real MNC teams build software.
@@ -253,7 +253,7 @@ const NodeCourse = () => {
               <h2 className="nc-section-title">See What You'll <span className="nc-yellow italic">Build</span></h2>
               <p className="nc-section-sub" style={{ textAlign: 'left' }}>
                 By the end of this program, you'll have 4+ production-ready projects in your portfolio — 
-                enough to impress any recruiter.
+                enough to showcase your engineering expertise.
               </p>
               <div className="nc-build-list">
                 {projects.map((p, i) => (
@@ -324,7 +324,7 @@ const NodeCourse = () => {
       {/* ===== MNC NETWORK ===== */}
       <section className="nc-logos-section">
         <div className="nc-container" style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
-          <p className="nc-logos-label">OUR STUDENTS ARE HIRED BY & MENTORS ARE FROM</p>
+          <p className="nc-logos-label">OUR MENTORS ARE FROM THESE TOP COMPANIES</p>
         </div>
         <LogoScroll />
       </section>

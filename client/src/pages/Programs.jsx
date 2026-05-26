@@ -43,7 +43,7 @@ const Programs = () => {
 
   return (
     <div className="min-h-screen bg-white selection:bg-primary selection:text-black">
-      <SEO title="Career Programs" description="Glitch Skill Hub provides hands-on, project-based curriculum designed by practicing software engineers to get you job-ready in weeks." path="/programs" />
+      <SEO title="Skill Programs" description="Glitch Skill Hub provides hands-on, project-based curriculum designed by practicing software engineers to build real-time skills in weeks." path="/programs" />
       <Navbar />
       
       {/* Hero Section */}
@@ -58,7 +58,7 @@ const Programs = () => {
             Career Programs.
           </h1>
           <p className="text-xl text-slate-500 max-w-3xl mx-auto leading-relaxed">
-            Hands-on, project-based curriculum designed by practicing software engineers to get you job-ready in weeks, not years.
+            Hands-on, project-based curriculum designed by practicing software engineers to build real-time skills in weeks, not years.
           </p>
         </div>
       </section>
@@ -201,7 +201,7 @@ const Programs = () => {
              {[
                { title: "Practical First", desc: "No boring slides. We start with code from day one.", icon: Terminal },
                { title: "MNC Workflow", desc: "Learn the exact processes used at Google and Accenture.", icon: ShieldCheck },
-               { title: "Direct Referral", desc: "Access our exclusive network of hiring partners.", icon: Rocket }
+               { title: "Industry Exposure", desc: "Access real-world projects and MNC-standard workflows.", icon: Rocket }
              ].map((benefit, i) => (
                <div key={i} className="text-center p-8">
                   <div className="w-16 h-16 bg-slate-50 rounded-2xl flex items-center justify-center text-primary mx-auto mb-8 shadow-sm">

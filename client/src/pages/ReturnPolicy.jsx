@@ -38,7 +38,7 @@ const ReturnPolicy = () => {
                 <ul className="list-disc pl-5 space-y-2 text-slate-800">
                   <li><strong>Practical Skills:</strong> We will teach you the real-time skills only. Our curriculum is entirely focused on practical, industry-ready knowledge.</li>
                   <li><strong>Mentorship:</strong> All our mentors are experienced professionals, including MNC employees and startup employees.</li>
-                  <li><strong>Placement Assistance:</strong> We are <strong>not guaranteeing placement</strong>. We will only provide placement assistance, and we will inform you when relevant internet job posts are available.</li>
+                  <li><strong>Skills Training Only:</strong> We are a <strong>skills training platform only</strong>. We teach real-time, practical engineering skills. We do NOT provide any job placement, hiring assistance, or guaranteed employment.</li>
                 </ul>
               </div>
             </section>

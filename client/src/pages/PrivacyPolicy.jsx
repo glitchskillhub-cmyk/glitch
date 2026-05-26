@@ -34,8 +34,8 @@ const PrivacyPolicy = () => {
               <p>Your information is primarily used to provide and improve our educational services, specifically to:</p>
               <ul className="list-disc pl-5 space-y-2 mt-2">
                 <li>Process your enrollment and manage your account.</li>
-                <li>Communicate important updates regarding courses, schedules, and placements.</li>
-                <li>Provide placement assistance by informing you of relevant internet job posts.</li>
+                <li>Communicate important updates regarding courses, schedules, and learning progress.</li>
+                <li>Improve and personalize your learning experience on our platform.</li>
                 <li>Enhance our curriculum and user experience.</li>
               </ul>
             </section>

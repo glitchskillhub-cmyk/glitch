@@ -108,7 +108,7 @@ const Home = () => {
                 Glitch Skill Hub isn't just a school; it's a bridge. We were founded by a group of MNC engineers who realized that traditional education was failing to keep up with the rapid pace of today's tech.
               </p>
               <p className="text-lg text-slate-600 leading-relaxed mb-10 font-bold">
-                Today, we help hundreds of students and working professionals transition into high-paying roles through raw, practical exposure.
+                Today, we help hundreds of students and working professionals master real-time skills through raw, practical exposure.
               </p>
               <Link to="/about" className="flex items-center gap-2 font-display font-bold text-sm tracking-widest hover:text-primary transition-colors">
                 Read Full Story <ChevronRight size={18} />
@@ -127,9 +127,9 @@ const Home = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {[
               { icon: Zap, title: "Zero Theory", desc: "We skip the fluff. 100% of our focus is on building and shipping code." },
-              { icon: ShieldCheck, title: "MNC Network", desc: "Direct referrals and networking opportunities with engineers from top firms." },
-              { icon: Trophy, title: "Job Ready", desc: "Our students don't just learn; they become ready for Day 1 on the job." },
-              { icon: Heart, title: "Lifetime Support", desc: "Once a Glitcher, always a Glitcher. Get career support whenever you need it." }
+              { icon: ShieldCheck, title: "MNC Network", desc: "Direct mentoring and learning opportunities with engineers from top firms." },
+              { icon: Trophy, title: "Industry Ready", desc: "Our students don't just learn; they master real-time skills used in top MNCs." },
+              { icon: Heart, title: "Lifetime Support", desc: "Once a Glitcher, always a Glitcher. Get learning support whenever you need it." }
             ].map((item, i) => (
               <div key={i} className="bento-card group flex flex-col items-center p-10 hover:border-primary">
                 <div className="w-16 h-16 bg-slate-50 rounded-2xl flex items-center justify-center text-slate-900 mb-8 group-hover:bg-primary transition-colors">

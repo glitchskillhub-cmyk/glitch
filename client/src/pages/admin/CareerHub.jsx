@@ -298,7 +298,7 @@ const CareerHub = () => {
                     </div>
                     <div>
                        <h3 className="text-2xl font-black uppercase tracking-tighter italic leading-none text-zinc-900">Add Corporate Job</h3>
-                       <p className="text-zinc-500 text-xs font-bold mt-1 uppercase tracking-widest">Publish career placements for students</p>
+                       <p className="text-zinc-500 text-xs font-bold mt-1 uppercase tracking-widest">Publish opportunities for students</p>
                     </div>
                  </div>
                  <button onClick={() => setIsAddJobOpen(false)} className="p-3 bg-zinc-100 text-zinc-400 hover:text-zinc-900 rounded-2xl transition-all">

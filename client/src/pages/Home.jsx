@@ -47,7 +47,7 @@ const Home = () => {
               </h1>
               <p className="text-lg md:text-xl text-slate-600 mb-10 max-w-xl leading-relaxed">
                 Glitch Skill Hub provides real-time knowledge for students and working professionals.
-                Upskill with classes taught by top MNC software engineers.
+                Upskill with classes taught by top MNC software engineers
               </p>
               <div className="flex flex-col sm:flex-row flex-wrap gap-6">
                 <Link to="/register" className="btn-premium group py-4 px-6 sm:py-5 sm:px-10">

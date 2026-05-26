@@ -28,7 +28,7 @@ import LogoScroll from '../components/LogoScroll';
 const Home = () => {
   return (
     <div className="min-h-screen bg-white selection:bg-primary selection:text-black">
-      <SEO title="Home" description="Glitch Skill Hub provides real-time knowledge for students and working professionals. Upskill with classes taught by top MNC software engineers." path="/" />
+      <SEO title="Home" description="Glitch Skill Hub provides real-time knowledge for students and working professionals. Upskill with classes taught by top MNC software engineers" path="/" />
       <Navbar />
 
       {/* Hero Section */}

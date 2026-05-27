@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { NavLink, useNavigate, useLocation } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import logo from '../assets/images/glitch-logo.webp';
 import { 
   LayoutDashboard, 
@@ -43,9 +44,11 @@ const AdminLayout = ({ children }) => {
   const [mobileMenu, setMobileMenu] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
+  const { logout } = useAuth();
 
   const handleLogout = () => {
     localStorage.removeItem('isSVAdmin');
+    logout(); // Also clear user session from AuthContext
     navigate('/admin/login');
   };
 

@@ -31,12 +31,16 @@ const Navbar = () => {
 
   const getDashboardPath = () => {
     if (!user) return '/login';
-    return user.role === 'mentor' ? '/mentor/dashboard' : '/student/dashboard';
+    if (user.role === 'admin') return '/admin/dashboard';
+    if (user.role === 'mentor') return '/mentor/dashboard';
+    return '/student/dashboard';
   };
 
   const getProfilePath = () => {
     if (!user) return '/login';
-    return user.role === 'mentor' ? '/mentor/dashboard' : '/student/settings';
+    if (user.role === 'admin') return '/admin/settings';
+    if (user.role === 'mentor') return '/mentor/dashboard';
+    return '/student/settings';
   };
 
 

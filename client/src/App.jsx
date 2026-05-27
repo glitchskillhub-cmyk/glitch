@@ -99,7 +99,7 @@ function App() {
         <Route path="/signup" element={<Signup />} />
 
         {/* Student Dashboard Routes */}
-        <Route element={<RoleProtectedRoute allowedRoles={['student']} />}>
+        <Route element={<RoleProtectedRoute allowedRoles={['student', 'customer']} />}>
           <Route path="/student" element={<StudentLayout><Outlet /></StudentLayout>}>
             <Route index element={<Navigate to="/student/dashboard" />} />
             <Route path="dashboard" element={<StudentDashboardHome />} />

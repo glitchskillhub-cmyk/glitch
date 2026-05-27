@@ -15,14 +15,45 @@ const sendReceiptEmail = async (studentDetails, paymentDetails) => {
 
   const mailOptions = {
     from: 'Glitch Skill Hub <info@glitchedu.online>',
+    replyTo: 'info@glitchedu.online',
     to: studentDetails.email,
-    subject: `✅ Payment Confirmed — Welcome to ${studentDetails.course} | Glitch Skill Hub`,
+    subject: `Payment Confirmed - Welcome to ${studentDetails.course} | Glitch Skill Hub`,
+    headers: {
+      'List-Unsubscribe': '<mailto:info@glitchedu.online?subject=unsubscribe>',
+      'X-Entity-Ref-ID': `receipt-${paymentId}-${Date.now()}`,
+    },
+    text: `Hi ${studentDetails.name},
+
+Thank you for choosing Glitch Skill Hub! Your payment of Rs.${amount.toLocaleString('en-IN')} has been successfully processed. You are now officially enrolled in the program.
+
+Payment Receipt
+- Student Name: ${studentDetails.name}
+- Email: ${studentDetails.email}
+- Program: ${studentDetails.course}
+- Amount Paid: Rs.${amount.toLocaleString('en-IN')}
+- Payment ID: ${paymentId}
+- Date & Time: ${paymentDate}, ${paymentTime}
+- Status: Confirmed
+
+What Happens Next?
+1. Our team will verify your enrollment within 24 hours
+2. You'll receive your class schedule & access credentials via WhatsApp/Email
+3. Join the batch and start your coding journey!
+
+Have questions? We're here to help!
+Phone: +91 6300127932
+Email: info@glitchedu.online
+
+Glitch Skill Hub - Your Future Starts Here
+(c) ${new Date().getFullYear()} Glitch Skill Hub. All rights reserved.
+`,
     html: `
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Payment Confirmed - Glitch Skill Hub</title>
 </head>
 <body style="margin: 0; padding: 0; background-color: #f4f4f5; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
   <div style="max-width: 600px; margin: 0 auto; padding: 40px 20px;">
@@ -43,7 +74,6 @@ const sendReceiptEmail = async (studentDetails, paymentDetails) => {
     <!-- Success Banner -->
     <div style="background-color: #ffffff; padding: 0 40px;">
       <div style="background: linear-gradient(135deg, #dcfce7 0%, #f0fdf4 100%); border-radius: 16px; padding: 28px; text-align: center; margin-top: 30px; border: 1px solid #bbf7d0;">
-        <div style="font-size: 42px; margin-bottom: 8px;">✅</div>
         <h2 style="margin: 0; color: #15803d; font-size: 20px; font-weight: 800;">Payment Successful!</h2>
         <p style="margin: 8px 0 0; color: #166534; font-size: 13px;">
           Your enrollment has been confirmed
@@ -58,7 +88,7 @@ const sendReceiptEmail = async (studentDetails, paymentDetails) => {
       </p>
       <p style="color: #3f3f46; font-size: 15px; line-height: 1.7; margin: 0 0 30px;">
         Thank you for choosing <strong style="color: #18181b;">Glitch Skill Hub</strong>! Your payment of 
-        <strong style="color: #15803d; font-size: 17px;">₹${amount.toLocaleString('en-IN')}</strong> 
+        <strong style="color: #15803d; font-size: 17px;">Rs.${amount.toLocaleString('en-IN')}</strong> 
         has been successfully processed. You are now officially enrolled in the program.
       </p>
 
@@ -82,21 +112,21 @@ const sendReceiptEmail = async (studentDetails, paymentDetails) => {
           </tr>
           <tr>
             <td style="padding: 10px 0; color: #71717a; font-size: 13px; border-bottom: 1px solid #f4f4f5;">Amount Paid</td>
-            <td style="padding: 10px 0; color: #15803d; font-size: 15px; font-weight: 800; text-align: right; border-bottom: 1px solid #f4f4f5;">₹${amount.toLocaleString('en-IN')}</td>
+            <td style="padding: 10px 0; color: #15803d; font-size: 15px; font-weight: 800; text-align: right; border-bottom: 1px solid #f4f4f5;">Rs.${amount.toLocaleString('en-IN')}</td>
           </tr>
           <tr>
             <td style="padding: 10px 0; color: #71717a; font-size: 13px; border-bottom: 1px solid #f4f4f5;">Payment ID</td>
             <td style="padding: 10px 0; color: #18181b; font-size: 12px; font-weight: 600; text-align: right; font-family: monospace; border-bottom: 1px solid #f4f4f5;">${paymentId}</td>
           </tr>
           <tr>
-            <td style="padding: 10px 0; color: #71717a; font-size: 13px; border-bottom: 1px solid #f4f4f5;">Date & Time</td>
+            <td style="padding: 10px 0; color: #71717a; font-size: 13px; border-bottom: 1px solid #f4f4f5;">Date and Time</td>
             <td style="padding: 10px 0; color: #18181b; font-size: 13px; font-weight: 600; text-align: right; border-bottom: 1px solid #f4f4f5;">${paymentDate}, ${paymentTime}</td>
           </tr>
           <tr>
             <td style="padding: 10px 0; color: #71717a; font-size: 13px;">Status</td>
             <td style="padding: 10px 0; text-align: right;">
               <span style="background-color: #dcfce7; color: #15803d; font-size: 11px; font-weight: 800; padding: 4px 12px; border-radius: 20px; text-transform: uppercase; letter-spacing: 1px;">
-                ✓ Confirmed
+                Confirmed
               </span>
             </td>
           </tr>
@@ -106,11 +136,11 @@ const sendReceiptEmail = async (studentDetails, paymentDetails) => {
       <!-- What's Next -->
       <div style="background: linear-gradient(135deg, #fefce8 0%, #fffbeb 100%); border: 1px solid #fde68a; border-radius: 16px; padding: 24px; margin-bottom: 28px;">
         <h3 style="margin: 0 0 14px; color: #92400e; font-size: 14px; font-weight: 800;">
-          🚀 What Happens Next?
+          What Happens Next?
         </h3>
         <ol style="margin: 0; padding-left: 18px; color: #78350f; font-size: 13px; line-height: 2;">
           <li>Our team will verify your enrollment within <strong>24 hours</strong></li>
-          <li>You'll receive your <strong>class schedule & access credentials</strong> via WhatsApp/Email</li>
+          <li>You'll receive your <strong>class schedule and access credentials</strong> via WhatsApp/Email</li>
           <li>Join the batch and start your coding journey!</li>
         </ol>
       </div>
@@ -126,13 +156,11 @@ const sendReceiptEmail = async (studentDetails, paymentDetails) => {
         <table style="margin: 0 auto; border-collapse: collapse;">
           <tr>
             <td style="padding: 8px 20px; text-align: center;">
-              <div style="font-size: 20px; margin-bottom: 4px;">📞</div>
               <a href="tel:+916300127932" style="color: #18181b; font-size: 14px; font-weight: 700; text-decoration: none;">
                 +91 6300127932
               </a>
             </td>
             <td style="padding: 8px 20px; text-align: center; border-left: 1px solid #e4e4e7;">
-              <div style="font-size: 20px; margin-bottom: 4px;">✉️</div>
               <a href="mailto:info@glitchedu.online" style="color: #18181b; font-size: 14px; font-weight: 700; text-decoration: none;">
                 info@glitchedu.online
               </a>
@@ -148,13 +176,16 @@ const sendReceiptEmail = async (studentDetails, paymentDetails) => {
         Glitch Skill Hub
       </p>
       <p style="color: #71717a; font-size: 11px; margin: 0 0 4px;">
-        Your Future Starts Here — Build. Code. Conquer.
+        Your Future Starts Here
       </p>
       <p style="color: #52525b; font-size: 10px; margin: 12px 0 0;">
-        © ${new Date().getFullYear()} Glitch Skill Hub. All rights reserved.
+        &copy; ${new Date().getFullYear()} Glitch Skill Hub. All rights reserved.
       </p>
       <p style="color: #3f3f46; font-size: 10px; margin: 8px 0 0;">
         This is an automated payment confirmation. Please do not reply to this email.
+      </p>
+      <p style="color: #3f3f46; font-size: 10px; margin: 8px 0 0;">
+        <a href="mailto:info@glitchedu.online?subject=unsubscribe" style="color: #71717a; text-decoration: underline;">Unsubscribe</a>
       </p>
     </div>
 
@@ -168,13 +199,13 @@ const sendReceiptEmail = async (studentDetails, paymentDetails) => {
     const { data, error } = await resend.emails.send(mailOptions);
 
     if (error) {
-      console.error('❌ Resend API Error:', error.message);
+      console.error('Resend API Error:', error.message);
       throw new Error(error.message);
     }
 
-    console.log('✅ Payment receipt email sent to:', studentDetails.email, 'Data:', data);
+    console.log('Payment receipt email sent to:', studentDetails.email, 'Data:', data);
   } catch (error) {
-    console.error('❌ Error sending email:', error.message);
+    console.error('Error sending email:', error.message);
     throw error;
   }
 };
@@ -182,14 +213,39 @@ const sendReceiptEmail = async (studentDetails, paymentDetails) => {
 const sendOTPEmail = async (email, name, otp) => {
   const mailOptions = {
     from: 'Glitch Skill Hub <info@glitchedu.online>',
+    replyTo: 'info@glitchedu.online',
     to: email,
-    subject: `🔐 Reset Your Password — OTP: ${otp} | Glitch Skill Hub`,
+    subject: `Password Reset Verification - Glitch Skill Hub`,
+    headers: {
+      'List-Unsubscribe': '<mailto:info@glitchedu.online?subject=unsubscribe>',
+      'X-Entity-Ref-ID': `otp-${Date.now()}`,
+    },
+    text: `Hi ${name},
+
+We received a request to reset the password for your Glitch Skill Hub account. Use the verification code below to proceed with setting up a new password:
+
+Your One-Time Password (OTP): ${otp}
+
+This OTP is valid for 10 minutes.
+
+For security reasons, do not share this OTP with anyone. Our support team will never ask for your passwords or OTPs.
+
+If you did not request a password reset, you can safely ignore this email - your password will remain unchanged and your account is secure.
+
+Need assistance? We're here to help!
+Phone: +91 6300127932
+Email: info@glitchedu.online
+
+Glitch Skill Hub - Your Future Starts Here
+(c) ${new Date().getFullYear()} Glitch Skill Hub. All rights reserved.
+`,
     html: `
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Password Reset - Glitch Skill Hub</title>
 </head>
 <body style="margin: 0; padding: 0; background-color: #f4f4f5; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
   <div style="max-width: 600px; margin: 0 auto; padding: 40px 20px;">
@@ -221,7 +277,7 @@ const sendOTPEmail = async (email, name, otp) => {
         <div style="color: #854d0e; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 12px;">
           Your One-Time Password (OTP)
         </div>
-        <div style="font-family: 'Courier New', Courier, monospace; font-size: 38px; font-weight: 800; letter-spacing: 8px; color: #18181b; background-color: #ffffff; border: 2px dashed #facc15; padding: 14px 20px; display: inline-block; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
+        <div style="font-family: 'Courier New', Courier, monospace; font-size: 38px; font-weight: 800; letter-spacing: 8px; color: #18181b; background-color: #ffffff; border: 2px dashed #facc15; padding: 14px 20px; display: inline-block; border-radius: 12px;">
           ${otp}
         </div>
         <p style="margin: 16px 0 0; color: #713f12; font-size: 13px; font-weight: 600;">
@@ -230,11 +286,11 @@ const sendOTPEmail = async (email, name, otp) => {
       </div>
 
       <p style="color: #71717a; font-size: 13px; line-height: 1.6; margin: 0 0 24px;">
-        🔒 For security reasons, do not share this OTP with anyone. Our support team will never ask for your passwords or OTPs.
+        For security reasons, do not share this OTP with anyone. Our support team will never ask for your passwords or OTPs.
       </p>
 
       <p style="color: #71717a; font-size: 13px; line-height: 1.6; margin: 0;">
-        If you did not request a password reset, you can safely ignore this email — your password will remain unchanged and your account is secure.
+        If you did not request a password reset, you can safely ignore this email. Your password will remain unchanged and your account is secure.
       </p>
 
       <!-- Divider -->
@@ -248,13 +304,11 @@ const sendOTPEmail = async (email, name, otp) => {
         <table style="margin: 0 auto; border-collapse: collapse;">
           <tr>
             <td style="padding: 8px 20px; text-align: center;">
-              <div style="font-size: 20px; margin-bottom: 4px;">📞</div>
               <a href="tel:+916300127932" style="color: #18181b; font-size: 14px; font-weight: 700; text-decoration: none;">
                 +91 6300127932
               </a>
             </td>
             <td style="padding: 8px 20px; text-align: center; border-left: 1px solid #e4e4e7;">
-              <div style="font-size: 20px; margin-bottom: 4px;">✉️</div>
               <a href="mailto:info@glitchedu.online" style="color: #18181b; font-size: 14px; font-weight: 700; text-decoration: none;">
                 info@glitchedu.online
               </a>
@@ -270,10 +324,13 @@ const sendOTPEmail = async (email, name, otp) => {
         Glitch Skill Hub
       </p>
       <p style="color: #71717a; font-size: 11px; margin: 0 0 4px;">
-        Your Future Starts Here — Build. Code. Conquer.
+        Your Future Starts Here
       </p>
       <p style="color: #52525b; font-size: 10px; margin: 12px 0 0;">
-        © ${new Date().getFullYear()} Glitch Skill Hub. All rights reserved.
+        &copy; ${new Date().getFullYear()} Glitch Skill Hub. All rights reserved.
+      </p>
+      <p style="color: #3f3f46; font-size: 10px; margin: 8px 0 0;">
+        <a href="mailto:info@glitchedu.online?subject=unsubscribe" style="color: #71717a; text-decoration: underline;">Unsubscribe</a>
       </p>
     </div>
 
@@ -286,16 +343,15 @@ const sendOTPEmail = async (email, name, otp) => {
   try {
     const { data, error } = await resend.emails.send(mailOptions);
     if (error) {
-      console.error('❌ Resend OTP Email Error:', error.message);
+      console.error('Resend OTP Email Error:', error.message);
       throw new Error(error.message);
     }
-    console.log('✅ OTP email sent successfully to:', email, 'Data:', data);
+    console.log('OTP email sent successfully to:', email, 'Data:', data);
     return data;
   } catch (error) {
-    console.error('❌ Error sending OTP email:', error.message);
+    console.error('Error sending OTP email:', error.message);
     throw error;
   }
 };
 
 module.exports = { sendReceiptEmail, sendOTPEmail };
-

@@ -23,9 +23,18 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     const message = error.response?.data?.message || 'Server is waking up or down. Please try again.';
-    // You can use window.toast or similar if available, or just log it
-    // Since I don't want to add a new dependency here, I'll just log it
-    // But the components can handle individual errors too.
+    
+    // If token is expired or invalid, auto-logout the student
+    if (error.response?.status === 401) {
+      const user = JSON.parse(localStorage.getItem('user'));
+      if (user) {
+        localStorage.removeItem('user');
+        localStorage.removeItem('loginTimestamp');
+        // Redirect to login page
+        window.location.href = '/login';
+      }
+    }
+    
     console.error("API Error:", message);
     return Promise.reject(error);
   }

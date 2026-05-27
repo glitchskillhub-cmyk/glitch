@@ -3,9 +3,11 @@ const jwt = require('jsonwebtoken');
 const { sendOTPEmail } = require('../utils/email');
 
 // Generate JWT
-const generateToken = (id) => {
+const generateToken = (id, role) => {
+  // Students get a 1-hour session; admins and mentors get 30 days
+  const expiresIn = (role === 'student' || role === 'customer') ? '1h' : '30d';
   return jwt.sign({ id }, process.env.JWT_SECRET || 'your_super_secret_key', {
-    expiresIn: '30d',
+    expiresIn,
   });
 };
 
@@ -61,7 +63,7 @@ exports.registerUser = async (req, res) => {
         email: user.email,
         role: user.role,
         isEnrolled: user.isEnrolled,
-        token: generateToken(user._id),
+        token: generateToken(user._id, user.role),
       });
     }
   } catch (error) {
@@ -84,7 +86,7 @@ exports.loginUser = async (req, res) => {
         email: user.email,
         role: user.role,
         isEnrolled: user.isEnrolled,
-        token: generateToken(user._id),
+        token: generateToken(user._id, user.role),
       });
     } else {
       res.status(401).json({ message: 'Invalid email or password' });
@@ -135,7 +137,7 @@ exports.updateUserProfile = async (req, res) => {
         phone: updatedUser.phone,
         socialLinks: updatedUser.socialLinks,
         role: updatedUser.role,
-        token: generateToken(updatedUser._id)
+        token: generateToken(updatedUser._id, updatedUser.role)
       });
     } else {
       res.status(404).json({ message: 'User not found' });

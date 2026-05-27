@@ -38,7 +38,9 @@ const Login = () => {
       const user = await login(email, password);
       clearTimeout(slowTimer);
       toast.success(`Welcome back, ${user.name}!`);
-      if (user.role === 'mentor') navigate('/mentor/dashboard');
+      const role = user.role === 'customer' ? 'student' : user.role;
+      if (role === 'admin') navigate('/admin/dashboard');
+      else if (role === 'mentor') navigate('/mentor/dashboard');
       else navigate('/student/dashboard');
     } catch (error) {
       clearTimeout(slowTimer);

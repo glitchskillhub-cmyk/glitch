@@ -51,7 +51,7 @@ const About = () => {
               <h2 className="section-title mb-10">Beyond <span className="text-primary">Textbooks.</span></h2>
               <div className="space-y-8">
                 <p className="text-lg text-slate-600 leading-relaxed">
-                  At Glitch Skill Hub, we've identified a massive gap in the Indian tech education system. Students graduate with degrees but struggle to build production-grade software. Working professionals want to upskill but find theoretical bootcamps useless.
+                  At Glitch Skill Hub, we've identified a massive gap in the Indian tech education system. Students graduate with degrees but struggle to build production-grade software. Working professionals want to upskill but find theoretical bootcamps useless
                 </p>
                 <p className="text-lg text-slate-600 leading-relaxed">
                   Our identity is built on <span className="text-black font-black underline decoration-primary">Real-time Knowledge</span>. Every trainer at Glitch is a currently practicing engineer at an MNC. We don't teach from slides; we teach from actual codebases and industry tasks.

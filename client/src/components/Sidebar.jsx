@@ -30,8 +30,8 @@ const Sidebar = ({ isMobileOpen, setIsMobileOpen }) => {
   const navItems = [
     { name: 'Dashboard', icon: Layers, path: '/student/dashboard', locked: false },
     { name: 'Programs', icon: BookOpen, path: '/student/programs', locked: false },
-    { name: 'Curriculum', icon: BookOpen, path: '/student/curriculum', locked: !isEnrolled },
-    { name: 'Tasks', icon: CheckCircle2, path: '/student/tasks', locked: !isEnrolled },
+    { name: 'Curriculum', icon: BookOpen, path: '/student/curriculum', locked: false },
+    { name: 'Tasks', icon: CheckCircle2, path: '/student/tasks', locked: false },
     { name: 'Payments', icon: CreditCard, path: '/student/payments', locked: false },
     { name: 'Certificates', icon: Award, path: '/student/certificates', locked: false },
     { name: 'Career Hub', icon: Briefcase, path: '/student/career', locked: false },

@@ -317,7 +317,6 @@ const checkAuthToken = async (req, res, next) => {
         description="Master scalable MERN stacks, DevOps containers, and advanced backend systems. High-contrast, no-fluff skills academy."
         path="/node-js-course"
       />
-      <Navbar />
 
       {/* ===== 1. HERO SECTION ===== */}
       <section className="nc-hero">

@@ -353,9 +353,12 @@ const checkAuthToken = async (req, res, next) => {
               </div>
 
               <div className="nc-hero-actions">
-                <a href={whatsappLink} target="_blank" rel="noopener noreferrer" className="nc-btn-primary">
+                <button 
+                  onClick={() => { setShowLeadModal(true); hasTriggeredPopup.current = true; }} 
+                  className="nc-btn-primary"
+                >
                   ENROLL NOW <ArrowRight size={18} />
-                </a>
+                </button>
                 <button onClick={handleDownloadBrochure} className="nc-btn-outline">
                   DOWNLOAD BROCHURE <FileText size={18} className="nc-yellow" />
                 </button>
@@ -705,9 +708,12 @@ const checkAuthToken = async (req, res, next) => {
               </p>
 
               <div className="nc-cta-card-actions-crisp">
-                <a href={whatsappLink} target="_blank" rel="noopener noreferrer" className="nc-btn-primary large">
+                <button 
+                  onClick={() => { setShowLeadModal(true); hasTriggeredPopup.current = true; }} 
+                  className="nc-btn-primary large"
+                >
                   Reserve Your Seat <ArrowRight size={18} />
-                </a>
+                </button>
                 <a href={whatsappLink} target="_blank" rel="noopener noreferrer" className="nc-btn-outline" style={{ border: '2px solid #ca8a04', color: '#ca8a04' }}>
                   WhatsApp Us <Phone size={16} />
                 </a>
@@ -747,9 +753,13 @@ const checkAuthToken = async (req, res, next) => {
                 Access fully interactive sessions, code review structures, containerization configurations, and lifetime video folders.
               </p>
 
-              <a href={whatsappLink} target="_blank" rel="noopener noreferrer" className="nc-btn-primary large" style={{ width: '100%', justifyContent: 'center' }}>
+              <button 
+                onClick={() => { setShowLeadModal(true); hasTriggeredPopup.current = true; }} 
+                className="nc-btn-primary large" 
+                style={{ width: '100%', justifyContent: 'center' }}
+              >
                 RESERVE YOUR SEAT NOW
-              </a>
+              </button>
               <p style={{ textAlign: 'center', fontSize: '0.8rem', color: '#94a3b8', marginTop: '1rem' }}>
                 * Limited seats available for the upcoming cohort.
               </p>

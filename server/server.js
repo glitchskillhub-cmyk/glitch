@@ -12,6 +12,7 @@ const studentRoutes = require('./routes/studentRoutes');
 const authRoutes = require('./routes/authRoutes');
 const courseRoutes = require('./routes/courseRoutes');
 const communityRoutes = require('./routes/communityRoutes');
+const leadRoutes = require('./routes/leadRoutes');
 const errorHandler = require('./middleware/errorMiddleware');
 const path = require('path');
 const fs = require('fs');
@@ -58,6 +59,7 @@ app.get('/', (req, res) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/courses', courseRoutes);
 app.use('/api/community', communityRoutes);
+app.use('/api/leads', leadRoutes);
 app.use('/api', studentRoutes);
 
 // Error handler

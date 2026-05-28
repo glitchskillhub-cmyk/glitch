@@ -48,6 +48,7 @@ import AdminTasks from './pages/admin/Tasks';
 import AdminCareerHub from './pages/admin/CareerHub';
 import AdminCertificates from './pages/admin/Certificates';
 import AdminCommunity from './pages/admin/Community';
+import AdminLeads from './pages/admin/Leads';
 
 // Legacy SVAdmin Pages (For Reference)
 import AdminLogin from './pages/AdminLogin';
@@ -139,6 +140,7 @@ function App() {
           <Route path="certificates" element={<AdminCertificates />} />
           <Route path="career" element={<AdminCareerHub />} />
           <Route path="community" element={<AdminCommunity />} />
+          <Route path="leads" element={<AdminLeads />} />
           <Route path="settings" element={<AdminSettingsV2 />} />
         </Route>
 

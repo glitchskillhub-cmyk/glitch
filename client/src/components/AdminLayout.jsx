@@ -63,6 +63,7 @@ const AdminLayout = ({ children }) => {
       { to: '/admin/programs', icon: BookOpen, label: 'Programs' },
       { to: '/admin/curriculum', icon: BookOpen, label: 'Curriculum' },
       { to: '/admin/tasks', icon: CheckSquare, label: 'Tasks' },
+      { to: '/admin/leads', icon: Users, label: 'Node JS Leads' },
     ]},
     { section: 'Finance', items: [
       { to: '/admin/payments', icon: CreditCard, label: 'Payments' },

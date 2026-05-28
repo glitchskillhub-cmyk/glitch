@@ -114,4 +114,10 @@ export const getAnnouncements = () => api.get('/community/announcements');
 export const createAnnouncement = (data) => api.post('/community/announcements', data);
 export const deleteAnnouncement = (id) => api.delete(`/community/announcements/${id}`);
 
+// Leads (Node.js Course Landing Page)
+export const submitLead = (data) => api.post('/leads', data);
+export const getAllLeads = (source) => api.get(`/leads${source ? `?source=${source}` : ''}`);
+export const updateLead = (id, data) => api.put(`/leads/${id}`, data);
+export const deleteLead = (id) => api.delete(`/leads/${id}`);
+
 export default api;

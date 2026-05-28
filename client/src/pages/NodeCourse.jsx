@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import SEO from '../components/SEO';
@@ -21,6 +21,7 @@ import codingVisualImg from '../assets/images/coding.png';
 import softwareWomanImg from '../assets/images/software_woman.png';
 import toolsImg from '../assets/images/tools.png';
 import LogoScroll from '../components/LogoScroll';
+import { submitLead } from '../utils/api';
 import brochurePdf from '../assets/MernFullStack-Brochure.pdf';
 import './NodeCourse.css';
 
@@ -32,10 +33,45 @@ const NodeCourse = () => {
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
   const [activeVideoModal, setActiveVideoModal] = useState(null);
+  
+  // Lead Form State
+  const [showLeadModal, setShowLeadModal] = useState(false);
+  const [submittingLead, setSubmittingLead] = useState(false);
+  const [leadForm, setLeadForm] = useState({ name: '', email: '', phone: '' });
+  const hasTriggeredPopup = useRef(false);
 
   useEffect(() => {
     window.scrollTo(0, 0);
+    
+    // Auto-trigger lead popup after 10 seconds for Google Ads traffic
+    const timer = setTimeout(() => {
+      if (!hasTriggeredPopup.current) {
+        setShowLeadModal(true);
+        hasTriggeredPopup.current = true;
+      }
+    }, 10000);
+    
+    return () => clearTimeout(timer);
   }, []);
+
+  const handleLeadSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      setSubmittingLead(true);
+      await submitLead({
+        ...leadForm,
+        source: 'node-js-course'
+      });
+      setShowLeadModal(false);
+      triggerToast("Thanks! Our team will contact you shortly.");
+      setLeadForm({ name: '', email: '', phone: '' });
+      hasTriggeredPopup.current = true;
+    } catch (error) {
+      triggerToast("Something went wrong. Please try again.");
+    } finally {
+      setSubmittingLead(false);
+    }
+  };
 
   const triggerToast = (msg) => {
     setToastMessage(msg);
@@ -745,6 +781,85 @@ const checkAuthToken = async (req, res, next) => {
                 <span className="nc-video-length">Video Length: {activeVideoModal.length} mins</span>
               </div>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Floating Enquire Button */}
+      <button 
+        onClick={() => { setShowLeadModal(true); hasTriggeredPopup.current = true; }}
+        className="fixed bottom-6 right-6 md:bottom-10 md:right-10 bg-zinc-900 text-white p-4 rounded-full shadow-2xl hover:bg-black hover:scale-105 transition-all z-40 flex items-center gap-3 border-2 border-zinc-800"
+      >
+        <div className="relative">
+          <Phone size={24} className="text-primary" />
+          <span className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full animate-pulse border-2 border-zinc-900"></span>
+        </div>
+        <span className="hidden md:inline font-black uppercase tracking-widest text-xs">Request Callback</span>
+      </button>
+
+      {/* Lead Capture Modal */}
+      {showLeadModal && (
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl w-full max-w-md overflow-hidden shadow-2xl relative animate-in zoom-in-95 duration-300">
+            <button 
+              onClick={() => setShowLeadModal(false)}
+              className="absolute top-4 right-4 p-2 bg-zinc-100 text-zinc-500 hover:text-zinc-900 hover:bg-zinc-200 rounded-full transition-colors"
+            >
+              <X size={16} />
+            </button>
+            
+            <div className="bg-zinc-950 p-6 text-center border-b-4 border-primary">
+              <h3 className="text-2xl font-black text-white italic tracking-tighter uppercase">Unlock 45-Day MERN Mastery</h3>
+              <p className="text-zinc-400 text-xs mt-2 font-medium tracking-wide">Enter your details to get course curriculum and direct call from mentor.</p>
+            </div>
+            
+            <form onSubmit={handleLeadSubmit} className="p-6 space-y-4">
+              <div>
+                <label className="block text-[10px] font-black uppercase tracking-widest text-zinc-500 mb-1">Full Name</label>
+                <input 
+                  type="text" 
+                  required 
+                  value={leadForm.name}
+                  onChange={(e) => setLeadForm({...leadForm, name: e.target.value})}
+                  className="w-full px-4 py-3 rounded-xl border border-zinc-200 bg-zinc-50 text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all font-medium"
+                  placeholder="Enter your name"
+                />
+              </div>
+              <div>
+                <label className="block text-[10px] font-black uppercase tracking-widest text-zinc-500 mb-1">Email Address</label>
+                <input 
+                  type="email" 
+                  required 
+                  value={leadForm.email}
+                  onChange={(e) => setLeadForm({...leadForm, email: e.target.value})}
+                  className="w-full px-4 py-3 rounded-xl border border-zinc-200 bg-zinc-50 text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all font-medium"
+                  placeholder="name@example.com"
+                />
+              </div>
+              <div>
+                <label className="block text-[10px] font-black uppercase tracking-widest text-zinc-500 mb-1">Phone Number</label>
+                <input 
+                  type="tel" 
+                  required 
+                  value={leadForm.phone}
+                  onChange={(e) => setLeadForm({...leadForm, phone: e.target.value})}
+                  className="w-full px-4 py-3 rounded-xl border border-zinc-200 bg-zinc-50 text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all font-medium"
+                  placeholder="+91 00000 00000"
+                />
+              </div>
+              
+              <button 
+                type="submit" 
+                disabled={submittingLead}
+                className="w-full bg-primary hover:bg-yellow-500 text-zinc-950 font-black uppercase tracking-widest text-sm py-4 rounded-xl transition-all hover:shadow-[0_0_20px_rgba(255,215,0,0.4)] disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2 mt-4"
+              >
+                {submittingLead ? (
+                  <div className="w-5 h-5 border-2 border-zinc-900 border-t-transparent rounded-full animate-spin"></div>
+                ) : (
+                  <>Get Detailed Syllabus <ChevronRight size={18} /></>
+                )}
+              </button>
+            </form>
           </div>
         </div>
       )}

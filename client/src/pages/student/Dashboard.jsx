@@ -203,14 +203,16 @@ const Dashboard = () => {
                   </div>
                   <div>
                     <h2 className="text-xl font-bold tracking-tight">
-                      {user?.isEnrolled && activeEnrollments.length > 0 ? "Active Program" : "Get Started"}
+                      {activeEnrollments.length > 0 ? "Active Program" : "Get Started"}
                     </h2>
                     <p className="text-sm font-medium text-slate-500 mt-1">
-                      {user?.isEnrolled && activeEnrollments.length > 0 ? "MERN Stack Engineering" : "Unlock Your Career"}
+                      {activeEnrollments.length > 0 
+                        ? (activeEnrollments[0].course?.title || activeEnrollments[0].title || 'Your Course') 
+                        : "Unlock Your Career"}
                     </p>
                   </div>
                 </div>
-                {user?.isEnrolled && activeEnrollments.length > 0 && (
+                {activeEnrollments.length > 0 && (
                   <div className="text-right">
                     <p className="text-xs font-semibold text-primary tracking-wider mb-2">
                       {activeEnrollments[0].progress || 0}% Done
@@ -224,16 +226,16 @@ const Dashboard = () => {
 
               <div className="mb-10">
                 <h3 className="text-xl font-bold mb-4">
-                  {user?.isEnrolled && activeEnrollments.length > 0
+                  {activeEnrollments.length > 0
                     ? (activeEnrollments[0].course?.title || activeEnrollments[0].title)
                     : "No Active Program Found"}
                 </h3>
                 <p className="text-slate-500 text-sm leading-relaxed mb-6 max-w-xl">
-                  {user?.isEnrolled && activeEnrollments.length > 0
+                  {activeEnrollments.length > 0
                     ? (activeEnrollments[0].course?.description || activeEnrollments[0].description)
                     : "You haven't enrolled in any active program yet. Complete your enrollment or contact support to start learning."}
                 </p>
-                {user?.isEnrolled && activeEnrollments.length > 0 && (
+                {activeEnrollments.length > 0 && (
                   <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-slate-400">
                     <Clock size={12} /> Last accessed: Just now
                   </div>
@@ -260,7 +262,7 @@ const Dashboard = () => {
                 )}
               </div>
 
-              {user?.isEnrolled && activeEnrollments.length > 0 ? (
+              {activeEnrollments.length > 0 ? (
                 <button 
                   onClick={() => window.location.href = '/student/programs'}
                   className="btn-premium py-5 px-10 group w-full md:w-auto"

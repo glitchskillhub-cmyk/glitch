@@ -381,15 +381,8 @@ exports.getDashboardStats = async (req, res, next) => {
 // Dashboard: Get My Enrollments
 exports.getMyEnrollments = async (req, res, next) => {
   try {
-    const User = require('../models/User');
-    const user = await User.findById(req.user.id);
-    
-    if (user && user.isEnrolled) {
-      const enrollments = await Enrollment.find({ student: req.user.id }).populate('course');
-      res.json(enrollments || []);
-    } else {
-      res.json([]);
-    }
+    const enrollments = await Enrollment.find({ student: req.user.id }).populate('course');
+    res.json(enrollments || []);
   } catch (error) { next(error); }
 };
 
@@ -516,25 +509,45 @@ exports.getStudentDashboardStats = async (req, res, next) => {
       .limit(5)
       .lean();
 
-    // Calculate due amount
+    // Calculate due amount using enrollment course data first, falling back to student record
     const Student = require('../models/Student');
-    const student = await Student.findOne({ email: user.email.toLowerCase() });
+    const CourseModel = require('../models/Course');
+    const PaymentModel = require('../models/Payment');
     
     let dueAmount = 0;
     let totalPaid = 0;
     let coursePrice = 0;
     let courseTitle = '';
+    let studentRecord = null;
+    
+    // Primary: Get course info from the active enrollment (most reliable source)
+    if (activeEnrollment && activeEnrollment.course) {
+      const enrolledCourse = await CourseModel.findById(activeEnrollment.course);
+      if (enrolledCourse) {
+        coursePrice = enrolledCourse.price || 0;
+        courseTitle = enrolledCourse.title;
+      }
+    }
+    
+    // Find the student registration record (most recent one for this email)
+    const student = await Student.findOne({ email: user.email.toLowerCase() }).sort({ createdAt: -1 });
     
     if (student) {
-      const Course = require('../models/Course');
-      const courseObj = await Course.findOne({ title: student.course });
-      if (courseObj) {
-        coursePrice = courseObj.price || 0;
-        courseTitle = courseObj.title;
+      studentRecord = student;
+      
+      // If we didn't get course info from enrollment, fall back to student record
+      if (!courseTitle) {
+        const courseObj = await CourseModel.findOne({ title: student.course });
+        if (courseObj) {
+          coursePrice = courseObj.price || 0;
+          courseTitle = courseObj.title;
+        }
       }
       
-      const Payment = require('../models/Payment');
-      const payments = await Payment.find({ studentId: student._id, status: 'Paid' });
+      // Calculate total paid from ALL payment records for this student
+      const allStudentRegistrations = await Student.find({ email: user.email.toLowerCase() });
+      const allStudentIds = allStudentRegistrations.map(s => s._id);
+      const payments = await PaymentModel.find({ studentId: { $in: allStudentIds }, status: 'Paid' });
       totalPaid = payments.reduce((sum, p) => sum + (p.amount || 0), 0);
       
       dueAmount = coursePrice - totalPaid;
@@ -546,7 +559,7 @@ exports.getStudentDashboardStats = async (req, res, next) => {
       tasks: `${completedTasksCount}/${tasksCount || 5}`,
       learningHours,
       certificates: certificatesCount.toString(),
-      studentId: student ? student._id : null,
+      studentId: studentRecord ? studentRecord._id : null,
       dueAmount,
       totalPaid,
       coursePrice,

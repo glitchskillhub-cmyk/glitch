@@ -4,7 +4,7 @@ import { useAuth } from '../../context/AuthContext';
 import { getStudentPayments, getMyEnrollments, createRazorpayOrder, verifyRazorpayPayment, getStudentStats } from '../../utils/api';
 import { toast } from 'react-hot-toast';
 
-const RAZORPAY_KEY = import.meta.env.VITE_RAZORPAY_KEY_ID || 'rzp_test_Skseh7l3ljLVO7';
+const RAZORPAY_KEY = import.meta.env.VITE_RAZORPAY_KEY_ID || 'rzp_live_SufPL6VwSvSJOW';
 
 const Payments = () => {
   const { user } = useAuth();

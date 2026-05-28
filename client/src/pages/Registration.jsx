@@ -3,12 +3,12 @@ import { useNavigate, Link } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import { createStudent, createRazorpayOrder, verifyRazorpayPayment, getAllCourses } from '../utils/api';
 import { useAuth } from '../context/AuthContext';
-import { Loader2, User, CreditCard, ShieldCheck, MapPin, Building, GraduationCap, Phone, Mail, BookOpen, Send, Sparkles, ChevronRight, Zap, Briefcase, Clock, Lock } from 'lucide-react';
+import { Loader2, User, CreditCard, ShieldCheck, MapPin, Building, GraduationCap, Phone, Mail, BookOpen, Send, Sparkles, ChevronRight, Zap, Briefcase, Clock, Lock, X, AlertTriangle, CheckCircle2 } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import SEO from '../components/SEO';
 
-const RAZORPAY_KEY = import.meta.env.VITE_RAZORPAY_KEY_ID || 'rzp_test_Skseh7l3ljLVO7';
+const RAZORPAY_KEY = import.meta.env.VITE_RAZORPAY_KEY_ID || 'rzp_live_SufPL6VwSvSJOW';
 
 const InputField = ({ label, name, type = 'text', placeholder, icon: Icon, required = true, value, onChange, error }) => (
   <div className="floating-label-group">
@@ -72,6 +72,9 @@ const Registration = () => {
   const [isFormValid, setIsFormValid] = useState(false);
   const [courses, setCourses] = useState([]);
   const [paymentType, setPaymentType] = useState('full'); // 'full' or 'slot'
+  const [termsAccepted, setTermsAccepted] = useState(false);
+  const [showSlotTerms, setShowSlotTerms] = useState(false);
+  const [slotTermsAccepted, setSlotTermsAccepted] = useState(false);
 
   // Fetch courses and handle url params on load
   useEffect(() => {
@@ -149,8 +152,40 @@ const Registration = () => {
     });
   };
 
+  const handleSlotSelect = () => {
+    setPaymentType('slot');
+    setShowSlotTerms(true);
+    setSlotTermsAccepted(false);
+  };
+
+  const handleSlotTermsConfirm = () => {
+    setSlotTermsAccepted(true);
+    setShowSlotTerms(false);
+  };
+
+  const handleSlotTermsCancel = () => {
+    setShowSlotTerms(false);
+    setSlotTermsAccepted(false);
+    setPaymentType('full');
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Check terms acceptance
+    if (!termsAccepted) {
+      toast.error('Please agree to the Terms & Conditions, Privacy Policy, and Refund Policy before proceeding.');
+      const termsEl = document.getElementById('terms-checkbox-section');
+      if (termsEl) termsEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+
+    // Check slot terms if slot payment selected
+    if (paymentType === 'slot' && !slotTermsAccepted) {
+      setShowSlotTerms(true);
+      toast.error('Please accept the Slot Booking Terms before proceeding.');
+      return;
+    }
 
     // Map fields to user-friendly label names
     const requiredFields = [
@@ -380,7 +415,7 @@ const Registration = () => {
                         <label className="block text-xs font-black uppercase text-slate-500 tracking-widest mb-2">Select Payment Option</label>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                            <div 
-                             onClick={() => setPaymentType('full')}
+                             onClick={() => { setPaymentType('full'); setSlotTermsAccepted(false); }}
                              className={`p-6 rounded-2xl border-2 cursor-pointer transition-all ${
                                paymentType === 'full' 
                                  ? 'border-primary bg-primary/5 text-slate-900 shadow-md' 
@@ -396,7 +431,7 @@ const Registration = () => {
                            </div>
                            
                            <div 
-                             onClick={() => setPaymentType('slot')}
+                             onClick={handleSlotSelect}
                              className={`p-6 rounded-2xl border-2 cursor-pointer transition-all ${
                                paymentType === 'slot' 
                                  ? 'border-primary bg-primary/5 text-slate-900 shadow-md' 
@@ -411,6 +446,37 @@ const Registration = () => {
                              <p className="text-[10px] mt-1 text-slate-400 font-bold uppercase tracking-wider">Book your seat now & pay the rest later</p>
                            </div>
                         </div>
+                      </div>
+
+                      {/* Terms & Conditions Checkbox */}
+                      <div id="terms-checkbox-section" className="pt-6">
+                        <label className="flex items-start gap-4 cursor-pointer group">
+                          <div className="relative mt-0.5">
+                            <input
+                              type="checkbox"
+                              checked={termsAccepted}
+                              onChange={(e) => setTermsAccepted(e.target.checked)}
+                              className="sr-only peer"
+                            />
+                            <div className={`w-5 h-5 rounded-md border-2 flex items-center justify-center transition-all ${
+                              termsAccepted
+                                ? 'bg-primary border-primary shadow-md shadow-primary/20'
+                                : 'border-slate-300 group-hover:border-primary/50'
+                            }`}>
+                              {termsAccepted && (
+                                <svg className="w-3 h-3 text-black" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                                </svg>
+                              )}
+                            </div>
+                          </div>
+                          <span className="text-xs text-slate-600 leading-relaxed font-medium">
+                            I agree to the{' '}
+                            <Link to="/terms" target="_blank" className="text-primary font-bold hover:underline">Terms & Conditions</Link>,{' '}
+                            <Link to="/privacy" target="_blank" className="text-primary font-bold hover:underline">Privacy Policy</Link>, and{' '}
+                            <Link to="/refund" target="_blank" className="text-primary font-bold hover:underline">Refund Policy</Link> of Glitch Skill Hub.
+                          </span>
+                        </label>
                       </div>
 
                       {/* Dynamic Payment Card */}
@@ -429,8 +495,12 @@ const Registration = () => {
                               </div>
                               <button
                                 type="submit"
-                                disabled={loading}
-                                className="w-full md:w-auto px-10 py-5 bg-primary text-black font-black uppercase tracking-[0.2em] text-[10px] rounded-2xl flex items-center justify-center gap-3 hover:bg-white hover:scale-[1.02] active:scale-95 transition-all shadow-xl shadow-primary/25 whitespace-nowrap border border-primary hover:border-white"
+                                disabled={loading || !termsAccepted}
+                                className={`w-full md:w-auto px-10 py-5 font-black uppercase tracking-[0.2em] text-[10px] rounded-2xl flex items-center justify-center gap-3 transition-all shadow-xl whitespace-nowrap border ${
+                                  termsAccepted
+                                    ? 'bg-primary text-black hover:bg-white hover:scale-[1.02] active:scale-95 shadow-primary/25 border-primary hover:border-white cursor-pointer'
+                                    : 'bg-slate-200 text-slate-400 border-slate-200 shadow-none cursor-not-allowed'
+                                }`}
                               >
                                 {loading ? (
                                   <><Loader2 className="animate-spin text-black" size={16} /> Processing</>
@@ -474,6 +544,83 @@ const Registration = () => {
       </section>
 
       <Footer />
+
+      {/* Slot Booking Terms Popup Modal */}
+      {showSlotTerms && (
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4" style={{ backgroundColor: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(8px)' }}>
+          <div className="bg-white rounded-[2rem] max-w-lg w-full shadow-2xl animate-in fade-in zoom-in-95 duration-300 overflow-hidden">
+            {/* Header */}
+            <div className="bg-gradient-to-r from-amber-500 to-orange-500 p-6 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-sm">
+                  <AlertTriangle size={20} className="text-white" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-black text-white tracking-tight">Slot Booking Terms</h3>
+                  <p className="text-[10px] font-bold text-white/80 uppercase tracking-widest">Please read carefully</p>
+                </div>
+              </div>
+              <button onClick={handleSlotTermsCancel} className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center text-white hover:bg-white/30 transition-colors">
+                <X size={16} />
+              </button>
+            </div>
+
+            {/* Body */}
+            <div className="p-6 md:p-8 space-y-5">
+              <div className="flex items-start gap-3 p-4 bg-red-50 border border-red-100 rounded-xl">
+                <div className="w-6 h-6 bg-red-500 rounded-full flex items-center justify-center shrink-0 mt-0.5">
+                  <X size={12} className="text-white" />
+                </div>
+                <div>
+                  <p className="text-sm font-bold text-red-900 mb-1">Non-Refundable Payment</p>
+                  <p className="text-xs text-red-700 leading-relaxed">The slot booking amount is <strong>strictly non-refundable</strong> under any circumstances. Once paid, this amount cannot be reversed or transferred.</p>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-3 p-4 bg-amber-50 border border-amber-100 rounded-xl">
+                <div className="w-6 h-6 bg-amber-500 rounded-full flex items-center justify-center shrink-0 mt-0.5">
+                  <Clock size={12} className="text-white" />
+                </div>
+                <div>
+                  <p className="text-sm font-bold text-amber-900 mb-1">Complete Payment Before Course Starts</p>
+                  <p className="text-xs text-amber-700 leading-relaxed">You must pay the <strong>remaining course balance at least 5 days before</strong> the course start date. Failure to complete the payment may result in loss of your reserved slot.</p>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-3 p-4 bg-blue-50 border border-blue-100 rounded-xl">
+                <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center shrink-0 mt-0.5">
+                  <ShieldCheck size={12} className="text-white" />
+                </div>
+                <div>
+                  <p className="text-sm font-bold text-blue-900 mb-1">Slot Reservation Guarantee</p>
+                  <p className="text-xs text-blue-700 leading-relaxed">Your seat in the upcoming batch will be reserved upon successful slot payment. You will receive a confirmation via email and WhatsApp.</p>
+                </div>
+              </div>
+
+              <p className="text-[10px] text-slate-500 font-semibold leading-relaxed text-center pt-2">
+                By clicking "I Agree & Continue", you acknowledge that you have read and understood all the slot booking terms mentioned above.
+              </p>
+            </div>
+
+            {/* Actions */}
+            <div className="px-6 md:px-8 pb-6 md:pb-8 flex gap-3">
+              <button
+                onClick={handleSlotTermsCancel}
+                className="flex-1 py-4 rounded-xl border-2 border-slate-200 text-slate-600 font-bold uppercase tracking-widest text-[10px] hover:border-slate-300 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleSlotTermsConfirm}
+                className="flex-1 py-4 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 text-white font-bold uppercase tracking-widest text-[10px] hover:from-amber-600 hover:to-orange-600 transition-all hover:scale-[1.02] active:scale-95 shadow-lg shadow-amber-500/20 flex items-center justify-center gap-2"
+              >
+                <CheckCircle2 size={14} />
+                I Agree & Continue
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

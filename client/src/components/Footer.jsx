@@ -101,23 +101,23 @@ const Footer = () => {
           <div className="lg:col-span-5">
             <h4 className="text-primary text-[10px] font-black uppercase tracking-[0.4em] mb-10">Direct Contact</h4>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-10">
-              <a href="mailto:info@glitchskillhub.com" className="flex items-center gap-6 group">
+              <a href="mailto:info@glitchedu.online" className="flex items-center gap-6 group">
                 <div className="w-14 h-14 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-slate-900 transition-all duration-300 shrink-0">
                   <Mail size={24} />
                 </div>
                 <div>
                   <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">Email Us</p>
-                  <p className="text-lg font-bold text-slate-900 group-hover:text-primary transition-colors">info@glitchskillhub.com</p>
+                  <p className="text-lg font-bold text-slate-900 group-hover:text-primary transition-colors">info@glitchedu.online</p>
                 </div>
               </a>
               
-              <a href="tel:+919876543210" className="flex items-center gap-6 group">
+              <a href="tel:6300127932" className="flex items-center gap-6 group">
                 <div className="w-14 h-14 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-slate-900 transition-all duration-300 shrink-0">
                   <Phone size={24} />
                 </div>
                 <div>
                   <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">Call Us</p>
-                  <p className="text-lg font-bold text-slate-900 group-hover:text-primary transition-colors">+91 98765 43210</p>
+                  <p className="text-lg font-bold text-slate-900 group-hover:text-primary transition-colors">6300127932</p>
                 </div>
               </a>
 

@@ -60,8 +60,8 @@ const Contact = () => {
               <div className="space-y-8">
                 {[
                   { icon: MapPin, title: "Our Base", detail: "HiTech City, Hyderabad, India.", sub: "100% Online Classes Across India" },
-                  { icon: Mail, title: "Email Us", detail: "info@glitchskillhub.com", sub: "admissions@glitchskillhub.com" },
-                  { icon: Phone, title: "Call Us", detail: "+91 98765 43210", sub: "+91 91234 56789" },
+                  { icon: Mail, title: "Email Us", detail: "info@glitchedu.online", sub: "admissions@glitchedu.online" },
+                  { icon: Phone, title: "Call Us", detail: "6300127932", sub: "" },
                   { icon: Clock, title: "Working Hours", detail: "Mon - Sat: 9:00 AM - 7:00 PM", sub: "Sunday: Closed" }
                 ].map((item, i) => (
                   <div key={i} className="flex items-start gap-6 group">

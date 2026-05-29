@@ -21,6 +21,7 @@ import codingVisualImg from '../assets/images/coding.png';
 import softwareWomanImg from '../assets/images/software_woman.jpg';
 import toolsImg from '../assets/images/tools.jpg';
 import LogoScroll from '../components/LogoScroll';
+import logo from '../assets/images/glitch-logo.webp';
 import { submitLead } from '../utils/api';
 import brochurePdf from '../assets/MernFullStack-Brochure.pdf';
 import './NodeCourse.css';
@@ -33,7 +34,7 @@ const NodeCourse = () => {
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
   const [activeVideoModal, setActiveVideoModal] = useState(null);
-  
+
   // Lead Form State
   const [showLeadModal, setShowLeadModal] = useState(false);
   const [submittingLead, setSubmittingLead] = useState(false);
@@ -42,7 +43,7 @@ const NodeCourse = () => {
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    
+
     // Auto-trigger lead popup after 10 seconds for Google Ads traffic
     const timer = setTimeout(() => {
       if (!hasTriggeredPopup.current) {
@@ -50,7 +51,7 @@ const NodeCourse = () => {
         hasTriggeredPopup.current = true;
       }
     }, 10000);
-    
+
     return () => clearTimeout(timer);
   }, []);
 
@@ -318,6 +319,28 @@ const checkAuthToken = async (req, res, next) => {
         path="/node-js-course"
       />
 
+      {/* ===== COURSE HEADER ===== */}
+      <header className="fixed top-0 left-0 w-full z-[100] bg-white border-b border-slate-100 shadow-sm transition-all duration-300 pt-4 pb-4">
+        <div className="nc-container flex items-center justify-between py-3">
+          <div
+            className="bg-slate-950 px-5 py-2 rounded-xl cursor-pointer hover:scale-105 transition-transform"
+            onClick={() => window.location.href = '/'}
+          >
+            <img
+              src={logo}
+              alt="Glitch Logo"
+              className="h-6 md:h-8 w-auto object-contain"
+            />
+          </div>
+          <button
+            onClick={() => { setShowLeadModal(true); hasTriggeredPopup.current = true; }}
+            className="bg-primary text-slate-950 font-black px-6 py-3 rounded-xl flex items-center gap-2 text-sm hover:bg-yellow-500 hover:scale-105 transition-all shadow-md"
+          >
+            ENROLL NOW <ArrowRight size={16} />
+          </button>
+        </div>
+      </header>
+
       {/* ===== 1. HERO SECTION ===== */}
       <section className="nc-hero">
         <div className="nc-container">
@@ -352,8 +375,8 @@ const checkAuthToken = async (req, res, next) => {
               </div>
 
               <div className="nc-hero-actions">
-                <button 
-                  onClick={() => { setShowLeadModal(true); hasTriggeredPopup.current = true; }} 
+                <button
+                  onClick={() => { setShowLeadModal(true); hasTriggeredPopup.current = true; }}
                   className="nc-btn-primary"
                 >
                   ENROLL NOW <ArrowRight size={18} />
@@ -369,49 +392,49 @@ const checkAuthToken = async (req, res, next) => {
               {/* Inline Lead Capture Form */}
               <div className="bg-white rounded-[2rem] p-8 shadow-2xl relative overflow-hidden border border-zinc-100">
                 <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary via-yellow-400 to-yellow-600"></div>
-                
+
                 <div className="mb-6 text-center">
                   <h3 className="text-xl font-black text-zinc-900 tracking-tight mb-2 uppercase">Unlock Detailed Syllabus</h3>
                   <p className="text-zinc-500 text-xs font-medium">Enter your details to get the curriculum and a callback from our senior mentor.</p>
                 </div>
-                
+
                 <form onSubmit={handleLeadSubmit} className="space-y-4 relative z-10">
                   <div>
                     <label className="block text-[10px] font-black uppercase tracking-widest text-zinc-500 mb-1">Full Name *</label>
-                    <input 
-                      type="text" 
-                      required 
+                    <input
+                      type="text"
+                      required
                       value={leadForm.name}
-                      onChange={(e) => setLeadForm({...leadForm, name: e.target.value})}
+                      onChange={(e) => setLeadForm({ ...leadForm, name: e.target.value })}
                       className="w-full px-4 py-3 rounded-xl border border-zinc-200 bg-zinc-50 text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all font-medium text-zinc-900"
                       placeholder="Enter your name"
                     />
                   </div>
                   <div>
                     <label className="block text-[10px] font-black uppercase tracking-widest text-zinc-500 mb-1">Email Address *</label>
-                    <input 
-                      type="email" 
-                      required 
+                    <input
+                      type="email"
+                      required
                       value={leadForm.email}
-                      onChange={(e) => setLeadForm({...leadForm, email: e.target.value})}
+                      onChange={(e) => setLeadForm({ ...leadForm, email: e.target.value })}
                       className="w-full px-4 py-3 rounded-xl border border-zinc-200 bg-zinc-50 text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all font-medium text-zinc-900"
                       placeholder="name@example.com"
                     />
                   </div>
                   <div>
                     <label className="block text-[10px] font-black uppercase tracking-widest text-zinc-500 mb-1">Mobile Number *</label>
-                    <input 
-                      type="tel" 
-                      required 
+                    <input
+                      type="tel"
+                      required
                       value={leadForm.phone}
-                      onChange={(e) => setLeadForm({...leadForm, phone: e.target.value})}
+                      onChange={(e) => setLeadForm({ ...leadForm, phone: e.target.value })}
                       className="w-full px-4 py-3 rounded-xl border border-zinc-200 bg-zinc-50 text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all font-medium text-zinc-900"
                       placeholder="+91 00000 00000"
                     />
                   </div>
-                  
-                  <button 
-                    type="submit" 
+
+                  <button
+                    type="submit"
                     disabled={submittingLead}
                     className="w-full bg-primary hover:bg-yellow-500 text-zinc-950 font-black uppercase tracking-widest text-sm py-4 rounded-xl transition-all hover:shadow-[0_10px_20px_rgba(255,215,0,0.2)] disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2 mt-2"
                   >
@@ -707,8 +730,8 @@ const checkAuthToken = async (req, res, next) => {
               </p>
 
               <div className="nc-cta-card-actions-crisp">
-                <button 
-                  onClick={() => { setShowLeadModal(true); hasTriggeredPopup.current = true; }} 
+                <button
+                  onClick={() => { setShowLeadModal(true); hasTriggeredPopup.current = true; }}
                   className="nc-btn-primary large"
                 >
                   Reserve Your Seat <ArrowRight size={18} />
@@ -752,9 +775,9 @@ const checkAuthToken = async (req, res, next) => {
                 Access fully interactive sessions, code review structures, containerization configurations, and lifetime video folders.
               </p>
 
-              <button 
-                onClick={() => { setShowLeadModal(true); hasTriggeredPopup.current = true; }} 
-                className="nc-btn-primary large" 
+              <button
+                onClick={() => { setShowLeadModal(true); hasTriggeredPopup.current = true; }}
+                className="nc-btn-primary large"
                 style={{ width: '100%', justifyContent: 'center' }}
               >
                 RESERVE YOUR SEAT NOW
@@ -838,7 +861,7 @@ const checkAuthToken = async (req, res, next) => {
       )}
 
       {/* Floating Enquire Button */}
-      <button 
+      <button
         onClick={() => { setShowLeadModal(true); hasTriggeredPopup.current = true; }}
         className="fixed bottom-6 right-6 md:bottom-10 md:right-10 bg-zinc-900 text-white p-4 rounded-full shadow-2xl hover:bg-black hover:scale-105 transition-all z-40 flex items-center gap-3 border-2 border-zinc-800"
       >
@@ -853,55 +876,55 @@ const checkAuthToken = async (req, res, next) => {
       {showLeadModal && (
         <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl w-full max-w-md overflow-hidden shadow-2xl relative animate-in zoom-in-95 duration-300">
-            <button 
+            <button
               onClick={() => setShowLeadModal(false)}
               className="absolute top-4 right-4 p-2 bg-zinc-100 text-zinc-500 hover:text-zinc-900 hover:bg-zinc-200 rounded-full transition-colors"
             >
               <X size={16} />
             </button>
-            
+
             <div className="bg-zinc-950 p-6 text-center border-b-4 border-primary">
               <h3 className="text-2xl font-black text-white italic tracking-tighter uppercase">Unlock 45-Day MERN Mastery</h3>
               <p className="text-zinc-400 text-xs mt-2 font-medium tracking-wide">Enter your details to get course curriculum and direct call from mentor.</p>
             </div>
-            
+
             <form onSubmit={handleLeadSubmit} className="p-6 space-y-4">
               <div>
                 <label className="block text-[10px] font-black uppercase tracking-widest text-zinc-500 mb-1">Full Name *</label>
-                <input 
-                  type="text" 
-                  required 
+                <input
+                  type="text"
+                  required
                   value={leadForm.name}
-                  onChange={(e) => setLeadForm({...leadForm, name: e.target.value})}
+                  onChange={(e) => setLeadForm({ ...leadForm, name: e.target.value })}
                   className="w-full px-4 py-3 rounded-xl border border-zinc-200 bg-zinc-50 text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all font-medium text-zinc-900"
                   placeholder="Enter your name"
                 />
               </div>
               <div>
                 <label className="block text-[10px] font-black uppercase tracking-widest text-zinc-500 mb-1">Email Address *</label>
-                <input 
-                  type="email" 
-                  required 
+                <input
+                  type="email"
+                  required
                   value={leadForm.email}
-                  onChange={(e) => setLeadForm({...leadForm, email: e.target.value})}
+                  onChange={(e) => setLeadForm({ ...leadForm, email: e.target.value })}
                   className="w-full px-4 py-3 rounded-xl border border-zinc-200 bg-zinc-50 text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all font-medium text-zinc-900"
                   placeholder="name@example.com"
                 />
               </div>
               <div>
                 <label className="block text-[10px] font-black uppercase tracking-widest text-zinc-500 mb-1">Mobile Number *</label>
-                <input 
-                  type="tel" 
-                  required 
+                <input
+                  type="tel"
+                  required
                   value={leadForm.phone}
-                  onChange={(e) => setLeadForm({...leadForm, phone: e.target.value})}
+                  onChange={(e) => setLeadForm({ ...leadForm, phone: e.target.value })}
                   className="w-full px-4 py-3 rounded-xl border border-zinc-200 bg-zinc-50 text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all font-medium text-zinc-900"
                   placeholder="+91 00000 00000"
                 />
               </div>
-              
-              <button 
-                type="submit" 
+
+              <button
+                type="submit"
                 disabled={submittingLead}
                 className="w-full bg-primary hover:bg-yellow-500 text-zinc-950 font-black uppercase tracking-widest text-sm py-4 rounded-xl transition-all hover:shadow-[0_0_20px_rgba(255,215,0,0.4)] disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2 mt-4"
               >

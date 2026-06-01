@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Menu, X, Sparkles, ChevronRight, User } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import AuthModal from './AuthModal';
 
 // Import Logo
 import logo from '../assets/images/glitch-logo.webp';
@@ -9,6 +10,8 @@ import logo from '../assets/images/glitch-logo.webp';
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [authModalMode, setAuthModalMode] = useState('login');
   const { user } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
@@ -70,13 +73,19 @@ const Navbar = () => {
         <div className="hidden md:flex items-center gap-4">
           {!user ? (
             <>
-              <Link to="/login" className="py-2 px-6 text-xs font-bold uppercase tracking-widest border-2 border-slate-900 rounded-xl hover:bg-slate-900 hover:text-white transition-all">
+              <button 
+                onClick={() => { setAuthModalMode('login'); setIsAuthModalOpen(true); }}
+                className="py-2 px-6 text-xs font-bold uppercase tracking-widest border-2 border-slate-900 rounded-xl hover:bg-slate-900 hover:text-white transition-all cursor-pointer"
+              >
                 Login
-              </Link>
-              <Link to="/signup" className="btn-premium py-2 px-6 text-xs group">
+              </button>
+              <button 
+                onClick={() => { setAuthModalMode('signup'); setIsAuthModalOpen(true); }}
+                className="btn-premium py-2 px-6 text-xs group cursor-pointer"
+              >
                 <span>Sign Up</span>
                 <ChevronRight size={14} className="group-hover:translate-x-1 transition-transform" />
-              </Link>
+              </button>
             </>
           ) : (
             <>
@@ -125,20 +134,18 @@ const Navbar = () => {
           ))}
           {!user ? (
             <>
-              <Link 
-                to="/login"
-                onClick={() => setIsMobileMenuOpen(false)}
+              <button 
+                onClick={() => { setAuthModalMode('login'); setIsAuthModalOpen(true); setIsMobileMenuOpen(false); }}
                 className="w-full py-5 mt-2 border-2 border-slate-900 rounded-2xl text-center font-bold uppercase tracking-widest text-sm hover:bg-slate-900 hover:text-white transition-all"
               >
                 Login
-              </Link>
-              <Link 
-                to="/signup"
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="btn-premium py-5"
+              </button>
+              <button 
+                onClick={() => { setAuthModalMode('signup'); setIsAuthModalOpen(true); setIsMobileMenuOpen(false); }}
+                className="btn-premium py-5 w-full"
               >
                 <span>Sign Up</span>
-              </Link>
+              </button>
             </>
           ) : (
             <Link 
@@ -151,6 +158,12 @@ const Navbar = () => {
           )}
         </div>
       </div>
+
+      <AuthModal 
+        isOpen={isAuthModalOpen} 
+        onClose={() => setIsAuthModalOpen(false)} 
+        initialMode={authModalMode} 
+      />
     </nav>
   );
 };

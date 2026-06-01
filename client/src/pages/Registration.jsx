@@ -76,6 +76,12 @@ const Registration = () => {
   const [showSlotTerms, setShowSlotTerms] = useState(false);
   const [slotTermsAccepted, setSlotTermsAccepted] = useState(false);
 
+  // Login Modal State
+  const [loginEmail, setLoginEmail] = useState('');
+  const [loginPassword, setLoginPassword] = useState('');
+  const [loginLoading, setLoginLoading] = useState(false);
+  const { login } = useAuth(); // getting login function from useAuth
+
   // Fetch courses and handle url params on load
   useEffect(() => {
     const fetchCourses = async () => {
@@ -522,12 +528,12 @@ const Registration = () => {
                          To ensure a secure checkout and to assign this course to you, please log in or create an account first.
                        </p>
                        <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto justify-center">
-                         <Link 
-                           to={`/login`} 
-                           className="btn-premium py-4 px-10 text-sm"
+                         <button 
+                           onClick={() => document.getElementById('login-modal').classList.remove('hidden')}
+                           className="btn-premium py-4 px-10 text-sm cursor-pointer"
                          >
                            Log In
-                         </Link>
+                         </button>
                          <Link 
                            to="/signup" 
                            className="py-4 px-10 rounded-full border-2 border-slate-100 font-bold uppercase tracking-widest text-xs text-slate-600 hover:border-primary hover:text-slate-900 transition-colors"
@@ -617,6 +623,94 @@ const Registration = () => {
                 <CheckCircle2 size={14} />
                 I Agree & Continue
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Login Modal Popup */}
+      {!user && (
+        <div id="login-modal" className="fixed inset-0 z-[9999] flex items-center justify-center p-4" style={{ backgroundColor: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(8px)' }}>
+          <div className="bg-white rounded-[2rem] max-w-md w-full shadow-2xl animate-in fade-in zoom-in-95 duration-300 overflow-hidden relative">
+            <button 
+              onClick={() => document.getElementById('login-modal').classList.add('hidden')}
+              className="absolute top-6 right-6 w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 hover:bg-slate-200 hover:text-slate-900 transition-colors z-10"
+            >
+              <X size={16} />
+            </button>
+            <div className="p-8 md:p-10">
+              <div className="text-center mb-8">
+                <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center text-primary mx-auto mb-4">
+                  <Lock size={28} />
+                </div>
+                <h3 className="text-2xl font-bold tracking-tight mb-2">Welcome Back</h3>
+                <p className="text-slate-500 text-sm">Please log in to continue registration.</p>
+              </div>
+              <form 
+                onSubmit={async (e) => {
+                  e.preventDefault();
+                  setLoginLoading(true);
+                  try {
+                    await login(loginEmail, loginPassword);
+                    toast.success('Successfully logged in!');
+                    // Note: 'user' state will update automatically via AuthContext
+                  } catch (error) {
+                    toast.error(error.response?.data?.message || 'Login failed');
+                  } finally {
+                    setLoginLoading(false);
+                  }
+                }}
+                className="space-y-6"
+              >
+                <div className="floating-label-group">
+                  <div className="relative group">
+                    <input
+                      type="email"
+                      required
+                      placeholder=" "
+                      value={loginEmail}
+                      onChange={(e) => setLoginEmail(e.target.value)}
+                      className="input-field pr-12 focus:z-0"
+                    />
+                    <label className="floating-label"><Mail size={14} className="text-slate-400" /> Email Address *</label>
+                    <div className="absolute right-5 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-primary transition-colors pointer-events-none">
+                      <Mail size={18} />
+                    </div>
+                  </div>
+                </div>
+                <div className="floating-label-group">
+                  <div className="relative group">
+                    <input
+                      type="password"
+                      required
+                      placeholder=" "
+                      value={loginPassword}
+                      onChange={(e) => setLoginPassword(e.target.value)}
+                      className="input-field pr-12 focus:z-0"
+                    />
+                    <label className="floating-label"><Lock size={14} className="text-slate-400" /> Password *</label>
+                    <div className="absolute right-5 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-primary transition-colors pointer-events-none">
+                      <Lock size={18} />
+                    </div>
+                  </div>
+                </div>
+                <button
+                  type="submit"
+                  disabled={loginLoading}
+                  className="btn-premium w-full py-4 flex items-center justify-center gap-2 mt-4"
+                >
+                  {loginLoading ? (
+                    <><Loader2 size={18} className="animate-spin" /> Logging in...</>
+                  ) : (
+                    <>Log In</>
+                  )}
+                </button>
+              </form>
+              <div className="mt-8 text-center">
+                <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">
+                  Don't have an account? <Link to="/signup" className="text-primary hover:underline">Sign up</Link>
+                </p>
+              </div>
             </div>
           </div>
         </div>

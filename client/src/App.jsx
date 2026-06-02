@@ -73,13 +73,30 @@ const RoleProtectedRoute = ({ children, allowedRoles }) => {
   return children ? children : <Outlet />;
 };
 
+// Redirect authenticated users away from login/signup
+const GuestRoute = ({ children }) => {
+  const { user, loading } = useAuth();
+
+  if (loading) return null;
+  if (user) {
+    if (user.role === 'mentor') return <Navigate to="/mentor/dashboard" />;
+    return <Navigate to="/student/dashboard" />;
+  }
+
+  return children ? children : <Outlet />;
+};
+
 import ScrollToTop from './components/ScrollToTop';
 
 function App() {
   return (
     <Router>
       <ScrollToTop />
-      <Toaster position="top-right" reverseOrder={false} />
+      <Toaster 
+        position="top-right" 
+        reverseOrder={false} 
+        containerStyle={{ zIndex: 99999 }}
+      />
       <Routes>
         {/* Public Routes */}
         <Route path="/" element={<Home />} />
@@ -96,8 +113,10 @@ function App() {
         <Route path="/refund" element={<ReturnPolicy />} />
         
         {/* Authentication */}
-        <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<Signup />} />
+        <Route element={<GuestRoute />}>
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
+        </Route>
 
         {/* Student Dashboard Routes */}
         <Route element={<RoleProtectedRoute allowedRoles={['student']} />}>

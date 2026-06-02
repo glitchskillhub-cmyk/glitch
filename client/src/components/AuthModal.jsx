@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
+import { useNavigate } from 'react-router-dom';
 import { Mail, Lock, User, Phone, Loader2, X, UserPlus } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { useAuth } from '../context/AuthContext';
@@ -11,6 +12,7 @@ const AuthModal = ({ isOpen, onClose, initialMode = 'login' }) => {
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
   const { login, register, user } = useAuth();
 
   useEffect(() => {
@@ -26,11 +28,12 @@ const AuthModal = ({ isOpen, onClose, initialMode = 'login' }) => {
     e.preventDefault();
     setLoading(true);
     try {
+      let loggedInUser;
       if (modalMode === 'login') {
-        await login(email, password);
+        loggedInUser = await login(email, password);
         toast.success('Successfully logged in!');
       } else {
-        await register({
+        loggedInUser = await register({
           name,
           email,
           password,
@@ -40,6 +43,13 @@ const AuthModal = ({ isOpen, onClose, initialMode = 'login' }) => {
         toast.success(`Welcome to the Glitch Hub, ${name}!`);
       }
       onClose(); // Close modal on success
+      
+      // Navigate to dashboard
+      if (loggedInUser && loggedInUser.role === 'mentor') {
+        navigate('/mentor/dashboard');
+      } else {
+        navigate('/student/dashboard');
+      }
     } catch (error) {
       toast.error(error.response?.data?.message || `${modalMode === 'login' ? 'Login' : 'Registration'} failed`);
     } finally {

@@ -38,15 +38,10 @@ export const AuthProvider = ({ children }) => {
     if (remainingMs <= 0) {
       // Session already expired
       logout();
-      toast.error('Your session has expired. Please log in again.');
       return;
     }
     logoutTimerRef.current = setTimeout(() => {
       logout();
-      toast('Your session has expired. Please log in again.', {
-        icon: '⏰',
-        duration: 5000,
-      });
     }, remainingMs);
   }, [clearLogoutTimer, logout]);
 
@@ -105,10 +100,6 @@ export const AuthProvider = ({ children }) => {
         if (remaining !== Infinity && remaining <= 0) {
           // Session expired while tab was hidden/suspended
           logout();
-          toast('Your session has expired. Please log in again.', {
-            icon: '⏰',
-            duration: 5000,
-          });
         } else if (remaining > 0 && remaining !== Infinity) {
           // Recalibrate the auto-logout timer with accurate remaining time
           startAutoLogoutTimer(remaining);

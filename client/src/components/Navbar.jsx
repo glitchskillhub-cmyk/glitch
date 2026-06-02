@@ -51,7 +51,6 @@ const Navbar = () => {
       if (elapsed >= 60 * 60 * 1000) {
         // Session expired — force logout via AuthContext
         logout();
-        toast('Your session has expired. Please log in again.', { icon: '⏰', duration: 5000 });
         return;
       }
     }

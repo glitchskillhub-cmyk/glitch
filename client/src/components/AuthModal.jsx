@@ -44,11 +44,13 @@ const AuthModal = ({ isOpen, onClose, initialMode = 'login' }) => {
       }
       onClose(); // Close modal on success
       
-      // Navigate to dashboard
-      if (loggedInUser && loggedInUser.role === 'mentor') {
-        navigate('/mentor/dashboard');
-      } else {
-        navigate('/student/dashboard');
+      // Navigate to dashboard if not on register page
+      if (window.location.pathname !== '/register') {
+        if (loggedInUser && loggedInUser.role === 'mentor') {
+          navigate('/mentor/dashboard');
+        } else {
+          navigate('/student/dashboard');
+        }
       }
     } catch (error) {
       toast.error(error.response?.data?.message || `${modalMode === 'login' ? 'Login' : 'Registration'} failed`);

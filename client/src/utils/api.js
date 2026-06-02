@@ -6,6 +6,15 @@ const api = axios.create({
     : 'https://glitch-azwb.onrender.com/api',
 });
 
+// Global logout callback — registered by AuthContext so the interceptor can
+// clear React state without a hard page reload.
+let _globalLogout = null;
+let _isLoggingOut = false; // prevents multiple simultaneous 401 logouts
+
+export const setGlobalLogout = (fn) => {
+  _globalLogout = fn;
+};
+
 // Add a request interceptor to attach the JWT token
 api.interceptors.request.use(
   (config) => {
@@ -25,13 +34,26 @@ api.interceptors.response.use(
     const message = error.response?.data?.message || 'Server is waking up or down. Please try again.';
     
     // If token is expired or invalid, auto-logout the student
-    if (error.response?.status === 401) {
+    if (error.response?.status === 401 && !_isLoggingOut) {
       const user = JSON.parse(localStorage.getItem('user'));
       if (user) {
-        localStorage.removeItem('user');
-        localStorage.removeItem('loginTimestamp');
-        // Redirect to login page
-        window.location.href = '/login';
+        _isLoggingOut = true;
+        // Use the global logout from AuthContext to properly clear React state
+        if (_globalLogout) {
+          _globalLogout();
+        } else {
+          // Fallback: manually clear localStorage
+          localStorage.removeItem('user');
+          localStorage.removeItem('loginTimestamp');
+        }
+        // Use a short delay to let React state settle, then navigate
+        setTimeout(() => {
+          _isLoggingOut = false;
+          // Only redirect if not already on the home or login page
+          if (window.location.pathname !== '/' && window.location.pathname !== '/login') {
+            window.location.replace('/');
+          }
+        }, 100);
       }
     }
     

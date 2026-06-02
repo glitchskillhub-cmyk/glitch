@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Menu, X, Sparkles, ChevronRight, User } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { toast } from 'react-hot-toast';
 import AuthModal from './AuthModal';
 
 // Import Logo
@@ -12,7 +13,7 @@ const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [authModalMode, setAuthModalMode] = useState('login');
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -40,6 +41,21 @@ const Navbar = () => {
   const getProfilePath = () => {
     if (!user) return '/login';
     return user.role === 'mentor' ? '/mentor/dashboard' : '/student/settings';
+  };
+
+  // Verify session is still valid before navigating to protected routes
+  const handleProtectedNavigation = (path) => {
+    const loginTimestamp = localStorage.getItem('loginTimestamp');
+    if (loginTimestamp) {
+      const elapsed = Date.now() - parseInt(loginTimestamp, 10);
+      if (elapsed >= 60 * 60 * 1000) {
+        // Session expired — force logout via AuthContext
+        logout();
+        toast('Your session has expired. Please log in again.', { icon: '⏰', duration: 5000 });
+        return;
+      }
+    }
+    navigate(path);
   };
 
 
@@ -90,7 +106,7 @@ const Navbar = () => {
           ) : (
             <>
               <div 
-                onClick={() => navigate(getProfilePath())}
+                onClick={() => handleProtectedNavigation(getProfilePath())}
                 className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-slate-400 hover:text-black transition-colors cursor-pointer select-none"
                 role="button"
                 tabIndex={0}
@@ -98,7 +114,7 @@ const Navbar = () => {
                 <User size={16} /> Profile
               </div>
               <div 
-                onClick={() => navigate(getDashboardPath())}
+                onClick={() => handleProtectedNavigation(getDashboardPath())}
                 className="inline-flex items-center justify-center gap-2 rounded-xl bg-slate-900 px-6 py-2 text-xs font-semibold tracking-wide text-white hover:bg-primary hover:text-slate-900 transition-all duration-200 cursor-pointer select-none group"
                 role="button"
                 tabIndex={0}

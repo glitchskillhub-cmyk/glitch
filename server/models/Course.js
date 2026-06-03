@@ -29,7 +29,20 @@ const courseSchema = new mongoose.Schema({
   },
   slotPrice: {
     type: Number,
-    default: 3000
+    default: null // Made optional
+  },
+  couponCode: {
+    type: String,
+    default: ''
+  },
+  discountType: {
+    type: String,
+    enum: ['percentage', 'flat'],
+    default: 'percentage'
+  },
+  discountValue: {
+    type: Number,
+    default: 0
   },
   readMoreLink: {
     type: String,

@@ -24,8 +24,9 @@ const Programs = () => {
   const [editingCourseId, setEditingCourseId] = useState(null);
   
   const [newCourse, setNewCourse] = useState({
-    title: '', description: '', price: '9999', slotPrice: '3000', duration: '6 Months',
-    instructor: 'Glitch Team', thumbnail: '', readMoreLink: '', startDate: ''
+    title: '', description: '', price: '9999', slotPrice: '', duration: '6 Months',
+    instructor: 'Glitch Team', thumbnail: '', readMoreLink: '', startDate: '',
+    couponCode: '', discountType: 'percentage', discountValue: ''
   });
 
   const fetchData = async () => {
@@ -58,12 +59,15 @@ const Programs = () => {
       title: course.title || '',
       description: course.description || '',
       price: course.price?.toString() || '9999',
-      slotPrice: course.slotPrice?.toString() || '3000',
+      slotPrice: course.slotPrice?.toString() || '',
       duration: course.duration || '6 Months',
       instructor: course.instructor || 'Glitch Team',
       thumbnail: course.thumbnail || '',
       readMoreLink: course.readMoreLink || '',
-      startDate: course.startDate || ''
+      startDate: course.startDate || '',
+      couponCode: course.couponCode || '',
+      discountType: course.discountType || 'percentage',
+      discountValue: course.discountValue?.toString() || ''
     });
     setIsAddModalOpen(true);
   };
@@ -82,8 +86,9 @@ const Programs = () => {
       setIsEditMode(false);
       setEditingCourseId(null);
       setNewCourse({ 
-        title: '', description: '', price: '9999', slotPrice: '3000', duration: '6 Months', 
-        instructor: 'Glitch Team', thumbnail: '', readMoreLink: '', startDate: '' 
+        title: '', description: '', price: '9999', slotPrice: '', duration: '6 Months', 
+        instructor: 'Glitch Team', thumbnail: '', readMoreLink: '', startDate: '',
+        couponCode: '', discountType: 'percentage', discountValue: ''
       });
       fetchData();
     } catch {
@@ -291,9 +296,8 @@ const Programs = () => {
 
                  <div className="grid grid-cols-2 gap-6">
                     <div className="space-y-2">
-                       <label className="text-[10px] font-black uppercase tracking-widest text-zinc-400 ml-2">Slot Booking Price (₹)</label>
+                       <label className="text-[10px] font-black uppercase tracking-widest text-zinc-400 ml-2">Slot Booking Price (₹) <span className="text-zinc-300 normal-case">(Optional)</span></label>
                        <input 
-                         required
                          type="number" 
                          className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl px-6 py-4 text-sm focus:border-primary transition-all outline-none text-zinc-900 font-bold"
                          placeholder="3000"
@@ -310,6 +314,44 @@ const Programs = () => {
                          value={newCourse.startDate}
                          onChange={(e) => setNewCourse({...newCourse, startDate: e.target.value})}
                        />
+                    </div>
+                 </div>
+
+                 {/* Coupon Code Section */}
+                 <div className="p-6 bg-zinc-50 border border-zinc-100 rounded-3xl space-y-4">
+                    <h4 className="text-[10px] font-black uppercase tracking-widest text-zinc-500 mb-2">Discount Coupon</h4>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                       <div className="space-y-2">
+                          <label className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 ml-2">Coupon Code</label>
+                          <input 
+                            type="text" 
+                            className="w-full bg-white border border-zinc-200 rounded-xl px-4 py-3 text-sm focus:border-primary transition-all outline-none text-zinc-900 font-bold uppercase"
+                            placeholder="e.g. GLITCH50"
+                            value={newCourse.couponCode}
+                            onChange={(e) => setNewCourse({...newCourse, couponCode: e.target.value.toUpperCase()})}
+                          />
+                       </div>
+                       <div className="space-y-2">
+                          <label className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 ml-2">Discount Type</label>
+                          <select 
+                            className="w-full bg-white border border-zinc-200 rounded-xl px-4 py-3 text-sm focus:border-primary transition-all outline-none text-zinc-900 font-bold"
+                            value={newCourse.discountType}
+                            onChange={(e) => setNewCourse({...newCourse, discountType: e.target.value})}
+                          >
+                             <option value="percentage">Percentage (%)</option>
+                             <option value="flat">Flat Amount (₹)</option>
+                          </select>
+                       </div>
+                       <div className="space-y-2">
+                          <label className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 ml-2">Discount Value</label>
+                          <input 
+                            type="number" 
+                            className="w-full bg-white border border-zinc-200 rounded-xl px-4 py-3 text-sm focus:border-primary transition-all outline-none text-zinc-900 font-bold"
+                            placeholder={newCourse.discountType === 'percentage' ? 'e.g. 20' : 'e.g. 500'}
+                            value={newCourse.discountValue}
+                            onChange={(e) => setNewCourse({...newCourse, discountValue: e.target.value})}
+                          />
+                       </div>
                     </div>
                  </div>
 

@@ -306,9 +306,34 @@ const Registration = () => {
 
   // Find currently selected course to display its dynamic price
   const selectedCourseObj = courses.find(c => c.title === formData.course);
-  const currentPrice = selectedCourseObj && selectedCourseObj.price ? Number(selectedCourseObj.price) : 9999;
-  const currentSlotPrice = selectedCourseObj && selectedCourseObj.slotPrice ? Number(selectedCourseObj.slotPrice) : 3000;
+  const basePrice = selectedCourseObj && selectedCourseObj.price ? Number(selectedCourseObj.price) : 9999;
+  const currentSlotPrice = selectedCourseObj 
+    ? (selectedCourseObj.slotPrice ? Number(selectedCourseObj.slotPrice) : null) 
+    : 3000;
+
+  const [couponInput, setCouponInput] = useState('');
+  
+  const isCouponValid = selectedCourseObj && selectedCourseObj.couponCode 
+    && couponInput.trim().toUpperCase() === selectedCourseObj.couponCode.toUpperCase();
+
+  let finalPrice = basePrice;
+  if (isCouponValid) {
+    if (selectedCourseObj.discountType === 'flat') {
+      finalPrice = Math.max(0, basePrice - (selectedCourseObj.discountValue || 0));
+    } else {
+      finalPrice = Math.max(0, basePrice - (basePrice * (selectedCourseObj.discountValue || 0) / 100));
+    }
+  }
+
+  const currentPrice = finalPrice;
   const displayPrice = paymentType === 'full' ? currentPrice : currentSlotPrice;
+
+  // Make sure payment type resets to 'full' if slot booking isn't available for this course
+  useEffect(() => {
+    if (paymentType === 'slot' && currentSlotPrice === null) {
+      setPaymentType('full');
+    }
+  }, [currentSlotPrice, paymentType]);
 
   return (
     <div className="min-h-screen bg-slate-50 selection:bg-primary selection:text-black">
@@ -382,11 +407,11 @@ const Registration = () => {
                             onChange={handleInputChange} 
                             error={errors.course} 
                           />
-                          <SelectField 
+                          <InputField 
                             label="Passout Year" 
                             name="rollNumber" 
                             icon={GraduationCap} 
-                            options={years} 
+                            type="text" 
                             value={formData.rollNumber} 
                             onChange={handleInputChange} 
                             error={errors.rollNumber} 
@@ -422,12 +447,34 @@ const Registration = () => {
                         )}
 
                         <InputField label="Graduation" name="branch" icon={GraduationCap} value={formData.branch} onChange={handleInputChange} error={errors.branch} />
+                        
+                        {/* Coupon Code Section */}
+                        <div className="pt-2">
+                          <div className="flex gap-4 items-start">
+                             <div className="flex-1">
+                               <InputField 
+                                 label="Coupon Code (Optional)" 
+                                 name="couponCode" 
+                                 icon={Sparkles} 
+                                 required={false}
+                                 value={couponInput} 
+                                 onChange={(e) => setCouponInput(e.target.value.toUpperCase())} 
+                               />
+                             </div>
+                          </div>
+                          {couponInput && isCouponValid && (
+                             <p className="text-[10px] text-green-500 font-bold uppercase tracking-widest mt-2 px-4 flex items-center gap-1.5"><CheckCircle2 size={12}/> Coupon applied successfully! Discount applied to Full Payment.</p>
+                          )}
+                          {couponInput && !isCouponValid && (
+                             <p className="text-[10px] text-red-500 font-bold uppercase tracking-widest mt-2 px-4 flex items-center gap-1.5"><AlertTriangle size={12}/> Invalid coupon code.</p>
+                          )}
+                        </div>
                       </div>
 
                       {/* Payment Option Selector */}
                       <div className="space-y-4 pt-4 border-t border-slate-100">
                         <label className="block text-xs font-black uppercase text-slate-500 tracking-widest mb-2">Select Payment Option</label>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className={`grid grid-cols-1 ${currentSlotPrice !== null ? 'md:grid-cols-2' : ''} gap-6`}>
                            <div 
                              onClick={() => { setPaymentType('full'); setSlotTermsAccepted(false); }}
                              className={`p-6 rounded-2xl border-2 cursor-pointer transition-all ${
@@ -444,21 +491,23 @@ const Registration = () => {
                              <p className="text-[10px] mt-1 text-slate-400 font-bold uppercase tracking-wider">Pay once and get full course access</p>
                            </div>
                            
-                           <div 
-                             onClick={handleSlotSelect}
-                             className={`p-6 rounded-2xl border-2 cursor-pointer transition-all ${
-                               paymentType === 'slot' 
-                                 ? 'border-primary bg-primary/5 text-slate-900 shadow-md' 
-                                 : 'border-slate-200 hover:border-slate-300 bg-white text-slate-500'
-                             }`}
-                           >
-                             <div className="flex justify-between items-center mb-2">
-                               <span className="text-sm font-black uppercase tracking-wider">Secure Your Slot</span>
-                               <input type="radio" checked={paymentType === 'slot'} onChange={() => {}} className="accent-primary" />
+                           {currentSlotPrice !== null && (
+                             <div 
+                               onClick={handleSlotSelect}
+                               className={`p-6 rounded-2xl border-2 cursor-pointer transition-all ${
+                                 paymentType === 'slot' 
+                                   ? 'border-primary bg-primary/5 text-slate-900 shadow-md' 
+                                   : 'border-slate-200 hover:border-slate-300 bg-white text-slate-500'
+                               }`}
+                             >
+                               <div className="flex justify-between items-center mb-2">
+                                 <span className="text-sm font-black uppercase tracking-wider">Secure Your Slot</span>
+                                 <input type="radio" checked={paymentType === 'slot'} onChange={() => {}} className="accent-primary" />
+                               </div>
+                               <p className="text-2xl font-black text-slate-950">₹{currentSlotPrice.toLocaleString()}</p>
+                               <p className="text-[10px] mt-1 text-slate-400 font-bold uppercase tracking-wider">Book your seat now & pay the rest later</p>
                              </div>
-                             <p className="text-2xl font-black text-slate-950">₹{currentSlotPrice.toLocaleString()}</p>
-                             <p className="text-[10px] mt-1 text-slate-400 font-bold uppercase tracking-wider">Book your seat now & pay the rest later</p>
-                           </div>
+                           )}
                         </div>
                       </div>
 

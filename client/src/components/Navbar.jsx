@@ -112,27 +112,23 @@ const Navbar = () => {
               >
                 <User size={16} /> Profile
               </div>
-              {location.pathname === '/' ? (
-                <div 
-                  onClick={() => { logout(); toast.success('Logged out successfully'); }}
-                  className="inline-flex items-center justify-center gap-2 rounded-xl bg-red-600 px-6 py-2 text-xs font-semibold tracking-wide text-white hover:bg-red-700 transition-all duration-200 cursor-pointer select-none group"
-                  role="button"
-                  tabIndex={0}
-                >
-                  <LogOut size={14} />
-                  <span>Logout</span>
-                </div>
-              ) : (
-                <div 
-                  onClick={() => handleProtectedNavigation(getDashboardPath())}
-                  className="inline-flex items-center justify-center gap-2 rounded-xl bg-slate-900 px-6 py-2 text-xs font-semibold tracking-wide text-white hover:bg-primary hover:text-slate-900 transition-all duration-200 cursor-pointer select-none group"
-                  role="button"
-                  tabIndex={0}
-                >
-                  <span>My Hub</span>
-                  <ChevronRight size={14} className="group-hover:translate-x-1 transition-transform" />
-                </div>
-              )}
+              <div 
+                onClick={() => { logout(); toast.success('Logged out successfully'); }}
+                className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-slate-400 hover:text-red-600 transition-colors cursor-pointer select-none"
+                role="button"
+                tabIndex={0}
+              >
+                <LogOut size={16} /> Logout
+              </div>
+              <div 
+                onClick={() => handleProtectedNavigation(getDashboardPath())}
+                className="inline-flex items-center justify-center gap-2 rounded-xl bg-slate-900 px-6 py-2 text-xs font-semibold tracking-wide text-white hover:bg-primary hover:text-slate-900 transition-all duration-200 cursor-pointer select-none group ml-2"
+                role="button"
+                tabIndex={0}
+              >
+                <span>My Hub</span>
+                <ChevronRight size={14} className="group-hover:translate-x-1 transition-transform" />
+              </div>
             </>
           )}
         </div>
@@ -183,14 +179,12 @@ const Navbar = () => {
               >
                 <span>My Dashboard</span>
               </Link>
-              {location.pathname === '/' && (
-                <button 
-                  onClick={() => { logout(); toast.success('Logged out successfully'); setIsMobileMenuOpen(false); }}
-                  className="w-full py-5 border-2 border-red-500 text-red-600 rounded-2xl text-center font-bold uppercase tracking-widest text-sm hover:bg-red-600 hover:text-white transition-all flex items-center justify-center gap-2"
-                >
-                  <LogOut size={16} /> Logout
-                </button>
-              )}
+              <button 
+                onClick={() => { logout(); toast.success('Logged out successfully'); setIsMobileMenuOpen(false); }}
+                className="w-full py-5 border-2 border-red-500 text-red-600 rounded-2xl text-center font-bold uppercase tracking-widest text-sm hover:bg-red-600 hover:text-white transition-all flex items-center justify-center gap-2 mt-2"
+              >
+                <LogOut size={16} /> Logout
+              </button>
             </>
           )}
         </div>

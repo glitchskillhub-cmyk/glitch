@@ -253,7 +253,7 @@ const Registration = () => {
         return;
       }
 
-      const orderRes = await createRazorpayOrder({ studentId, course: formData.course, paymentType });
+      const orderRes = await createRazorpayOrder({ studentId, course: formData.course, paymentType, couponCode: couponInput.trim() });
       const order = orderRes.data.order;
 
       const options = {

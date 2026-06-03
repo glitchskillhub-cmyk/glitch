@@ -29,18 +29,31 @@ exports.createOrder = async (req, res, next) => {
       });
     }
 
-    const { studentId, course, paymentType } = req.body;
-    console.log('Creating order for student:', studentId, 'course:', course, 'type:', paymentType);
+    const { studentId, course, paymentType, couponCode } = req.body;
+    console.log('Creating order for student:', studentId, 'course:', course, 'type:', paymentType, 'coupon:', couponCode || 'none');
 
     // Look up course price dynamically from the DB
     const Course = require('../models/Course');
     const courseObj = await Course.findOne({ title: course });
     
     let price = courseObj && courseObj.price ? Number(courseObj.price) : 9999;
-    const slotPrice = courseObj && courseObj.slotPrice ? Number(courseObj.slotPrice) : 3000;
+    const slotPrice = courseObj && courseObj.slotPrice ? Number(courseObj.slotPrice) : null;
+
+    // Apply coupon discount to full price if valid
+    if (couponCode && courseObj && courseObj.couponCode 
+        && couponCode.toUpperCase() === courseObj.couponCode.toUpperCase()) {
+      if (courseObj.discountType === 'flat') {
+        price = Math.max(0, price - (courseObj.discountValue || 0));
+      } else {
+        // percentage
+        price = Math.max(0, price - (price * (courseObj.discountValue || 0) / 100));
+      }
+      price = Math.round(price); // round to avoid float issues
+      console.log(`- Coupon "${couponCode}" applied! Discounted price: ${price}`);
+    }
     
     if (paymentType === 'slot') {
-      price = slotPrice;
+      price = slotPrice || price;
     } else if (paymentType === 'due') {
       const Student = require('../models/Student');
       const student = await Student.findById(studentId);

@@ -316,6 +316,23 @@ const Registration = () => {
   const isCouponValid = selectedCourseObj && selectedCourseObj.couponCode 
     && couponInput.trim().toUpperCase() === selectedCourseObj.couponCode.toUpperCase();
 
+  const [couponAlertShown, setCouponAlertShown] = useState(false);
+
+  useEffect(() => {
+    if (isCouponValid && !couponAlertShown) {
+       const discountStr = selectedCourseObj?.discountType === 'flat' 
+         ? `₹${selectedCourseObj?.discountValue}` 
+         : `${selectedCourseObj?.discountValue}%`;
+       toast.success(`Congratulations! Coupon applied. You get a ${discountStr} discount!`, {
+          icon: '🎉',
+          duration: 4000
+       });
+       setCouponAlertShown(true);
+    } else if (!isCouponValid && couponAlertShown) {
+       setCouponAlertShown(false);
+    }
+  }, [isCouponValid, couponAlertShown, selectedCourseObj]);
+
   let finalPrice = basePrice;
   if (isCouponValid) {
     if (selectedCourseObj.discountType === 'flat') {
@@ -463,7 +480,10 @@ const Registration = () => {
                              </div>
                           </div>
                           {couponInput && isCouponValid && (
-                             <p className="text-[10px] text-green-500 font-bold uppercase tracking-widest mt-2 px-4 flex items-center gap-1.5"><CheckCircle2 size={12}/> Coupon applied successfully! Discount applied to Full Payment.</p>
+                             <p className="text-[10px] text-green-500 font-bold uppercase tracking-widest mt-2 px-4 flex items-center gap-1.5">
+                               <CheckCircle2 size={12}/> 
+                               Coupon applied! Discount of {selectedCourseObj.discountType === 'flat' ? `₹${selectedCourseObj.discountValue}` : `${selectedCourseObj.discountValue}%`} applied.
+                             </p>
                           )}
                           {couponInput && !isCouponValid && (
                              <p className="text-[10px] text-red-500 font-bold uppercase tracking-widest mt-2 px-4 flex items-center gap-1.5"><AlertTriangle size={12}/> Invalid coupon code.</p>

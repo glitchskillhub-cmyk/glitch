@@ -78,6 +78,15 @@ exports.createOrder = async (req, res, next) => {
     const order = await getRazorpay().orders.create(options);
     console.log('Razorpay order created:', order.id);
 
+    // Save effective price on student record for accurate due calculations
+    const StudentModel = require('../models/Student');
+    const studentDoc = await StudentModel.findById(studentId);
+    if (studentDoc && paymentType === 'full') {
+      studentDoc.effectivePrice = price;
+      if (couponCode) studentDoc.appliedCoupon = couponCode.toUpperCase();
+      await studentDoc.save();
+    }
+
     // Create pending payment record with dynamic price
     await Payment.create({
       studentId,

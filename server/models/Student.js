@@ -12,6 +12,8 @@ const studentSchema = new mongoose.Schema({
   presentRole: { type: String },
   experience: { type: String },
   companyName: { type: String },
+  effectivePrice: { type: Number, default: null }, // Actual price after coupon discount
+  appliedCoupon: { type: String, default: '' },
   status: { type: String, enum: ['Pending', 'Active', 'Approved', 'Rejected'], default: 'Pending' },
   batch: { type: String, default: '' },
   createdAt: { type: Date, default: Date.now },

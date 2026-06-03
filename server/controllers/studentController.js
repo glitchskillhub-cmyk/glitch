@@ -544,14 +544,23 @@ exports.getStudentDashboardStats = async (req, res, next) => {
         }
       }
       
+      // Use effectivePrice (post-coupon) if it was saved during registration
+      const actualCoursePrice = (student.effectivePrice !== null && student.effectivePrice !== undefined) 
+        ? student.effectivePrice 
+        : coursePrice;
+      
       // Calculate total paid from ALL payment records for this student
       const allStudentRegistrations = await Student.find({ email: user.email.toLowerCase() });
       const allStudentIds = allStudentRegistrations.map(s => s._id);
       const payments = await PaymentModel.find({ studentId: { $in: allStudentIds }, status: 'Paid' });
       totalPaid = payments.reduce((sum, p) => sum + (p.amount || 0), 0);
       
-      dueAmount = coursePrice - totalPaid;
+      // Use actualCoursePrice (after coupon) for due calculation, but show original coursePrice for display
+      dueAmount = actualCoursePrice - totalPaid;
       if (dueAmount < 0) dueAmount = 0;
+      
+      // Show the effective price as the course price so it makes sense to the student
+      coursePrice = actualCoursePrice;
     }
 
     res.json({

@@ -109,7 +109,7 @@ const Programs = () => {
           onClick={() => {
             setIsEditMode(false);
             setEditingCourseId(null);
-            setNewCourse({ title: '', description: '', price: '9999', slotPrice: '3000', duration: '6 Months', instructor: 'Glitch Team', thumbnail: '', readMoreLink: '', startDate: '' });
+            setNewCourse({ title: '', description: '', price: '9999', slotPrice: '', duration: '6 Months', instructor: 'Glitch Team', thumbnail: '', readMoreLink: '', startDate: '' });
             setIsAddModalOpen(true);
           }}
           className="flex items-center gap-2 px-8 py-4 bg-primary text-black rounded-2xl text-[10px] font-black uppercase tracking-widest hover:scale-[1.02] active:scale-95 transition-all shadow-xl shadow-primary/20"
@@ -129,7 +129,7 @@ const Programs = () => {
                onClick={() => {
                  setIsEditMode(false);
                  setEditingCourseId(null);
-                 setNewCourse({ title: '', description: '', price: '9999', slotPrice: '3000', duration: '6 Months', instructor: 'Glitch Team', thumbnail: '', readMoreLink: '', startDate: '' });
+                 setNewCourse({ title: '', description: '', price: '9999', slotPrice: '', duration: '6 Months', instructor: 'Glitch Team', thumbnail: '', readMoreLink: '', startDate: '' });
                  setIsAddModalOpen(true);
                }} 
                className="mt-4 text-primary text-[10px] font-black uppercase tracking-[0.2em] hover:underline"
@@ -190,7 +190,9 @@ const Programs = () => {
                    </div>
                    <div className="p-4 bg-zinc-50 border border-zinc-100 rounded-2xl">
                       <p className="text-[9px] font-black uppercase tracking-[0.2em] text-zinc-400 mb-1">Slot Booking</p>
-                      <p className="text-lg font-black text-primary italic">₹{course.slotPrice || '3,000'}</p>
+                      <p className="text-lg font-black text-primary italic">
+                         {course.slotPrice ? `₹${course.slotPrice}` : <span className="text-sm text-zinc-400 not-italic uppercase tracking-widest">Optional</span>}
+                      </p>
                    </div>
                 </div>
 

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Menu, X, Sparkles, ChevronRight, User, LogOut } from 'lucide-react';
+import { Menu, X, Sparkles, ChevronRight, User, LogOut, LayoutDashboard } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { toast } from 'react-hot-toast';
 import AuthModal from './AuthModal';
@@ -164,7 +164,12 @@ const Navbar = () => {
             </>
           ) : (
             <>
-
+              <button 
+                onClick={() => { handleProtectedNavigation(getDashboardPath()); setIsMobileMenuOpen(false); }}
+                className="w-full py-5 border-2 border-slate-900 text-slate-900 rounded-2xl text-center font-bold uppercase tracking-widest text-sm hover:bg-slate-900 hover:text-white transition-all flex items-center justify-center gap-2 mt-2"
+              >
+                <LayoutDashboard size={16} /> Dashboard
+              </button>
               <button 
                 onClick={() => { logout(); toast.success('Logged out successfully'); setIsMobileMenuOpen(false); }}
                 className="w-full py-5 border-2 border-red-500 text-red-600 rounded-2xl text-center font-bold uppercase tracking-widest text-sm hover:bg-red-600 hover:text-white transition-all flex items-center justify-center gap-2 mt-2"

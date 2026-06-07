@@ -430,61 +430,19 @@ const checkAuthToken = async (req, res, next) => {
             {/* HERO RIGHT: Crispy IDE code preview + pricing badge */}
             <div className="nc-hero-sidebar-bento">
               {/* Inline Lead Capture Form */}
-              <div className="bg-white rounded-[2rem] p-8 shadow-2xl relative overflow-hidden border border-zinc-100">
+              <div className="bg-white rounded-[2rem] p-0 md:p-8 shadow-2xl relative overflow-hidden border border-zinc-100">
                 <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary via-yellow-400 to-yellow-600"></div>
 
-                <div className="mb-6 text-center">
+                <div className="mb-2 md:mb-6 text-center hidden md:block pt-6 md:pt-0">
                   <h3 className="text-xl font-black text-zinc-900 tracking-tight mb-2 uppercase">Unlock Detailed Syllabus</h3>
                   <p className="text-zinc-500 text-xs font-medium">Enter your details to get the curriculum and a callback from our senior mentor.</p>
                 </div>
 
-                <form onSubmit={handleLeadSubmit} className="space-y-4 relative z-10">
-                  <div>
-                    <label className="block text-[10px] font-black uppercase tracking-widest text-zinc-500 mb-1">Full Name *</label>
-                    <input
-                      type="text"
-                      required
-                      value={leadForm.name}
-                      onChange={(e) => setLeadForm({ ...leadForm, name: e.target.value })}
-                      className="w-full px-4 py-3 rounded-xl border border-zinc-200 bg-zinc-50 text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all font-medium text-zinc-900"
-                      placeholder="Enter your name"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-[10px] font-black uppercase tracking-widest text-zinc-500 mb-1">Email Address *</label>
-                    <input
-                      type="email"
-                      required
-                      value={leadForm.email}
-                      onChange={(e) => setLeadForm({ ...leadForm, email: e.target.value })}
-                      className="w-full px-4 py-3 rounded-xl border border-zinc-200 bg-zinc-50 text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all font-medium text-zinc-900"
-                      placeholder="name@example.com"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-[10px] font-black uppercase tracking-widest text-zinc-500 mb-1">Mobile Number *</label>
-                    <input
-                      type="tel"
-                      required
-                      value={leadForm.phone}
-                      onChange={(e) => setLeadForm({ ...leadForm, phone: e.target.value })}
-                      className="w-full px-4 py-3 rounded-xl border border-zinc-200 bg-zinc-50 text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all font-medium text-zinc-900"
-                      placeholder="+91 00000 00000"
-                    />
-                  </div>
-
-                  <button
-                    type="submit"
-                    disabled={submittingLead}
-                    className="w-full bg-primary hover:bg-yellow-500 text-zinc-950 font-black uppercase tracking-widest text-sm py-4 rounded-xl transition-all hover:shadow-[0_10px_20px_rgba(255,215,0,0.2)] disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2 mt-2"
-                  >
-                    {submittingLead ? (
-                      <div className="w-5 h-5 border-2 border-zinc-900 border-t-transparent rounded-full animate-spin"></div>
-                    ) : (
-                      <>Get Syllabus & Callback <ChevronRight size={18} /></>
-                    )}
-                  </button>
-                </form>
+                <iframe
+                  title="Zoho Lead Form"
+                  src="https://forms.zohopublic.in/glitchskillhubgm1/form/EmailSubscription/formperma/GueiYUHkjBHy5sVG8XovZiRspHcveDO2Os-mSlh1Ly0"
+                  style={{ width: '100%', height: '550px', border: 'none' }}
+                />
               </div>
 
               {/* Connected Pricing Card */}
@@ -935,58 +893,18 @@ const checkAuthToken = async (req, res, next) => {
               <X size={16} />
             </button>
 
-            <div className="bg-zinc-950 p-6 text-center border-b-4 border-primary">
+            <div className="bg-zinc-950 p-6 text-center border-b-4 border-primary hidden md:block">
               <h3 className="text-2xl font-black text-white italic tracking-tighter uppercase">Unlock 45-Day MERN Mastery</h3>
               <p className="text-zinc-400 text-xs mt-2 font-medium tracking-wide">Enter your details to get course curriculum and direct call from mentor.</p>
             </div>
 
-            <form onSubmit={handleLeadSubmit} className="p-6 space-y-4">
-              <div>
-                <label className="block text-[10px] font-black uppercase tracking-widest text-zinc-500 mb-1">Full Name *</label>
-                <input
-                  type="text"
-                  required
-                  value={leadForm.name}
-                  onChange={(e) => setLeadForm({ ...leadForm, name: e.target.value })}
-                  className="w-full px-4 py-3 rounded-xl border border-zinc-200 bg-zinc-50 text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all font-medium text-zinc-900"
-                  placeholder="Enter your name"
-                />
-              </div>
-              <div>
-                <label className="block text-[10px] font-black uppercase tracking-widest text-zinc-500 mb-1">Email Address *</label>
-                <input
-                  type="email"
-                  required
-                  value={leadForm.email}
-                  onChange={(e) => setLeadForm({ ...leadForm, email: e.target.value })}
-                  className="w-full px-4 py-3 rounded-xl border border-zinc-200 bg-zinc-50 text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all font-medium text-zinc-900"
-                  placeholder="name@example.com"
-                />
-              </div>
-              <div>
-                <label className="block text-[10px] font-black uppercase tracking-widest text-zinc-500 mb-1">Mobile Number *</label>
-                <input
-                  type="tel"
-                  required
-                  value={leadForm.phone}
-                  onChange={(e) => setLeadForm({ ...leadForm, phone: e.target.value })}
-                  className="w-full px-4 py-3 rounded-xl border border-zinc-200 bg-zinc-50 text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all font-medium text-zinc-900"
-                  placeholder="+91 00000 00000"
-                />
-              </div>
-
-              <button
-                type="submit"
-                disabled={submittingLead}
-                className="w-full bg-primary hover:bg-yellow-500 text-zinc-950 font-black uppercase tracking-widest text-sm py-4 rounded-xl transition-all hover:shadow-[0_0_20px_rgba(255,215,0,0.4)] disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2 mt-4"
-              >
-                {submittingLead ? (
-                  <div className="w-5 h-5 border-2 border-zinc-900 border-t-transparent rounded-full animate-spin"></div>
-                ) : (
-                  <>Get Detailed Syllabus <ChevronRight size={18} /></>
-                )}
-              </button>
-            </form>
+            <div className="p-0 md:p-2 pt-8 md:pt-2">
+              <iframe
+                title="Zoho Lead Modal Form"
+                src="https://forms.zohopublic.in/glitchskillhubgm1/form/EmailSubscription/formperma/GueiYUHkjBHy5sVG8XovZiRspHcveDO2Os-mSlh1Ly0"
+                style={{ width: '100%', height: '550px', border: 'none' }}
+              />
+            </div>
           </div>
         </div>
       )}

@@ -40,6 +40,7 @@ const NodeCourse = () => {
   const [submittingLead, setSubmittingLead] = useState(false);
   const [leadForm, setLeadForm] = useState({ name: '', email: '', phone: '' });
   const hasTriggeredPopup = useRef(false);
+  const [timeLeft, setTimeLeft] = useState(46 * 60);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -54,6 +55,39 @@ const NodeCourse = () => {
 
     return () => clearTimeout(timer);
   }, []);
+
+  useEffect(() => {
+    let endTime = localStorage.getItem('mernCourseOfferEndTime');
+    if (!endTime || Date.now() > parseInt(endTime, 10)) {
+      endTime = Date.now() + 46 * 60 * 1000;
+      localStorage.setItem('mernCourseOfferEndTime', endTime.toString());
+    }
+
+    const interval = setInterval(() => {
+      const remaining = Math.floor((parseInt(endTime, 10) - Date.now()) / 1000);
+      if (remaining <= 0) {
+        const newEndTime = Date.now() + 46 * 60 * 1000;
+        localStorage.setItem('mernCourseOfferEndTime', newEndTime.toString());
+        setTimeLeft(46 * 60);
+      } else {
+        setTimeLeft(remaining);
+      }
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  const formatTime = (seconds) => {
+    const m = Math.floor(seconds / 60).toString().padStart(2, '0');
+    const s = (seconds % 60).toString().padStart(2, '0');
+    return (
+      <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', marginLeft: '4px' }}>
+        <span style={{ background: '#ef4444', color: 'white', padding: '2px 6px', borderRadius: '4px', fontWeight: '900', fontFamily: 'monospace', fontSize: '1rem', letterSpacing: '1px', boxShadow: '0 2px 4px rgba(239, 68, 68, 0.3)' }}>{m}</span>
+        <span style={{ color: '#ef4444', fontWeight: '900' }}>:</span>
+        <span style={{ background: '#ef4444', color: 'white', padding: '2px 6px', borderRadius: '4px', fontWeight: '900', fontFamily: 'monospace', fontSize: '1rem', letterSpacing: '1px', boxShadow: '0 2px 4px rgba(239, 68, 68, 0.3)' }}>{s}</span>
+      </span>
+    );
+  };
 
   const handleLeadSubmit = async (e) => {
     e.preventDefault();
@@ -347,6 +381,12 @@ const checkAuthToken = async (req, res, next) => {
           <div className="nc-hero-grid">
 
             <div className="nc-hero-text">
+              <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: '#fff1f2', border: '1px solid #fecdd3', padding: '8px 16px', borderRadius: '12px', marginBottom: '1.5rem', boxShadow: '0 4px 12px rgba(225, 29, 72, 0.1)' }}>
+                <Clock size={18} color="#e11d48" />
+                <span style={{ fontSize: '0.9rem', fontWeight: 900, color: '#e11d48', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Offer Ends In:</span>
+                {formatTime(timeLeft)}
+              </div>
+
               <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', marginBottom: '1.5rem' }}>
                 <div className="nc-badge-glow" style={{ marginBottom: 0 }}>
                   <span className="nc-dot pulse" /> DESIGNED FOR WORKING PROFESSIONALS
@@ -451,8 +491,14 @@ const checkAuthToken = async (req, res, next) => {
               <div className="nc-pricing-card-hero">
                 <div className="nc-pricing-card-hero-header">
                   <div>
-                    <span className="nc-p-tag">PROGRAM FEE</span>
-                    <h3 className="nc-p-huge">₹9,999</h3>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.25rem' }}>
+                      <span className="nc-p-tag" style={{ margin: 0 }}>PROGRAM FEE</span>
+
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.5rem' }}>
+                      <h3 className="nc-p-huge">₹9,999</h3>
+                      <span style={{ textDecoration: 'line-through', color: '#94a3b8', fontSize: '1.25rem', fontWeight: 600 }}>₹29,999</span>
+                    </div>
                   </div>
                   <div className="nc-p-features">
                     {includesList.slice(0, 2).map((item, i) => (
@@ -767,8 +813,14 @@ const checkAuthToken = async (req, res, next) => {
           <div className="nc-pricing-card-standalone-crisp">
             <div className="nc-pricing-left-crisp">
               <span className="nc-pricing-tag-crisp">MERN 45-DAY ENGINE</span>
-              <div style={{ display: 'flex', alignItems: 'baseline', gap: '8px', margin: '1rem 0' }}>
+
+              <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', background: '#fef2f2', color: '#ef4444', padding: '6px 12px', borderRadius: '100px', fontSize: '0.85rem', fontWeight: 800, marginTop: '1rem' }}>
+                <Clock size={14} /> Offer ends in {formatTime(timeLeft)}
+              </div>
+
+              <div style={{ display: 'flex', alignItems: 'baseline', gap: '12px', margin: '0.5rem 0 1rem 0' }}>
                 <span className="nc-pricing-huge-price-crisp">₹9,999</span>
+                <span style={{ textDecoration: 'line-through', color: '#94a3b8', fontSize: '1.5rem', fontWeight: 600 }}>₹29,999</span>
                 <span style={{ fontSize: '0.85rem', color: '#94a3b8', fontWeight: 800 }}>One-time payment</span>
               </div>
               <p style={{ color: '#cbd5e1', fontSize: '0.9rem', marginBottom: '2rem', lineHeight: '1.6' }}>

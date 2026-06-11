@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import brochurePdf from '../assets/MernFullStack-Brochure.pdf';
+import logo from '../assets/images/glitch-logo.webp';
 
 export default function NodeCourseTwo() {
   const [showPopup, setShowPopup] = useState(false);
@@ -1339,7 +1340,7 @@ footer {
           <nav className="nav" aria-label="Main navigation">
             <div className="nav-inner">
               <div className="nav-logo" style={{ background: '#0D0D0D', padding: '6px 14px', borderRadius: '8px', display: 'flex', alignItems: 'center' }}>
-                <img src="/src/assets/images/glitch-logo.webp" alt="Glitch Skill Hub" style={{ height: '32px', width: 'auto' }} />
+                <img src={logo} alt="Glitch Skill Hub" style={{ height: '32px', width: 'auto' }} />
               </div>
               <div className="nav-links">
                 <a href="#curriculum">Curriculum</a>
@@ -3136,7 +3137,7 @@ footer {
               <div className="footer-inner">
                 <div className="footer-brand">
                   <div className="footer-logo" style={{ display: 'inline-flex', background: '#0D0D0D', padding: '8px 16px', borderRadius: '10px' }}>
-                    <img src="/src/assets/images/glitch-logo.webp" alt="Glitch Skill Hub" style={{ height: '36px', width: 'auto' }} />
+                    <img src={logo} alt="Glitch Skill Hub" style={{ height: '36px', width: 'auto' }} />
                   </div>
                   <p className="footer-tagline">
                     Practical software training for working IT professionals in

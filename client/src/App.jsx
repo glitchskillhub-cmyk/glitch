@@ -11,6 +11,7 @@ import Contact from './pages/Contact';
 import Registration from './pages/Registration';
 import Success from './pages/Success';
 import NodeCourse from './pages/NodeCourse';
+import NodeCourseTwo from './pages/nodecoursetwo';
 import Terms from './pages/Terms';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import ReturnPolicy from './pages/ReturnPolicy';
@@ -108,6 +109,7 @@ function App() {
         <Route path="/register" element={<Registration />} />
         <Route path="/success" element={<Success />} />
         <Route path="/node-js-course" element={<NodeCourse />} />
+        <Route path="/node-js-course-two" element={<NodeCourseTwo />} />
         <Route path="/terms" element={<Terms />} />
         <Route path="/privacy" element={<PrivacyPolicy />} />
         <Route path="/refund" element={<ReturnPolicy />} />

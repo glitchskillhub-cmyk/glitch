@@ -35,7 +35,7 @@ const Partners = () => {
     const text = `*New Partnership Inquiry*%0A%0A*Institute Name:* ${formData.instituteName}%0A*Contact Person:* ${formData.contactName}%0A*Phone:* ${formData.phone}%0A*Email:* ${formData.email}%0A*Location:* ${formData.location}%0A*Message:* ${formData.message}`;
     
     // WhatsApp URL (replace with actual number)
-    const whatsappUrl = `https://wa.me/916300127402?text=${text}`;
+    const whatsappUrl = `https://wa.me/916300127932?text=${text}`;
     
     // Open WhatsApp in a new tab
     window.open(whatsappUrl, '_blank');

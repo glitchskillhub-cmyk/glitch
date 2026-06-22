@@ -16,6 +16,7 @@ import Terms from './pages/Terms';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import ReturnPolicy from './pages/ReturnPolicy';
 import NotFound from './pages/NotFound';
+import Partners from './pages/Partners';
 
 // Auth Pages
 import Login from './pages/Login';
@@ -113,6 +114,7 @@ function App() {
         <Route path="/terms" element={<Terms />} />
         <Route path="/privacy" element={<PrivacyPolicy />} />
         <Route path="/refund" element={<ReturnPolicy />} />
+        <Route path="/partners" element={<Partners />} />
         
         {/* Authentication */}
         <Route element={<GuestRoute />}>

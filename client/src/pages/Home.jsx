@@ -143,6 +143,66 @@ const Home = () => {
         </div>
       </section>
 
+      {/* 20+ Top IT Courses Section */}
+      <section className="py-16 md:py-24 bg-slate-900 text-white relative overflow-hidden">
+        <div className="absolute inset-0 opacity-5 pointer-events-none" style={{ backgroundImage: "url('data:image/svg+xml,%3Csvg width=\\'60\\' height=\\'60\\' viewBox=\\'0 0 60 60\\' xmlns=\\'http://www.w3.org/2000/svg\\'%3E%3Cg fill=\\'none\\' fill-rule=\\'evenodd\\'%3E%3Cg fill=\\'%23ffffff\\' fill-opacity=\\'1\\'%3E%3Cpath d=\\'M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z\\'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')" }}></div>
+        
+        <div className="container mx-auto px-6 relative z-10">
+          <div className="text-center mb-16">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-slate-700 bg-slate-800/50 backdrop-blur-sm text-sm font-bold tracking-widest uppercase mb-8 text-slate-300">
+               <span className="w-2 h-2 rounded-full bg-primary animate-pulse"></span> AI-Powered Learning
+            </div>
+            <h2 className="text-4xl md:text-5xl font-bold tracking-tight leading-tight mb-6 text-white">
+              20+ Top IT Courses with <br/><span className="text-primary">AI Integration.</span>
+            </h2>
+            <p className="text-xl text-slate-400 max-w-2xl mx-auto mb-4">
+              Industry-relevant. Future-ready. AI-powered.
+            </p>
+            <p className="text-md text-slate-500 max-w-3xl mx-auto">
+               We focus on doing AI right. Glitch AI integrated curriculum teaches the most in-demand IT courses to make you future-proof.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {[
+              "Full Stack Development with AI",
+              "Python Programming with AI",
+              "Digital Marketing with AI",
+              "UI/UX Design with AI",
+              "Power BI & Advanced Analytics",
+              "React JS Development",
+              "Node JS Development",
+              "Database Management",
+              "Java Development with AI",
+              "Data Science & Machine Learning",
+              "Generative AI & Prompt Engineering",
+              "Data Analytics & Visualization",
+              "Web Development",
+              "Mobile App Development",
+              "Software Testing with AI",
+              "DevOps & Cloud Computing",
+              "Cyber Security & Ethical Hacking",
+              "AI for Productivity",
+              "Excel & Advanced Excel with AI",
+              "Interview Preparation & Soft Skills"
+            ].map((course, i) => (
+              <div key={i} className="group flex items-start gap-4 p-6 rounded-2xl bg-slate-800/50 hover:bg-slate-800 border border-slate-700 hover:border-primary/50 transition-all hover:-translate-y-1 backdrop-blur-sm">
+                <div className="w-12 h-12 shrink-0 bg-slate-900/50 rounded-xl flex items-center justify-center text-slate-400 group-hover:bg-primary/20 group-hover:text-primary transition-colors border border-slate-700/50">
+                  {course.includes('AI') ? <Sparkles size={24} /> : <Code size={24} />}
+                </div>
+                <div className="flex items-center h-full pt-1">
+                  <h3 className="text-lg font-bold leading-tight text-slate-200 group-hover:text-white transition-colors">{course}</h3>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+        
+        {/* Background decorations */}
+        <div className="absolute top-1/4 left-0 w-96 h-96 bg-primary/10 rounded-full blur-[120px] -z-10 pointer-events-none"></div>
+        <div className="absolute bottom-0 right-0 w-96 h-96 bg-primary/10 rounded-full blur-[120px] -z-10 pointer-events-none"></div>
+      </section>
+
       {/* Practical Learning Section */}
       <section className="py-16 md:py-24 bg-slate-50 overflow-hidden">
         <div className="container mx-auto px-6">

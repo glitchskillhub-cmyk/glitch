@@ -79,6 +79,7 @@ const Footer = () => {
                 { name: 'Start', path: '/' },
                 { name: 'Programs', path: '/programs' },
                 { name: 'Mentors', path: '/mentors' },
+                { name: 'Partners', path: '/partners' },
                 { name: 'Our Story', path: '/about' },
                 { name: 'Get in Touch', path: '/contact' }
               ].map((item) => (

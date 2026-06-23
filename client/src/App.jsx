@@ -17,6 +17,7 @@ import PrivacyPolicy from './pages/PrivacyPolicy';
 import ReturnPolicy from './pages/ReturnPolicy';
 import NotFound from './pages/NotFound';
 import Partners from './pages/Partners';
+import BdeTerms from './pages/BdeTerms';
 
 // Auth Pages
 import Login from './pages/Login';
@@ -115,6 +116,7 @@ function App() {
         <Route path="/privacy" element={<PrivacyPolicy />} />
         <Route path="/refund" element={<ReturnPolicy />} />
         <Route path="/partners" element={<Partners />} />
+        <Route path="/bde-terms" element={<BdeTerms />} />
         
         {/* Authentication */}
         <Route element={<GuestRoute />}>

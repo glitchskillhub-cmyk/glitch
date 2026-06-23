@@ -63,7 +63,20 @@ const BdeTerms = () => {
             </section>
 
             <section>
-              <h2 className="text-2xl font-bold text-slate-900 mb-4">6. Professional Conduct</h2>
+              <h2 className="text-2xl font-bold text-slate-900 mb-4">6. Payment Terms and Conditions</h2>
+              <ul className="list-disc pl-5 space-y-2">
+                <li>Incentives are applicable only for successful institute partnerships and student enrollments generated through the Business Development Executive.</li>
+                <li>The incentive amount will be calculated at 5% of the final course fee paid by each enrolled student referred through the respective institute partnership.</li>
+                <li>Incentives are payable only after the student enrollment process is completed and the respective training batch is successfully commenced.</li>
+                <li>Payments will be released after trainer payments and internal settlement processes are completed.</li>
+                <li>No incentives or payments will be applicable for inquiries, unconverted leads, cancelled enrollments, refunds, or inactive students.</li>
+                <li>The payout schedule and settlement date will be determined by Glitch Skill Hub management.</li>
+                <li>Glitch Skill Hub reserves the right to verify all enrollments and payment records before releasing any incentive amounts.</li>
+              </ul>
+            </section>
+
+            <section>
+              <h2 className="text-2xl font-bold text-slate-900 mb-4">7. Professional Conduct</h2>
               <ul className="list-disc pl-5 space-y-2">
                 <li>Candidates are expected to maintain professionalism while representing Glitch Skill Hub.</li>
                 <li>Misrepresentation, false commitments, or unethical practices are strictly prohibited.</li>
@@ -71,7 +84,7 @@ const BdeTerms = () => {
             </section>
 
             <section>
-              <h2 className="text-2xl font-bold text-slate-900 mb-4">7. Confidentiality</h2>
+              <h2 className="text-2xl font-bold text-slate-900 mb-4">8. Confidentiality</h2>
               <ul className="list-disc pl-5 space-y-2">
                 <li>All company information, pricing, strategies, and client details are confidential.</li>
                 <li>Sharing company information with third parties without authorization is prohibited.</li>
@@ -79,7 +92,7 @@ const BdeTerms = () => {
             </section>
 
             <section>
-              <h2 className="text-2xl font-bold text-slate-900 mb-4">8. Termination of Association</h2>
+              <h2 className="text-2xl font-bold text-slate-900 mb-4">9. Termination of Association</h2>
               <ul className="list-disc pl-5 space-y-2">
                 <li>Glitch Skill Hub reserves the right to discontinue the association at any time based on performance, misconduct, or business requirements.</li>
                 <li>The candidate may also discontinue the association by providing prior notice.</li>
@@ -87,7 +100,7 @@ const BdeTerms = () => {
             </section>
 
             <section>
-              <h2 className="text-2xl font-bold text-slate-900 mb-4">9. Acceptance</h2>
+              <h2 className="text-2xl font-bold text-slate-900 mb-4">10. Acceptance</h2>
               <p>By joining Glitch Skill Hub, I acknowledge that I have read and understood the above terms and conditions and agree to comply with them.</p>
               <p className="font-semibold mt-4">Glitch HR Team.</p>
             </section>
